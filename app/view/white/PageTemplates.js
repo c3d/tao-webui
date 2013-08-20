@@ -1,7 +1,7 @@
 Ext.define('TE.view.white.PageTemplates', {
     extend: 'TE.view.PageTemplates',
 
-    title: 'Page Templates (White)',
+    title: tr('Page Templates (White)'),
 
     initComponent: function() {
         console.log('view.white.PageTemplates initComponent');
@@ -17,7 +17,7 @@ Ext.define('TE.view.white.PageTemplates', {
             caption: tr('Title, Bullets & Photo')
         }, {
             image: 'photo_horizontal.png',
-            caption: tr('Photo Horizontal')
+            caption: tr('Photo &ndash; Horizontal')
         }, {
             image: 'blank.png',
             caption: tr('Blank')

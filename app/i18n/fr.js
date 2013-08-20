@@ -2,13 +2,15 @@ function tr(key)
 {
     var translations = {
         'Themes & Applications': 'Thèmes et Applications',
-        'Page Templates': 'Modèles de Pages',
+        'Page Templates (Vellum)': 'Modèles de Pages (<i>Vellum</i>)',
+        'Page Templates (White)': 'Modèles de Pages (<i>White</i>)',
         'Tools': 'Outils',
         'Properties': 'Propriétés',
         'Pages': null,
         'Title & Subtitle': 'Titre et Sous-Titre',
         'Title & Bullets': 'Titre et Puces',
         'Title, Bullets & Photo': 'Titre, Puces et Photos',
+        'Photo &ndash; Horizontal': 'Photo &ndash; Horizontale',
         'Blank': 'Vide'
     };
 
