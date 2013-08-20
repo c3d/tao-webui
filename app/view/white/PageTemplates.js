@@ -1,10 +1,10 @@
-Ext.define('TE.view.vellum.PageTemplates', {
+Ext.define('TE.view.white.PageTemplates', {
     extend: 'TE.view.PageTemplates',
 
-    title: 'Page Templates (Vellum)',
+    title: 'Page Templates (White)',
 
     initComponent: function() {
-        console.log('view.vellum.PageTemplates initComponent');
+        console.log('view.white.PageTemplates initComponent');
 
         var tmpls = [{
             image: 'title_and_subtitle.png',
@@ -16,6 +16,9 @@ Ext.define('TE.view.vellum.PageTemplates', {
             image: 'title_bullets_and_photo.png',
             caption: tr('Title, Bullets & Photo')
         }, {
+            image: 'photo_horizontal.png',
+            caption: tr('Photo Horizontal')
+        }, {
             image: 'blank.png',
             caption: tr('Blank')
         }];
@@ -24,7 +27,7 @@ Ext.define('TE.view.vellum.PageTemplates', {
         Ext.Array.forEach(tmpls, function(t) {
             this.items.push({
                 xtype: 'imageandcaption',
-                image: 'app/assets/images/vellum/' + t.image,
+                image: 'app/assets/images/white/' + t.image,
                 caption: t.caption });
         }, this);
 

@@ -1,22 +1,24 @@
 Ext.define('TE.view.ThemeIcon', {
     extend: 'TE.view.ImageAndCaption',
-    alias: 'widget.themeicon',
 
+    xtype: 'themeicon',
     // Name of the class to instanciate to fill the 'page templates' panel
-    ptclassname: 'TE.view.vellum.PageTemplates',
+    ptclassname: '',
+    // Cached instance
     pt: null,
 
-    constructor: function() {
-        this.callParent(arguments);
+    // constructor: function() {
+    //     this.callParent(arguments);
+    // },
 
-    },
-
-    initComponent: function(config) {
-        console.log('view.Theme initComponent');
-        this.callParent(arguments);
-     },
+    // initComponent: function(config) {
+    //     console.log('view.Theme initComponent');
+    //     this.callParent(arguments);
+    //  },
 
      getPageTemplatesPanel: function() {
+        // TODO cache
+        console.log('this.ptclassname = ', this.ptclassname);
         return (Ext.create(this.ptclassname));
      }
  });

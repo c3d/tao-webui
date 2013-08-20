@@ -12,25 +12,29 @@ Ext.define('TE.view.Tools', {
     items: [{
     	title: tr('Themes & Applications'),
         xtype: 'panel',
+        itemId: 'themepanel',
         autoScroll: true,
         layout: {
             type: 'vbox',
             align: 'center',
             defaultMargins: 5
         },
-        items: [{
-            xtype: 'themeicon',
-            image: 'app/assets/images/vellum/vellum.png',
-            caption: 'Vellum'
-        }]
+        items: []
     }, {
+        // Placeholder for the list of page templates
         xtype: 'panel'
     }],
 
     initComponent: function() {
         console.log('view.Tools initComponent');
-
         this.callParent(arguments);
+
+        this.addTheme(Ext.create('TE.view.vellum.ThemeIcon'));
+    },
+
+    addTheme: function(panel) {
+        console.log('addTheme');
+        this.getComponent('themepanel').add(panel);
     },
 
     setPageTemplates: function(panel) {

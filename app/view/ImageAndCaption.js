@@ -19,8 +19,7 @@ Ext.define('TE.view.ImageAndCaption', {
 
     constructor: function(cfg) {
 
-        this.image = cfg.image;
-        this.caption = cfg.caption;
+        Ext.apply(this, cfg);
         Ext.apply(this, {
             items: [{   
                 xtype: 'image',
