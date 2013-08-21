@@ -22,7 +22,8 @@ Ext.define('TE.view.Tools', {
         items: []
     }, {
         // Placeholder for the list of page templates
-        xtype: 'panel'
+        xtype: 'panel',
+        itemId: 'placeholder'
     }],
 
     initComponent: function() {
@@ -37,7 +38,10 @@ Ext.define('TE.view.Tools', {
     },
 
     setPageTemplates: function(tmpl) {
-        this.remove(1);
+        var comp = this.items.items[1];
+        // Placeholder may be deleted, not objects passed to this function (they are cached)
+        var del = typeof comp.itemId !== 'undefined' && comp.itemId === 'placeholder';
+        this.remove(1, del);
         this.add(tmpl);
     }
  });
