@@ -9,23 +9,28 @@ Ext.define('TE.controller.Editor', {
 
     init: function() {
         this.control({
+            'imageandcaption': {
+                // All icons
+                click: this.highlightOnly
+            },
             'themeicon': {
-                click: this.themeClicked
+                click: this.themeIconClicked
             }
         });
     },
 
-    themeClicked: function(themeicon) {
-        // Update list of page templates according to selected theme/app
-        var tools = themeicon.up('tools');
-        tools.setPageTemplates(themeicon.getPageTemplatesPanel());
+    themeIconClicked: function(icon) {
+        var tools = icon.up('tools');
+        tools.setPageTemplates(icon.getPageTemplatesPanel());
 
-        // Set caption of clicked item in bold and show a border
-        var themePanel = tools.getComponent('themepanel');
-        var children = themePanel.items ? themePanel.items.items : [];
-        Ext.each(children, function(child) {
-            child.toggleBoldCaption(child === themeicon);
-            child.toggleHighlight(child === themeicon);
+        Ext.each(Ext.ComponentQuery.query('themeicon'), function(child) {
+            child.toggleBoldCaption(child === icon);
+        });
+    },
+
+    highlightOnly: function(icon) {
+        Ext.each(Ext.ComponentQuery.query('imageandcaption'), function(child) {
+            child.toggleHighlight(child === icon);
         });
     }
 });

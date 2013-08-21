@@ -1,12 +1,11 @@
 Ext.define('TE.view.ThemeIcon', {
     extend: 'TE.view.ImageAndCaption',
 
-    xtype: 'themeicon',
+    alias: 'widget.themeicon',
 
     getPageTemplatesPanel: function() {
         if (typeof this.self.pt === 'undefined') {
             // Create and cache instance
-            console.log('create ' + this.self.ptclassname);
             this.self.pt = Ext.create(this.self.ptclassname);
         }
         return this.self.pt;
