@@ -11,7 +11,7 @@ Ext.define('TE.controller.Editor', {
         this.control({
             'imageandcaption': {
                 // All icons
-                click: this.highlightOnly
+                click: this.selectOnly
             },
             'themeicon': {
                 click: this.themeIconClicked
@@ -24,13 +24,13 @@ Ext.define('TE.controller.Editor', {
         tools.setPageTemplates(icon.getPageTemplatesPanel());
 
         Ext.each(Ext.ComponentQuery.query('themeicon'), function(child) {
-            child.toggleBoldCaption(child === icon);
+            child.toggleCurrentTheme(child === icon);
         });
     },
 
-    highlightOnly: function(icon) {
+    selectOnly: function(icon) {
         Ext.each(Ext.ComponentQuery.query('imageandcaption'), function(child) {
-            child.toggleHighlight(child === icon);
+            child.toggleSelected(child === icon);
         });
     }
 });

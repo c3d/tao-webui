@@ -11,13 +11,11 @@ Ext.define('TE.view.ThemeIcon', {
         return this.self.pt;
     },
 
-    toggleBoldCaption: function(on) {
-        var cap = '';
+    toggleCurrentTheme: function(on) {
         if (on)
-            cap += '<b>';
-        cap += this.caption;
-        if (on)
-            cap += '</b>';
-        this.getComponent('caption').update(cap);
+            this.el.addCls('te-currenttheme');
+        else
+            this.el.removeCls('te-currenttheme');
+        this.doLayout();
      }
  });

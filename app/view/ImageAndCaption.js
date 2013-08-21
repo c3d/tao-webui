@@ -41,10 +41,10 @@ Ext.define('TE.view.ImageAndCaption', {
         this.callParent(arguments);
      },
 
-    toggleHighlight: function(on) {
+    toggleSelected: function(on) {
         if (on === true)
-            this.el.applyStyles('background: #D2E1F4');
+            this.el.addCls('te-selectedicon');
         else
-            this.el.applyStyles('background: white');
+            this.el.removeCls('te-selectedicon');
      }
  });
