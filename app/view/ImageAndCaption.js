@@ -24,10 +24,12 @@ Ext.define('TE.view.ImageAndCaption', {
             items: [{   
                 xtype: 'image',
                 autoEl: 'div',
+                itemId: 'image',
                 src: this.image,
             },
             {
                 xtype: 'container',
+                itemId: 'caption',
                 html: this.caption,
             }]
         });
@@ -36,7 +38,13 @@ Ext.define('TE.view.ImageAndCaption', {
     },
 
     initComponent: function(config) {
-        console.log('view.ImageAndCaption initComponent');
         this.callParent(arguments);
+     },
+
+    toggleHighlight: function(on) {
+        if (on === true)
+            this.el.applyStyles('background: #D2E1F4');
+        else
+            this.el.applyStyles('background: white');
      }
  });

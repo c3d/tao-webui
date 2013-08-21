@@ -4,8 +4,6 @@ Ext.define('TE.view.white.PageTemplates', {
     title: tr('Page Templates (White)'),
 
     initComponent: function() {
-        console.log('view.white.PageTemplates initComponent');
-
         var tmpls = [{
             image: 'title_and_subtitle.png',
             caption: tr('Title & Subtitle')

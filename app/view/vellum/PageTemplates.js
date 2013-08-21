@@ -4,8 +4,6 @@ Ext.define('TE.view.vellum.PageTemplates', {
     title: tr('Page Templates (Vellum)'),
 
     initComponent: function() {
-        console.log('view.vellum.PageTemplates initComponent');
-
         var tmpls = [{
             image: 'title_and_subtitle.png',
             caption: tr('Title & Subtitle')

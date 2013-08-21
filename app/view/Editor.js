@@ -24,7 +24,6 @@ Ext.define('TE.view.Editor', {
     }],
 
     initComponent: function() {
-        console.log('view.Editor initComponent');
         this.callParent(arguments);
      }
  });
