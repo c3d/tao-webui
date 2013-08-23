@@ -1,5 +1,5 @@
-Ext.define('TE.view.white.ThemeIcon', {
-    extend: 'TE.view.ThemeIcon',
+Ext.define('TE.view.white.Theme', {
+    extend: 'TE.view.Theme',
 
     statics: {
 	    ptclassname: 'TE.view.white.PageTemplates',

@@ -15,18 +15,18 @@ Ext.define('TE.controller.Editor', {
                 // All icons
                 click: this.selectOnly
             },
-            'themeicon': {
-                click: this.themeIconClicked
+            'theme': {
+                click: this.themeClicked
             }
         });
         this.getDocumentStore().on({ 'load': this.showPages });
     },
 
-    themeIconClicked: function(icon) {
+    themeClicked: function(icon) {
         var tools = icon.up('tools'); // REVISIT? tools !== this.getToolsView(). Why?
         tools.setPageTemplates(icon.getPageTemplatesPanel());
 
-        Ext.each(Ext.ComponentQuery.query('themeicon'), function(child) {
+        Ext.each(Ext.ComponentQuery.query('theme'), function(child) {
             child.toggleCurrentTheme(child === icon);
         });
     },

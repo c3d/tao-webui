@@ -1,5 +1,6 @@
 Ext.define('TE.view.white.PageTemplates', {
     extend: 'TE.view.PageTemplates',
+    requires: 'TE.view.PageTemplate',
 
     title: tr('Page Templates (White)'),
 
@@ -24,7 +25,7 @@ Ext.define('TE.view.white.PageTemplates', {
         this.items = []; // REVISIT?
         Ext.Array.forEach(tmpls, function(t) {
             this.items.push({
-                xtype: 'imageandcaption',
+                xtype: 'pagetemplate',
                 image: 'app/assets/images/white/' + t.image,
                 caption: t.caption });
         }, this);

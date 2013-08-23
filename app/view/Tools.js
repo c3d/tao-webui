@@ -29,11 +29,12 @@ Ext.define('TE.view.Tools', {
     initComponent: function() {
         this.callParent(arguments);
 
-        this.addThemeIcon(Ext.create('TE.view.vellum.ThemeIcon'));
-        this.addThemeIcon(Ext.create('TE.view.white.ThemeIcon'));
+        this.addTheme(Ext.create('TE.view.vellum.Theme'));
+        this.addTheme(Ext.create('TE.view.white.Theme'));
     },
 
-    addThemeIcon: function(panel) {
+    // Add icon to theme panel
+    addTheme: function(panel) {
         this.getComponent('themepanel').add(panel);
     },
 

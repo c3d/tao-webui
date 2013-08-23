@@ -1,7 +1,7 @@
-Ext.define('TE.view.ThemeIcon', {
+Ext.define('TE.view.Theme', {
     extend: 'TE.view.ImageAndCaption',
 
-    alias: 'widget.themeicon',
+    alias: 'widget.theme',
 
     getPageTemplatesPanel: function() {
         if (typeof this.self.pt === 'undefined') {

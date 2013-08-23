@@ -1,5 +1,5 @@
-Ext.define('TE.view.vellum.ThemeIcon', {
-    extend: 'TE.view.ThemeIcon',
+Ext.define('TE.view.vellum.Theme', {
+    extend: 'TE.view.Theme',
 
     statics: {
         ptclassname: 'TE.view.vellum.PageTemplates'
