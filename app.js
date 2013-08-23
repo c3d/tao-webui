@@ -1,6 +1,3 @@
-if (typeof tr === 'undefined') {
-    console.log('Info: no tr() function defined: no translations');
-};
 var tr = (typeof tr !== 'undefined') ? tr : function (txt) { return txt };
 
 Ext.application({
