@@ -1,0 +1,11 @@
+{
+    "documents": [
+        { "id": 1,
+          "name": "Test Document",
+          "pages": [
+              {"id": 1, "name": "Première page"},
+              {"id": 2, "name": "Deuxième page"}
+          ]
+        }
+    ]
+}
