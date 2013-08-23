@@ -3,5 +3,12 @@ Ext.define('TE.view.document.PageList', {
     alias: 'widget.pagelist',
 
     title: 'Pages',
-    store: 'Document'
+    store: 'Document',
+
+    autoScroll: true,
+    layout: {
+        type: 'hbox',
+        align: 'center',
+        defaultMargins: 5
+    }
 });

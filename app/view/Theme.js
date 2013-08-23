@@ -1,6 +1,5 @@
 Ext.define('TE.view.Theme', {
     extend: 'TE.view.ImageAndCaption',
-
     alias: 'widget.theme',
 
     getPageTemplatesPanel: function() {

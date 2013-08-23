@@ -26,16 +26,15 @@ Ext.define('TE.view.Tools', {
         itemId: 'placeholder'
     }],
 
+    // REVISIT: move code to controller.Editor
+
     initComponent: function() {
         this.callParent(arguments);
 
-        this.addTheme(Ext.create('TE.view.vellum.Theme'));
-        this.addTheme(Ext.create('TE.view.white.Theme'));
-    },
+        var themepanel = this.getComponent('themepanel');
 
-    // Add icon to theme panel
-    addTheme: function(panel) {
-        this.getComponent('themepanel').add(panel);
+        themepanel.add(Ext.create('TE.view.vellum.Theme'));
+        themepanel.add(Ext.create('TE.view.white.Theme'));
     },
 
     setPageTemplates: function(tmpl) {

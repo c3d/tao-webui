@@ -4,6 +4,7 @@ Ext.define('TE.view.ImageAndCaption', {
 
     image: '',
     caption: '',
+    maxCaptionLen: 0,
 
     layout: {
         type: 'vbox',
@@ -20,6 +21,10 @@ Ext.define('TE.view.ImageAndCaption', {
     constructor: function(cfg) {
 
         Ext.apply(this, cfg);
+        var caption = this.caption;
+        var ellidedCaption = (this.maxCaptionLen !== 0) ?
+                                Ext.String.ellipsis(caption, this.maxCaptionLen) :
+                                this.caption;
         Ext.apply(this, {
             items: [{   
                 xtype: 'image',
@@ -30,7 +35,13 @@ Ext.define('TE.view.ImageAndCaption', {
             {
                 xtype: 'container',
                 itemId: 'caption',
-                html: this.caption,
+                html: ellidedCaption,
+                listeners: (ellidedCaption.length === caption.length) ? {} : {
+                    // Show un-truncated name as a tooltip
+                    render: function(c) {
+                        this.getEl().dom.title = caption;
+                    }
+                }
             }]
         });
         this.initConfig(cfg);

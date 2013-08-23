@@ -37,6 +37,7 @@ Ext.define('TE.controller.Editor', {
         });
     },
 
+    // Populate the "Pages" pane: one icon for each page loaded from the document store
     showPages: function(store, records, successful) {
         if (successful === false) {
             console.log('Failed to load document');
@@ -44,6 +45,14 @@ Ext.define('TE.controller.Editor', {
         }
 
         var doc = store.first().raw;
-        console.log(doc);
+        var pagelist = Ext.ComponentQuery.query('pagelist')[0];
+        Ext.Array.forEach(doc.pages, function(page) {
+            if (typeof page.ptclass !== 'undefined' && page.ptclass !== '') {
+                pagelist.add(Ext.create(page.ptclass, {
+                    caption: page.name,
+                    maxCaptionLen: 18
+                }));
+            }
+        })
     }
 });
