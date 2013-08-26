@@ -1,9 +1,9 @@
-Ext.define('TE.view.document.PageList', {
+Ext.define('TE.view.PageList', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.pagelist',
 
     title: 'Pages',
-    store: 'Document',
+    store: 'Pages',
 
     autoScroll: true,
     layout: {

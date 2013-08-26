@@ -1,11 +1,11 @@
 Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
 
-    stores: [ 'Document' ],
-    models: [ 'Document', 'Page' ],
+    stores: [ 'Pages' ],
+    models: [ 'Page' ],
     views: [
         'Editor',
-        'document.PageList',
+        'PageList',
         'Tools'
     ],
 
@@ -19,7 +19,7 @@ Ext.define('TE.controller.Editor', {
                 click: this.themeClicked
             }
         });
-        this.getDocumentStore().on({ 'load': this.showPages });
+        this.getPagesStore().on({ 'load': this.showPages });
     },
 
     themeClicked: function(icon) {
@@ -44,12 +44,14 @@ Ext.define('TE.controller.Editor', {
             return;
         }
 
-        var doc = store.first().raw;
-        var pagelist = Ext.ComponentQuery.query('pagelist')[0];
-        Ext.Array.forEach(doc.pages, function(page) {
-            if (typeof page.ptclass !== 'undefined' && page.ptclass !== '') {
-                pagelist.add(Ext.create(page.ptclass, {
-                    caption: page.name,
+        var name, ptclass,
+            pagelist = Ext.ComponentQuery.query('pagelist')[0];
+        store.each(function(page) {
+            name = page.get('name');
+            ptclass = page.get('ptclass');
+            if (typeof ptclass !== 'undefined' && ptclass !== '') {
+                pagelist.add(Ext.create(ptclass, {
+                    caption: name,
                     maxCaptionLen: 18
                 }));
             }
