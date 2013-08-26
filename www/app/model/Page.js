@@ -3,7 +3,7 @@ Ext.define('TE.model.Page', {
 	fields: [ 'name', 'ptclass' ],
 
     proxy: {
-        type: 'ajax',
+        type: 'rest',
         url: 'rest/pages',
         reader: {
             type: 'json',

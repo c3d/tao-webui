@@ -29,6 +29,15 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('theme'), function(child) {
             child.toggleCurrentTheme(child === icon);
         });
+
+        //TESTING
+        var newpage = Ext.create('TE.model.Page', { name: 'Nouvelle page', ptclass: '' });
+        newpage.save(); // POST
+        var first = this.getPagesStore().first();
+        first.set('name', 'Modified');
+        first.save(); // PUT
+        var last = this.getPagesStore().last();
+        last.destroy(); // DELETE
     },
 
     selectOnly: function(icon) {
@@ -55,6 +64,6 @@ Ext.define('TE.controller.Editor', {
                     maxCaptionLen: 18
                 }));
             }
-        })
+        });
     }
 });
