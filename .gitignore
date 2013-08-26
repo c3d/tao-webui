@@ -1,2 +1,4 @@
-/ext-4
+/www/ext-4
+/node_modules
 .DS_Store
+
