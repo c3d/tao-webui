@@ -31,13 +31,14 @@ Ext.define('TE.controller.Editor', {
         });
 
         //TESTING
-        var newpage = Ext.create('TE.model.Page', { name: 'Nouvelle page', ptclass: '' });
-        newpage.save(); // POST
-        var first = this.getPagesStore().first();
-        first.set('name', 'Modified');
-        first.save(); // PUT
-        var last = this.getPagesStore().last();
-        last.destroy(); // DELETE
+        // var store = this.getPagesStore();
+        // var newpage = Ext.create('TE.model.Page', { name: 'Nouvelle page', ptclass: '' });
+        // newpage.save(); // POST
+        // var first = store.first();
+        // first.set('name', 'Modified');
+        // first.save(); // PUT
+        // var last = this.getPagesStore().last();
+        // last.destroy(); // DELETE
     },
 
     selectOnly: function(icon) {

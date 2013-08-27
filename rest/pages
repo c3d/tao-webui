@@ -1,8 +1,0 @@
-{
-    "success": true,
-    "pages": [
-        {"id": 1, "name": "Première page", "ptclass": "TE.view.vellum.TitleAndSubtitle" },
-        {"id": 2, "name": "Page 2 ♥ (particulièrement réussie)", "ptclass": "TE.view.vellum.TitleBulletsAndPhoto" },
-        {"id": 3, "name": "Autre style", "ptclass": "TE.view.white.PhotoHorizontal" },
-    ]
-}

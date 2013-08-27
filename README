@@ -1,0 +1,4 @@
+Usage:
+
+1) ./start_server.sh
+2) Connect to http://localhost:3000/
