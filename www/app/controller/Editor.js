@@ -11,24 +11,30 @@ Ext.define('TE.controller.Editor', {
 
     init: function() {
         this.control({
-            'imageandcaption': {
-                // All icons
-                click: this.selectOnly
+            'pagetemplate': {
+                click: this.pageTemplateClicked
             },
             'theme': {
                 click: this.themeClicked
+            },
+            'pagelist': {
+                select: this.pageClicked
             }
         });
-        this.getPagesStore().on({ 'load': this.showPages });
     },
 
-    themeClicked: function(icon) {
-        var tools = icon.up('tools'); // REVISIT? tools !== this.getToolsView(). Why?
-        tools.setPageTemplates(icon.getPageTemplatesPanel());
+    themeClicked: function(theme) {
+        var tools = theme.up('tools'); // REVISIT? tools !== this.getToolsView(). Why?
+        tools.setPageTemplates(theme.getPageTemplatesPanel());
 
         Ext.each(Ext.ComponentQuery.query('theme'), function(child) {
-            child.toggleCurrentTheme(child === icon);
+            child.toggleCurrentTheme(child === theme);
+            child.toggleSelected(child === theme);
         });
+        Ext.each(Ext.ComponentQuery.query('pagetemplate'), function(child) {
+            child.toggleSelected(false);
+        })
+        Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
 
         //TESTING
         // var store = this.getPagesStore();
@@ -41,30 +47,16 @@ Ext.define('TE.controller.Editor', {
         // last.destroy(); // DELETE
     },
 
-    selectOnly: function(icon) {
-        Ext.each(Ext.ComponentQuery.query('imageandcaption'), function(child) {
-            child.toggleSelected(child === icon);
+    pageTemplateClicked: function(pt) {
+        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
+            child.toggleSelected(child === pt);
         });
+        Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
     },
 
-    // Populate the "Pages" pane: one icon for each page loaded from the document store
-    showPages: function(store, records, successful) {
-        if (successful === false) {
-            console.log('Failed to load document');
-            return;
-        }
-
-        var name, ptclass,
-            pagelist = Ext.ComponentQuery.query('pagelist')[0];
-        store.each(function(page) {
-            name = page.get('name');
-            ptclass = page.get('ptclass');
-            if (typeof ptclass !== 'undefined' && ptclass !== '') {
-                pagelist.add(Ext.create(ptclass, {
-                    caption: name,
-                    maxCaptionLen: 18
-                }));
-            }
+    pageClicked: function() {
+        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
+            child.toggleSelected(false);
         });
     }
 });

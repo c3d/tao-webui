@@ -8,6 +8,10 @@ Ext.define('TE.model.Page', {
         reader: {
             type: 'json',
             root: 'pages'
-        }
+        },
+        // Do not send ?page=...&start=...&limit=...
+        pageParam: undefined,
+        startParam: undefined,
+        limitParam: undefined
     }
 })

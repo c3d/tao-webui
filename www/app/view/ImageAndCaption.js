@@ -47,6 +47,8 @@ Ext.define('TE.view.ImageAndCaption', {
      },
 
     toggleSelected: function(on) {
+        if (this.el === undefined)
+            return;
         if (on === true)
             this.el.addCls('te-selectedicon');
         else
