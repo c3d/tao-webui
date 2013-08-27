@@ -18,9 +18,7 @@ Ext.define('TE.view.ImageAndCaption', {
         }
     },
 
-    constructor: function(cfg) {
-
-        Ext.apply(this, cfg);
+    initComponent: function(config) {
         var caption = this.caption;
         var ellidedCaption = (this.maxCaptionLen !== 0) ?
                                 Ext.String.ellipsis(caption, this.maxCaptionLen) :
@@ -44,11 +42,7 @@ Ext.define('TE.view.ImageAndCaption', {
                 }
             }]
         });
-        this.initConfig(cfg);
-        this.callParent(arguments);
-    },
 
-    initComponent: function(config) {
         this.callParent(arguments);
      },
 
