@@ -12,18 +12,16 @@ Ext.define('TE.view.Editor', {
         margins: '0 3 3 3'
     },{
         xtype: 'tools',
+        itemId: 'tools',
         region: 'west',
         width: 170,
         collapsible: true,
         split: true, // enable resizing
         margins: '3 0 0 3'
     },{
+        itemId: 'centerpane',
         title: tr('Properties'),
         region: 'center',
-        margins: '3 3 0 0',
-    }],
-
-    initComponent: function() {
-        this.callParent(arguments);
-     }
+        margins: '3 3 0 0'
+    }]
  });

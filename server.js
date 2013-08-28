@@ -12,11 +12,23 @@ app.use(express.bodyParser());
 // Resource          (Create)      (Read)     (Update)    (Delete)
 //
 // /rest/pages       Create one    List all   Not used    Not used 
-// /rest/pages/:id   Error         Not used   Update one  Delete one
+// /rest/pages/:id   Error         Get one    Update one  Delete one
 
 app.get('/rest/pages', function(req, res) {
     getPages(function(err, pages) {
         res.send(err ? 500 : pages);
+    });
+});
+
+app.get('/rest/pages/:id', function(req, res) {
+    getPages(function(err, pages) {
+        var found = [];
+        for (var i = 0; i < pages.length; i++) {
+            if (pages[i].id == req.params.id) {
+                found.push(pages[i]);
+            }
+        }
+        res.send(found.length === 1 ? found : 500);
     });
 });
 

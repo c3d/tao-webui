@@ -12,9 +12,9 @@ Ext.define('TE.view.PageList', {
         sortable: false
     },{
         text: '',
-        dataIndex: 'ptclass',
+        dataIndex: 'kind',
         renderer: function(v, meta, rec, rowIndex) {
-            var img = Ext.create(rec.get('ptclass')).image;
+            var img = Ext.create(rec.getPageTemplateViewClass()).image;
             return '<img src="' + img + '" />';
         }
     },{

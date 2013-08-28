@@ -1,6 +1,6 @@
 Ext.define('TE.model.Page', {
 	extend: 'Ext.data.Model',
-	fields: [ 'name', 'ptclass' ],
+	fields: [ 'name', 'kind', 'properties' ],
 
     proxy: {
         type: 'rest',
@@ -13,5 +13,47 @@ Ext.define('TE.model.Page', {
         pageParam: undefined,
         startParam: undefined,
         limitParam: undefined
+    },
+
+    // Example: if kind = vellum.TitleAndSubtitle, returns 'TE.view.vellum.TitleAndSubtitle'
+    getPageTemplateViewClass: function() {
+        return 'TE.view.' + this.get('kind');
+    },
+
+    // Example: if kind = vellum.TitleAndSubtitle, returns 'TE.view.properties.vellum.TitleAndSubtitle'
+    getPropertiesViewClass: function() {
+        return 'TE.view.properties.' + this.get('kind');
+    },
+
+    // Example: if kind = vellum.TitleAndSubtitle, returns 'TE.model.vellum.TitleAndSubtitle'
+    getModelClassName: function() {
+        return 'TE.model.' + this.get('kind');
+    },
+
+    // Example: if kind = 'vellum.AnyThing', returns 'vellum.Vellum'
+    getControllerName: function() {
+        var kind = this.get('kind');
+        var dot = kind.indexOf('.');
+        var theme = kind.substring(0, dot);
+        var cls = theme;
+        cls = cls[0].toUpperCase() + cls.substring(1);
+        return theme + '.' + cls;
+    },
+
+    // Ext.data.Field.mapping operates only during read.
+    // This takes care of write (by copying the value of some~property into some.property)
+    // http://stackoverflow.com/questions/15624966/load-and-save-nested-data-in-extjs-4
+    save: function() {
+        var data = this.getData();
+        Ext.Array.forEach(Object.keys(data), function(key) {
+            var tilde = key.indexOf('~');
+            var left = key.substring(0, tilde);
+            var right = key.substring(tilde + 1);
+            if (data.hasOwnProperty(left) && data[left].hasOwnProperty(right)) {
+                data[left][right] = data[key];
+            }
+        })
+        this.callParent();
     }
+
 })

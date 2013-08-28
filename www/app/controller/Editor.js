@@ -8,6 +8,11 @@ Ext.define('TE.controller.Editor', {
         'PageList',
         'Tools'
     ],
+    refs: [
+        // Make components accessible through this.getCenterpane(), this.getTools(), etc.
+        { ref: 'centerpane', selector: '#centerpane' },
+        { ref: 'tools', selector: '#tools' }
+    ],
 
     init: function() {
         this.control({
@@ -24,8 +29,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     themeClicked: function(theme) {
-        var tools = theme.up('tools'); // REVISIT? tools !== this.getToolsView(). Why?
-        tools.setPageTemplates(theme.getPageTemplatesPanel());
+        this.getTools().setPageTemplates(theme.getPageTemplatesPanel());
 
         Ext.each(Ext.ComponentQuery.query('theme'), function(child) {
             child.toggleCurrentTheme(child === theme);
@@ -36,7 +40,7 @@ Ext.define('TE.controller.Editor', {
         })
         Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
 
-        //TESTING
+        // TESTING Create/Update/Delete operations
         // var store = this.getPagesStore();
         // var newpage = Ext.create('TE.model.Page', { name: 'Nouvelle page', ptclass: '' });
         // newpage.save(); // POST
@@ -54,9 +58,21 @@ Ext.define('TE.controller.Editor', {
         Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
     },
 
-    pageClicked: function() {
+    pageClicked: function(grid, record) {
         Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
             child.toggleSelected(false);
+        });
+
+        // Make sure controller for the specific kind of page is loaded
+        var ctrl = this.application.getController(record.getControllerName());
+
+        // Reload record, applying the suitable data model for the page
+        var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
+        exactmodel.load(record.get('id'), {
+            scope: this,
+            success: function(record, operation) {
+                ctrl.display(record);
+            }
         });
     }
 });
