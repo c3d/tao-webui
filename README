@@ -2,3 +2,8 @@ Usage:
 
 1) ./start_server.sh
 2) Connect to http://localhost:3000/
+
+Browser requirements
+
+Google Chrome: tested with Google Chrome 29
+IE: requires IE >= 9
