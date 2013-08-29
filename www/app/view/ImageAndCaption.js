@@ -26,13 +26,15 @@ Ext.define('TE.view.ImageAndCaption', {
         Ext.apply(this, {
             items: [{   
                 xtype: 'image',
-                autoEl: 'div',
-                itemId: 'image',
                 src: this.image,
+                // Chrome:
+                // If width and height are not specified, image is shown only partially
+                // on first draw
+                width: 64,
+                height: 48
             },
             {
                 xtype: 'container',
-                itemId: 'caption',
                 html: ellidedCaption,
                 listeners: (ellidedCaption.length === caption.length) ? {} : {
                     // Show un-truncated name as a tooltip
