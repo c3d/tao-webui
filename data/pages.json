@@ -1,7 +1,7 @@
 [
         {"id": "1", "name": "Première page", "kind": "vellum.TitleAndSubtitle", "properties": { "title": "Le titre", "subtitle": "Le sous-titre" } },
         {"id": "2", "name": "Page 2 ♥ (particulièrement réussie)", "kind": "vellum.TitleBulletsAndPhoto", "properties": { "title": "C'est un titre", "bullets": "<font face=\"tahoma, arial, verdana, sans-serif\">On peut utiliser des puces :</font><div><ul><li><font face=\"tahoma, arial, verdana, sans-serif\">Un,</font></li><li><font face=\"tahoma, arial, verdana, sans-serif\">Deux,</font></li><li><font face=\"tahoma, arial, verdana, sans-serif\">Trois...</font></li></ul><div><font face=\"tahoma, arial, verdana, sans-serif\">C'est <b>cool</b>.</font></div></div>", "photo": "http://example.com/photo.png" } },
-        {"id": "3", "name": "Autre style", "kind": "white.PhotoHorizontal", "properties": { "caption": "Voici une jolie photo", "photo": "/path/to/photo" } },
-        {"id": "4", "name": "Ceci est la page numéro 4", "kind": "white.TitleAndBullets", "properties": { "title": "Le titre se trouve ici", "photo":"http://example.com/images/example.png" } },
-        {"id": "5", "name": "P5", "kind": "vellum.TitleAndSubtitle", "properties": { "title": "Titre p5", "subtitle": "Sous-titre p5" } }
+        {"id": "3", "name": "Changement de style pour la page 3", "kind": "white.PhotoHorizontal", "properties": { "caption": "Voici une jolie photo", "photo": "/path/to/photo" } },
+        {"id": "4", "name": "Ceci est la page numéro 4", "kind": "white.TitleAndBullets", "properties": { "title": "Le titre se trouve ici", "bullets":"Bla bla." } },
+        {"id": "5", "name": "Page 5", "kind": "vellum.TitleAndSubtitle", "properties": { "title": "Titre p5", "subtitle": "Sous-titre p.5" } }
 ]
