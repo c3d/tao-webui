@@ -12,7 +12,7 @@ Ext.define('TE.controller.vellum.Vellum', {
 
     init: function() {
         this.control({
-            'textfield': {
+            'textfield, customhtmleditor': {
                 blur: function() { this.updatePage(); }
             }
         });
