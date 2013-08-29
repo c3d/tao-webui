@@ -1,7 +1,7 @@
 [
         {"id": "1", "name": "Première page", "kind": "vellum.TitleAndSubtitle", "properties": { "title": "Le titre", "subtitle": "Le sous-titre" } },
         {"id": "2", "name": "Page 2 ♥ (particulièrement réussie)", "kind": "vellum.TitleBulletsAndPhoto", "properties": { "title": "C'est un titre", "bullets": "Le texte principal", "photo": "http://example.com/photo.png" } },
-        {"id": "3", "name": "Autre style", "kind": "white.PhotoHorizontal", "properties": { "photo": "/path/to/photo" } },
+        {"id": "3", "name": "Autre style", "kind": "white.PhotoHorizontal", "properties": { "caption": "Voici une jolie photo", "photo": "/path/to/photo" } },
         {"id": "4", "name": "Ceci est la page numéro 4", "kind": "white.TitleAndBullets", "properties": { "title": "Le titre se trouve ici", "photo":"http://example.com/images/example.png" } },
         {"id": "5", "name": "P5", "kind": "vellum.TitleAndSubtitle", "properties": { "title": "Titre p5", "subtitle": "Sous-titre p5" } }
 ]
