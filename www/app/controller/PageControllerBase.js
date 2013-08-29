@@ -14,13 +14,19 @@ Ext.define('TE.controller.PageControllerBase', {
     },
 
     updatePage: function() {
-    	// Copy form values into record
+        // Copy form values into record
         var form = this.getCenterpane().down('form');
         var record = form.getRecord();
         var values = form.getValues();
         record.set(values);
-        // Push modified page to server
-        record.save();
-        // FIXME page list is not updated -- 2 models => 2 records
+        if (record.dirty) {
+            // Push modified page to server
+            record.save();
+
+            // Update page list (2 models => 2 records)
+            console.log(record.getChanges());
+            record.generic_record.set(record.getChanges());
+            record.generic_record.commit();
+        }
     }
 });

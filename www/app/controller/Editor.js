@@ -67,11 +67,13 @@ Ext.define('TE.controller.Editor', {
         var ctrl = this.application.getController(record.getControllerName());
 
         // Reload record, applying the suitable data model for the page
+        // REVISIT Use a store to cache data
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
         exactmodel.load(record.get('id'), {
             scope: this,
-            success: function(record, operation) {
-                ctrl.display(record);
+            success: function(newrecord, operation) {
+                newrecord.generic_record = record;
+                ctrl.display(newrecord);
             }
         });
     }
