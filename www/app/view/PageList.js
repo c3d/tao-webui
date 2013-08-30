@@ -1,5 +1,6 @@
 Ext.define('TE.view.PageList', {
     extend: 'Ext.grid.Panel',
+    requires: [ 'TE.view.PageListContextMenu' ],
     alias: 'widget.pagelist',
 
     title: 'Pages',

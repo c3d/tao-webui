@@ -6,12 +6,14 @@ Ext.define('TE.controller.Editor', {
     views: [
         'Editor',
         'PageList',
+        'PageListContextMenu',
         'Tools'
     ],
     refs: [
         // Make components accessible through this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
-        { ref: 'tools', selector: '#tools' }
+        { ref: 'tools', selector: '#tools' },
+        { ref: 'contextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true }
     ],
 
     init: function() {
@@ -23,7 +25,11 @@ Ext.define('TE.controller.Editor', {
                 click: this.themeClicked
             },
             'pagelist': {
-                select: this.pageClicked
+                select: this.pageClicked,
+                cellcontextmenu: this.showPageContextMenu
+            },
+            '#ctx-menu-delete-page': {
+                click: this.deletePageMenuItemClicked
             }
         });
     },
@@ -76,5 +82,17 @@ Ext.define('TE.controller.Editor', {
                 ctrl.display(newrecord);
             }
         });
+    },
+
+    showPageContextMenu: function(table, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+        e.stopEvent();
+        var menu = this.getContextMenu();
+        menu.setPage(record.get('id'));
+        menu.showAt(e.xy);
+    },
+
+    deletePageMenuItemClicked: function(item, e) {
+        var pageId = this.getContextMenu().getPage();
+        console.log('DELETE PAGE', pageId);
     }
 });
