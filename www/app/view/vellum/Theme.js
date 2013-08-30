@@ -4,6 +4,6 @@ Ext.define('TE.view.vellum.Theme', {
     statics: {
         ptclassname: 'TE.view.vellum.PageTemplates'
     },
-    image: 'app/assets/images/vellum/vellum.png',
+    image: 'app/resources/images/vellum/vellum.png',
     caption: 'Vellum'
  });
