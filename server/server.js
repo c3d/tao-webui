@@ -130,22 +130,22 @@ function allocatePageId(pages)
     return id;
 }
 
-function escape(txt)
-{
-    return txt.replace('"', '""');
-}
 
 function writeTaoDocument(pages)
 {
     var ddd = '';
     for (var i = 0; i < pages.length; i++) {
         var page = pages[i];
-        ddd += 'page "' +  escape(page.name) + '",\n';
-        ddd += '    text_box 0, 0, 0.8 * window_width, 0.9 * window_height,\n';
-        ddd += '        text "' + escape(page.name) + '"\n'
-        ddd += '        line_break\n';
-        if (typeof page.title !== 'undefined')
-            ddd += '        text "' + escape(page.title) + '"\n';
+        try
+        {
+            // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
+            var tmpl = require('./export/' + page.kind.replace('.', '/'));
+            ddd += tmpl.generate(page);
+        } catch (e)
+        {
+            console.log('Cannot write Tao code for page ' + page.id +
+                        ': module not found for kind: ' + page.kind);
+        }
     }
     var file = __dirname + '/data/doc.ddd';
     fs.writeFileSync(file, ddd);
