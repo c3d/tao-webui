@@ -110,8 +110,16 @@ Ext.define('TE.controller.Editor', {
         var pageId = this.getPageContextMenu().getPage();
         var store = this.getPagesStore();
         var page = store.findRecord('id', pageId);
-        store.remove(page);
-        store.sync();
+
+        var box = Ext.create(Ext.window.MessageBox);
+        box.confirm(tr('Delete page'),
+                    tr('Are you sure you want to delete this page?') + '<br><br>[' + pageId + '] ' + page.get('name'),
+                    function(button) {
+                        if (button === 'yes') {
+                            store.remove(page);
+                            store.sync();
+                        }
+                    });
     },
 
     newPageMenuItemClicked: function() {
