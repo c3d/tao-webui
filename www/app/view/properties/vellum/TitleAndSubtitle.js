@@ -18,17 +18,17 @@ Ext.define('TE.view.properties.vellum.TitleAndSubtitle', {
                     {
                         xtype: 'textfield',
                         name: 'name',
-                        fieldLabel: 'Page name'
+                        fieldLabel: tr('Page name')
                     },
                     {
                         xtype: 'textfield',
                         name: 'title',
-                        fieldLabel: 'Title'
+                        fieldLabel: tr('Title')
                     },
                     {
                         xtype: 'textfield',
                         name: 'subtitle',
-                        fieldLabel: 'Subtitle'
+                        fieldLabel: tr('Subtitle')
                     }
                 ]
             }

@@ -3,8 +3,8 @@ Ext.define('TE.view.PageListContextMenu', {
 	alias: 'widget.pagelistcontextmenu',
 
     items: [{
-    	text: 'Delete page',
-    	icon: 'app/resources/images/delete.png',
+        text: tr('Delete'),
+        icon: 'app/resources/images/delete.png',
     	itemId: 'ctx-menu-delete-page'
     }],
 

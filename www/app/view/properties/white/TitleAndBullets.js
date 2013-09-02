@@ -20,12 +20,12 @@ Ext.define('TE.view.properties.white.TitleAndBullets', {
                     {
                         xtype: 'textfield',
                         name: 'name',
-                        fieldLabel: 'Page name'
+                        fieldLabel: tr('Page name')
                     },
                     {
                         xtype: 'customhtmleditor',
                         name: 'bullets',
-                        fieldLabel: 'Bullet text'
+                        fieldLabel: ('Bullet text')
                     }
                 ]
             }
