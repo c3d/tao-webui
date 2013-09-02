@@ -113,6 +113,7 @@ function getPages(callback)
 function save(pages)
 {
     fs.writeFileSync(__dirname + '/data/saved_pages.json', JSON.stringify(pages));
+    writeTaoDocument(pages);
 }
 
 function allocatePageId(pages)
@@ -125,4 +126,25 @@ function allocatePageId(pages)
     while (id in ids)
         id++;
     return id;
+}
+
+function escape(txt)
+{
+    return txt.replace('"', '""');
+}
+
+function writeTaoDocument(pages)
+{
+    var ddd = '';
+    for (var i = 0; i < pages.length; i++) {
+        var page = pages[i];
+        ddd += 'page "' +  escape(page.name) + '",\n';
+        ddd += '    text_box 0, 0, 0.8 * window_width, 0.9 * window_height,\n';
+        ddd += '        text "' + escape(page.name) + '"\n'
+        ddd += '        line_break\n';
+        if (typeof page.title !== 'undefined')
+            ddd += '        text "' + escape(page.title) + '"\n';
+    }
+    var file = __dirname + '/doc.ddd';
+    fs.writeFileSync(file, ddd);
 }
