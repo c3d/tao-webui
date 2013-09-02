@@ -15,6 +15,9 @@ Ext.define('TE.view.ImageAndCaption', {
     listeners: {
         render: function(c) {
             c.getEl().on('click', function() { this.fireEvent('click', c); }, c);
+            c.getEl().on('contextmenu', function(e, t) {
+                    e.stopEvent(); this.fireEvent('contextmenu', c, t);
+                }, c);
         }
     },
 

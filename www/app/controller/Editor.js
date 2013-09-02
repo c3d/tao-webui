@@ -7,19 +7,23 @@ Ext.define('TE.controller.Editor', {
         'Editor',
         'PageList',
         'PageListContextMenu',
+        'PageTemplateContextMenu',
         'Tools'
     ],
     refs: [
         // Make components accessible through this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
         { ref: 'tools', selector: '#tools' },
-        { ref: 'contextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true }
+        { ref: 'pagelist', selector: 'pagelist' },
+        { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
+        { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true }
     ],
 
     init: function() {
         this.control({
             'pagetemplate': {
-                click: this.pageTemplateClicked
+                click: this.pageTemplateClicked,
+                contextmenu: this.showPageTemplateContextMenu
             },
             'theme': {
                 click: this.themeClicked
@@ -30,6 +34,9 @@ Ext.define('TE.controller.Editor', {
             },
             '#ctx-menu-delete-page': {
                 click: this.deletePageMenuItemClicked
+            },
+            '#ctx-menu-new-page': {
+                click: this.newPageMenuItemClicked
             }
         });
     },
@@ -88,16 +95,33 @@ Ext.define('TE.controller.Editor', {
 
     showPageContextMenu: function(table, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         e.stopEvent();
-        var menu = this.getContextMenu();
+        var menu = this.getPageContextMenu();
         menu.setPage(record.get('id'));
         menu.showAt(e.xy);
     },
 
+    showPageTemplateContextMenu: function(pt, t) {
+        var menu = this.getPageTemplateContextMenu();
+        menu.setPageTemplate(pt);
+        menu.showBy(t);
+    },
+
     deletePageMenuItemClicked: function(item, e) {
-        var pageId = this.getContextMenu().getPage();
+        var pageId = this.getPageContextMenu().getPage();
         var store = this.getPagesStore();
         var page = store.findRecord('id', pageId);
-        store.remove(page); // Removes page from the local list
-        page.destroy();     // Removes page on the server
+        store.remove(page);
+        store.sync();
+    },
+
+    newPageMenuItemClicked: function() {
+        var tmpl = this.getPageTemplateContextMenu().getPageTemplate();
+        var model = tmpl.getModelClassName();
+        var page = Ext.create(model);
+        page.set('kind', model.replace('TE.model.', ''));
+        page.set('name', tr('New page'));
+        var store = this.getPagesStore();
+        store.add(page);
+        store.sync();
     }
 });

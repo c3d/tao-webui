@@ -39,7 +39,9 @@ app.post('/rest/pages', function (req, res) {
         pages.push(page);
         console.log('Page ' + page.id + ' created');
         save(pages);
-        res.send(page);
+        var rsp = { success: true, pages: [] };
+        rsp.pages[0] = page;
+        res.send(rsp);
     });
 });
 
