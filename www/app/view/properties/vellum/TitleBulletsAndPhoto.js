@@ -23,6 +23,11 @@ Ext.define('TE.view.properties.vellum.TitleBulletsAndPhoto', {
                         fieldLabel: tr('Page name')
                     },
                     {
+                        xtype: 'textfield',
+                        name: 'title',
+                        fieldLabel: tr('Title')
+                    },
+                    {
                         xtype: 'customhtmleditor',
                         name: 'bullets',
                         fieldLabel: tr('Bullet text')
