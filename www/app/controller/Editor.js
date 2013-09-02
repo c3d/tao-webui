@@ -45,6 +45,7 @@ Ext.define('TE.controller.Editor', {
             child.toggleSelected(false);
         })
         Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
+        this.getCenterpane().removeAll();
 
         // TESTING Create/Update/Delete operations
         // var store = this.getPagesStore();
@@ -62,6 +63,7 @@ Ext.define('TE.controller.Editor', {
             child.toggleSelected(child === pt);
         });
         Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
+        this.getCenterpane().removeAll();
     },
 
     pageClicked: function(grid, record) {
