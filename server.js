@@ -28,7 +28,7 @@ app.get('/rest/pages/:id', function(req, res) {
                 found.push(pages[i]);
             }
         }
-        res.send(found.length === 1 ? found : 500);
+        res.send(found.length === 1 ? found : 404);
     });
 });
 
@@ -54,7 +54,7 @@ app.put('/rest/pages/:id', function(req, res) {
                 save(pages);
             }
         }
-        res.send(found ? found : 500);
+        res.send(found ? found : 404);
     });
 });
 
