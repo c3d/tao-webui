@@ -22,12 +22,12 @@ Ext.define('TE.view.properties.white.PhotoHorizontal', {
                     },
                     {
                         xtype: 'textfield',
-                        name: 'properties~photo',
+                        name: 'photo',
                         fieldLabel: 'Photo'
                     },
                     {
                         xtype: 'textfield',
-                        name: 'properties~caption',
+                        name: 'caption',
                         fieldLabel: 'Caption'
                     }
                 ]

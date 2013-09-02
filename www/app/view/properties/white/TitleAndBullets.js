@@ -24,7 +24,7 @@ Ext.define('TE.view.properties.white.TitleAndBullets', {
                     },
                     {
                         xtype: 'customhtmleditor',
-                        name: 'properties~bullets',
+                        name: 'bullets',
                         fieldLabel: 'Bullet text'
                     }
                 ]

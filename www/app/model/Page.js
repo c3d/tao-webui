@@ -1,6 +1,6 @@
 Ext.define('TE.model.Page', {
 	extend: 'Ext.data.Model',
-	fields: [ 'name', 'kind', 'properties' ],
+	fields: [ 'name', 'kind' ],
 
     proxy: {
         type: 'rest',
@@ -38,33 +38,6 @@ Ext.define('TE.model.Page', {
         var cls = theme;
         cls = cls[0].toUpperCase() + cls.substring(1);
         return theme + '.' + cls;
-    },
-
-    // Ext.data.Field.mapping operates only during read.
-    // This takes care of write (by copying the value of some~property into some.property)
-    // http://stackoverflow.com/questions/15624966/load-and-save-nested-data-in-extjs-4
-    syncTildeProperties: function() {
-        var me = this;
-        var data = this.getData();
-        // Object.keys requires IE9 or later (http://kangax.github.io/es5-compat-table/)
-        Ext.Array.forEach(Object.keys(data), function(key) {
-            var tilde = key.indexOf('~');
-            var left = key.substring(0, tilde);
-            var right = key.substring(tilde + 1);
-            if (data.hasOwnProperty(left) && data[left].hasOwnProperty(right)) {
-                var obj = me.get(left);
-                if (obj[right] != data[key]) {
-                    obj[right] = data[key];
-                    me.set(left, obj);
-                    me.setDirty();  // Why is this needed?
-                }
-            }
-        })
-    },
-
-    set: function(fieldNameOrObject, newValue) {
-        this.callParent(arguments);
-        this.syncTildeProperties();
     }
 
 })
