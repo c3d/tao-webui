@@ -71,7 +71,7 @@ app.delete('/rest/pages/:id', function(req, res) {
                 found = true;
             }            
         }
-        res.send(found ? 200 : 404);
+        res.send(found ? { success: true } : 404);
     });
 });
 
