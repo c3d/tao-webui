@@ -93,6 +93,9 @@ Ext.define('TE.controller.Editor', {
 
     deletePageMenuItemClicked: function(item, e) {
         var pageId = this.getContextMenu().getPage();
-        console.log('DELETE PAGE', pageId);
+        var store = this.getPagesStore();
+        var page = store.findRecord('id', pageId);
+        store.remove(page); // Removes page from the local list
+        page.destroy();     // Removes page on the server
     }
 });
