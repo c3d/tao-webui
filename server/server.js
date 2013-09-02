@@ -78,7 +78,7 @@ app.delete('/rest/pages/:id', function(req, res) {
 
 // Serve static files
 
-app.use(express.static( __dirname + '/www'));
+app.use(express.static( __dirname + '/../www'));
 
 
 // Start server
@@ -147,6 +147,6 @@ function writeTaoDocument(pages)
         if (typeof page.title !== 'undefined')
             ddd += '        text "' + escape(page.title) + '"\n';
     }
-    var file = __dirname + '/doc.ddd';
+    var file = __dirname + '/data/doc.ddd';
     fs.writeFileSync(file, ddd);
 }
