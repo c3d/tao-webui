@@ -1,4 +1,4 @@
-Ext.define('TE.controller.vellum.Vellum', {
+Ext.define('TE.controller.vellum.Controller', {
     extend: 'TE.controller.PageControllerBase',
 
     models: [

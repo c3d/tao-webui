@@ -1,6 +1,6 @@
 function escape(txt)
 {
-    return txt.replace('"', '""');
+    return txt.replace(/"/g, '""');
 }
 
 module.exports = {

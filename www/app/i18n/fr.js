@@ -22,7 +22,18 @@ function tr(key)
         'Subtitle': 'Sous-titre',
         'Photo': null,
         'Caption': 'Légende',
-        'Bullet text': 'Corps du texte'
+        'Bullet text': 'Corps du texte',
+        'New page': 'Nouvelle page',
+
+        'Blue Claire': 'Bleu Claire',
+        'Main Title Slide': 'Titre',
+        'Section Slide': 'Section',
+        'Picture Slide': 'Image',
+        'Slide': 'Texte',
+        'Page Templates (Blue Claire)': 'Modèles de Pages (Bleu Claire)',
+        'Text': 'Texte',
+        'Picture': 'Image',
+        'Scale (%)': 'Zoom (%)'
     };
 
     if (key in translations)

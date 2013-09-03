@@ -30,14 +30,12 @@ Ext.define('TE.model.Page', {
         return 'TE.model.' + this.get('kind');
     },
 
-    // Example: if kind = 'vellum.AnyThing', returns 'vellum.Vellum'
+    // Example: if kind = 'vellum.AnyThing', returns 'vellum.Controller'
     getControllerName: function() {
         var kind = this.get('kind');
         var dot = kind.indexOf('.');
         var theme = kind.substring(0, dot);
-        var cls = theme;
-        cls = cls[0].toUpperCase() + cls.substring(1);
-        return theme + '.' + cls;
+        return theme + '.Controller';
     }
 
 })

@@ -1,5 +1,10 @@
 var esc = require('../../util').escape;
 
+function header()
+{
+	return '';
+}
+
 function generate(page)
 {
 	var ddd = '';
@@ -12,5 +17,6 @@ function generate(page)
 }
 
 module.exports = {
+	header: header,
 	generate: generate
 }

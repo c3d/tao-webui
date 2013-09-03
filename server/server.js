@@ -133,20 +133,43 @@ function allocatePageId(pages)
 
 function writeTaoDocument(pages)
 {
-    var ddd = '';
-    for (var i = 0; i < pages.length; i++) {
-        var page = pages[i];
+    var missing = [];
+    var getTmpl = function(page)
+    {
         try
         {
             // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
-            var tmpl = require('./export/' + page.kind.replace('.', '/'));
-            ddd += tmpl.generate(page);
+            return require('./export/' + page.kind.replace('.', '/'));
         } catch (e)
         {
-            console.log('Cannot write Tao code for page ' + page.id +
-                        ': module not found for kind: ' + page.kind);
+            if (missing.indexOf(page.kind) == -1)
+                missing.push(page.kind);
         }
+        var empty = function() { return ''; }
+        return { header: empty, generate: empty };
     }
+
+    var ddd = '';
+    var ctx = {};
+    for (var i = 0; i < pages.length; i++)
+    {
+        var page = pages[i];
+        ddd += getTmpl(page).header(ctx);
+    }
+
+    for (var i = 0; i < pages.length; i++)
+    {
+        var page = pages[i];
+        ddd += getTmpl(page).generate(page);
+    }
+
     var file = __dirname + '/data/doc.ddd';
     fs.writeFileSync(file, ddd);
+
+    var err = '';
+    if (missing.length !== 0)
+    {
+        err = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
+    }
+    console.log(file + ' saved' + err);
 }

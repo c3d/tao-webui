@@ -3,7 +3,7 @@ Ext.define('TE.view.PageTemplateContextMenu', {
 	alias: 'widget.pagetemplatecontextmenu',
 
     items: [{
-        text: 'New page from this template',
+        text: tr('New page from this template'),
         icon: 'app/resources/images/add.png',
         itemId: 'ctx-menu-new-page'
     }],

@@ -1,4 +1,4 @@
-Ext.define('TE.controller.white.White', {
+Ext.define('TE.controller.white.Controller', {
     extend: 'TE.controller.PageControllerBase',
 
     models: [
