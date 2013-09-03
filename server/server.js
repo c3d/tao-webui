@@ -103,7 +103,7 @@ function getPages(callback)
                 console.log('File read error: ' + err);
                 callback(err);
             } else {
-                if (data.length === 0)
+                if (data.trim().length === 0)
                     data = '[]';
                 cached_pages = JSON.parse(data);
                 callback(null, cached_pages);
