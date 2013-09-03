@@ -33,10 +33,10 @@ Ext.define('TE.view.Tools', {
 
         var themepanel = this.getComponent('themepanel');
 
+        themepanel.add(Ext.create('TE.view.blueclaire.Theme'));
+
         themepanel.add(Ext.create('TE.view.vellum.Theme'));
         themepanel.add(Ext.create('TE.view.white.Theme'));
-
-        themepanel.add(Ext.create('TE.view.blueclaire.Theme'));
     },
 
     setPageTemplates: function(tmpl) {
