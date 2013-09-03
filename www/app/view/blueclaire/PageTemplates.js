@@ -2,7 +2,7 @@ Ext.define('TE.view.blueclaire.PageTemplates', {
     extend: 'TE.view.PageTemplates',
     requires: 'TE.view.PageTemplate',
 
-    title: tr('Page Templates (Blue Claire)'),
+    title: tr('Blue Claire'),
 
     initComponent: function() {
         var names = [

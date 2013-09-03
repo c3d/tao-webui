@@ -10,7 +10,7 @@ Ext.define('TE.view.Tools', {
     },
 
     items: [{
-    	title: tr('Themes & Applications'),
+    	title: tr('Themes'),
         xtype: 'panel',
         itemId: 'themepanel',
         autoScroll: true,

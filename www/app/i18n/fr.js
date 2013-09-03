@@ -1,9 +1,9 @@
 function tr(key)
 {
     var translations = {
-        'Themes & Applications': 'Thèmes et Applications',
-        'Page Templates (Vellum)': 'Modèles de Pages (<i>Vellum</i>)',
-        'Page Templates (White)': 'Modèles de Pages (<i>White</i>)',
+        'Themes': 'Thèmes',
+        'Vellum': 'Vélin',
+        'White': 'Blanc',
         'Tools': 'Outils',
         'Properties': 'Propriétés',
         'Pages': null,
@@ -29,7 +29,6 @@ function tr(key)
         'Section Slide': 'Section',
         'Picture Slide': 'Image',
         'Slide': 'Texte',
-        'Page Templates (Blue Claire)': 'Modèles de Pages (Bleu Claire)',
         'Text': 'Texte',
         'Picture': 'Image',
         'Scale (%)': 'Zoom (%)'

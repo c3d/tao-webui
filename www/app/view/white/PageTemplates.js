@@ -2,7 +2,7 @@ Ext.define('TE.view.white.PageTemplates', {
     extend: 'TE.view.PageTemplates',
     requires: 'TE.view.PageTemplate',
 
-    title: tr('Page Templates (White)'),
+    title: tr('White'),
 
     initComponent: function() {
         var names = [
