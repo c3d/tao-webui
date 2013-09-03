@@ -15,6 +15,7 @@ Ext.define('TE.controller.Editor', {
         { ref: 'centerpane', selector: '#centerpane' },
         { ref: 'tools', selector: '#tools' },
         { ref: 'pagelist', selector: 'pagelist' },
+        { ref: 'themePanel', selector: '#themepanel' },
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
         { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true }
     ],
@@ -53,6 +54,7 @@ Ext.define('TE.controller.Editor', {
         })
         Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
+        this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
     },
 
     pageTemplateClicked: function(pt) {
