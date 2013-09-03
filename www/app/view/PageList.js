@@ -7,19 +7,18 @@ Ext.define('TE.view.PageList', {
     store: 'Pages',
 
     columns: [{
-        text: tr('Page #'),
         xtype: 'rownumberer',
-        width: 50,
         sortable: false
     },{
-        text: '',
+        header: '',
         dataIndex: 'kind',
         renderer: function(v, meta, rec, rowIndex) {
             var img = Ext.create(rec.getPageTemplateViewClass()).image;
             return '<img src="' + img + '" />';
-        }
+        },
+        sortable: false
     },{
-        text: tr('Page name'),
+        header: tr('Page name'),
         flex: 1,
         dataIndex: 'name',
         sortable: false

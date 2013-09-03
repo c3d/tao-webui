@@ -16,7 +16,6 @@ function tr(key)
         'Delete page': 'Supprimer une page',
         'Are you sure you want to delete this page?': 'Voulez-vous vraiment supprimer cette page ?',
         'New page from this template': 'Nouvelle page',
-        'Page #': 'Page Nº',
         'Page name': 'Nom de la page',
         'Title': 'Titre',
         'Subtitle': 'Sous-titre',
