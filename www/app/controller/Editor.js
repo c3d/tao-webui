@@ -53,16 +53,6 @@ Ext.define('TE.controller.Editor', {
         })
         Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
-
-        // TESTING Create/Update/Delete operations
-        // var store = this.getPagesStore();
-        // var newpage = Ext.create('TE.model.Page', { name: 'Nouvelle page', ptclass: '' });
-        // newpage.save(); // POST
-        // var first = store.first();
-        // first.set('name', 'Modified');
-        // first.save(); // PUT
-        // var last = this.getPagesStore().last();
-        // last.destroy(); // DELETE
     },
 
     pageTemplateClicked: function(pt) {
