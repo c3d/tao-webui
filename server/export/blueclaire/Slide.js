@@ -1,4 +1,5 @@
 var esc = require('../../util').escape;
+var htmlToSlideContent = require('../../util').htmlToSlideContent;
 var header = require('./common.js').header;
 
 function esc_html(txt)
@@ -14,8 +15,7 @@ function generate(page)
     ddd += 'slide "' + esc(page.name) + '",\n';
     if (page.text != '')
     {
-        // FIXME page.text is HTML
-    	ddd += '    text "' + esc_html(page.text) + '"\n';
+        ddd += htmlToSlideContent(page.text);
         empty = false;
     }
     if (empty)
@@ -24,6 +24,6 @@ function generate(page)
 }
 
 module.exports = {
-	header:   header,
+    header:   header,
     generate: generate
 }

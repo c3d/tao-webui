@@ -136,17 +136,18 @@ function writeTaoDocument(pages)
     var missing = [];
     var getTmpl = function(page)
     {
-        try
-        {
-            // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
-            return require('./export/' + page.kind.replace('.', '/'));
-        } catch (e)
+        // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
+        var modname = './export/' + page.kind.replace('.', '/');
+        var modfile = modname + '.js';
+        if (fs.existsSync(modfile) === false)
         {
             if (missing.indexOf(page.kind) == -1)
                 missing.push(page.kind);
+            var empty = function() { return ''; }
+            return { header: empty, generate: empty };
         }
-        var empty = function() { return ''; }
-        return { header: empty, generate: empty };
+
+        return require(modname);
     }
 
     var ddd = '';
