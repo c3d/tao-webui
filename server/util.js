@@ -33,15 +33,25 @@ var DomToSlideConverter = (function() {
 
         prev = txt.trim();
         if (lineStart)
-            indent();
+            doIndent();
         out += txt;
         lineStart = (txt.slice(-1) === '\n') ? true : false;
     }
 
-    function indent()
+    function doIndent()
     {
         for (var i = 0; i < nindent; i++)
             out += indentString;
+    }
+
+    function indent()
+    {
+        nindent++;
+    }
+
+    function unindent()
+    {
+        nindent--;
     }
 
     function clear()
@@ -156,43 +166,43 @@ var DomToSlideConverter = (function() {
                 if (dom.attribs)
                 {
                     output('text_span\n');
-                    nindent++;
+                    indent();
                 }
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
                 if (dom.attribs)
-                    nindent--;
+                    unindent();
                 break;
             case 'u':
                 output('text_span\n');
-                nindent++;
+                indent();
                 output('underline 1\n');
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
-                nindent--;
+                unindent();
                 break;
             case 'br':
                 output('text " " ; line_break\n');
                 break;
             case 'b':
                 output('text_span\n');
-                nindent++;
+                indent();
                 output('bold\n');
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
-                nindent--;
+                unindent();
                 break;
             case 'i':
                 output('text_span\n');
-                nindent++;
+                indent();
                 output('italic\n');
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
-                nindent--;
+                unindent();
                 break;
             case 'ul':
                 listMode = 'ul';
@@ -235,7 +245,7 @@ var DomToSlideConverter = (function() {
                 if (hasAttr)
                 {
                     output('text_span\n');
-                    nindent++;
+                    indent();
                 }
                 if (faces)
                 {
@@ -255,7 +265,7 @@ var DomToSlideConverter = (function() {
                     convert(elt);
                 });
                 if (hasAttr)
-                    nindent--;
+                    unindent();
                 break;
             default:
                 console.log('Unrecognized tag: ' + dom.name);
