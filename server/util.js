@@ -31,6 +31,7 @@ var DomToSlideConverter = (function() {
         if (txt.trim() === 'paragraph_break' && prev === txt.trim())
             return;
 
+        prev = txt.trim();
         if (lineStart)
             indent();
         out += txt;
@@ -91,6 +92,32 @@ var DomToSlideConverter = (function() {
 
     }
 
+    // Make sure all font names in comma-separated list are quoted with '' or ""
+    // Quote names that are not quoted (with "")
+    // Discard font names starting and ending with underscore (_)
+    // to handle special font names: '_default font_' or '_defaut_'
+    // (see app/util/CustomHtmlEditor.js)
+    //
+    // Example:
+    //   (input)  >'foo', "bar", baz, _def_<
+    //   (return) >'foo', "bar", "baz"<
+    function checkFontFaces(faces)
+    {
+        var processed = [];
+        var tab = faces.split(',');
+        for (var i = 0; i < tab.length; i++)
+        {
+            var face = tab[i].trim();
+            if (face[0] === "_" && face[face.length - 1] === "_")
+                continue;
+            if (face[0] !== "'" && face[0] !== '"')
+                face = '"' + face + '"';
+            processed.push(face);
+        }
+
+        return processed.length > 0 ? processed.join() : undefined;
+    }
+
     function convert(dom)
     {
         if (dom === null)
@@ -129,7 +156,6 @@ var DomToSlideConverter = (function() {
                 if (dom.attribs)
                 {
                     output('text_span\n');
-                    // TODO handle dom.attribs.style e.g., span style="font-family: 'courier new'; font-size: small;"
                     nindent++;
                 }
                 dom.children.forEach(function(elt) {
@@ -148,7 +174,7 @@ var DomToSlideConverter = (function() {
                 nindent--;
                 break;
             case 'br':
-                output('line_break\n');
+                output('text " " ; line_break\n');
                 break;
             case 'b':
                 output('text_span\n');
@@ -204,16 +230,16 @@ var DomToSlideConverter = (function() {
                     convertStyle(dom.attribs.style, true);
                 break;
             case 'font':
-                var hasAttr = (dom.attribs && (dom.attribs.face || dom.attribs.color || dom.attribs.size));
+                var faces = (dom.attribs && dom.attribs.face) ? checkFontFaces(dom.attribs.face) : undefined;
+                var hasAttr = (dom.attribs && (faces || dom.attribs.color || dom.attribs.size));
                 if (hasAttr)
                 {
                     output('text_span\n');
                     nindent++;
                 }
-                if (dom.attribs && dom.attribs.face)
+                if (faces)
                 {
-                    var faces = dom.attribs.face.replace(/, /g, '", "');
-                    output('font "' + faces + '"\n');
+                    output('font ' + faces + '\n');
                 }
                 if (dom.attribs && dom.attribs.color)
                 {

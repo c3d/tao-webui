@@ -23,6 +23,7 @@ function tr(key)
         'Caption': 'Légende',
         'Bullet text': 'Corps du texte',
         'New page': 'Nouvelle page',
+        '_Theme default_', '_Police du thème_',
 
         'Blue Claire': 'Bleu Claire',
         'Main Title Slide': 'Titre',
