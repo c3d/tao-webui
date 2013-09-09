@@ -38,6 +38,12 @@ Ext.define('TE.controller.Editor', {
             },
             '#ctx-menu-new-page': {
                 click: this.newPageMenuItemClicked
+            },
+            '#ctx-menu-move-page-before': {
+                click: this.pageBeforeMenuItemClicked
+            },
+            '#ctx-menu-move-page-after': {
+                click: this.pageAfterMenuItemClicked
             }
         });
     },
@@ -89,6 +95,9 @@ Ext.define('TE.controller.Editor', {
         e.stopEvent();
         var menu = this.getPageContextMenu();
         menu.setPage(record.get('id'));
+        var last = this.getPagesStore().count() - 1;
+        menu.getComponent('ctx-menu-move-page-before').setDisabled(rowIndex === 0);
+        menu.getComponent('ctx-menu-move-page-after').setDisabled(rowIndex === last);
         menu.showAt(e.xy);
     },
 
@@ -134,5 +143,45 @@ Ext.define('TE.controller.Editor', {
         //         console.log('-1');
         //     }
         // });
+    },
+
+    pageBeforeMenuItemClicked: function() {
+        var pageId = this.getPageContextMenu().getPage();
+        var store = this.getPagesStore();
+        var index = store.find('id', pageId);
+        var record = store.findRecord('id', pageId);
+        var ctrl = this.application.getController(record.getControllerName());
+        var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
+        exactmodel.load(record.get('id'), {
+            scope: this,
+            success: function(newrecord, operation) {
+                newrecord.set('idx', index - 1);
+                newrecord.save({
+                    success: function() {
+                        store.reload();
+                    }
+                });
+            }
+        });
+    },
+
+    pageAfterMenuItemClicked: function() {
+        var pageId = this.getPageContextMenu().getPage();
+        var store = this.getPagesStore();
+        var index = store.find('id', pageId);
+        var record = store.findRecord('id', pageId);
+        var ctrl = this.application.getController(record.getControllerName());
+        var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
+        exactmodel.load(record.get('id'), {
+            scope: this,
+            success: function(newrecord, operation) {
+                newrecord.set('idx', index + 1);
+                newrecord.save({
+                    success: function() {
+                        store.reload();
+                    }
+                });
+            }
+        });
     }
 });

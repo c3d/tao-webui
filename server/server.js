@@ -69,7 +69,7 @@ app.put('/pages/:id', function(req, res) {
             pages.splice(i, 1);
             // - insert at new position
             pages.splice(found.idx, 0, found);
-            console.log('Page moved from index ' + i + ' to index ' + found.idx);
+            console.log('Page ' + found.id + ' moved from index ' + i + ' to index ' + found.idx);
             // - no need to keep the idx attribute in the page
             delete found.idx;
         }
@@ -133,6 +133,7 @@ function getPages(callback)
 
 function save(pages)
 {
+    cached_pages = pages;
     fs.writeFileSync(__dirname + '/data/saved_pages.json', JSON.stringify(pages));
     writeTaoDocument(pages);
 }

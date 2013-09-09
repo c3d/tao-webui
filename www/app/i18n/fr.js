@@ -24,6 +24,8 @@ function tr(key)
         'Bullet text': 'Corps du texte',
         'New page': 'Nouvelle page',
         '_Theme default_', '_Police du thème_',
+        'Move before': 'Déplacer avant',
+        'Move after': 'Déplacer après',
 
         'Blue Claire': 'Bleu Claire',
         'Main Title Slide': 'Titre',
