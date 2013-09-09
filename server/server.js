@@ -36,8 +36,15 @@ app.post('/pages', function (req, res) {
     getPages(function(err, pages) {
         var page = req.body;
         page.id = allocatePageId(pages);
-        pages.push(page);
-        console.log('Page ' + page.id + ' created');
+
+        var idx = pages.length; // Insert at end by default
+        if (page.idx !== -1) {
+            // Store at index specified by client
+            idx = page.idx
+            delete page.idx;
+        }
+        pages.splice(idx, 0, page);
+        console.log('Page ' + page.id + ' created (index ' + idx + ')');
         save(pages);
         var rsp = { success: true, pages: [] };
         rsp.pages[0] = page;
@@ -48,14 +55,26 @@ app.post('/pages', function (req, res) {
 app.put('/pages/:id', function(req, res) {
     getPages(function(err, pages) {
         var found = null;
-        for (var i = 0; i < pages.length; i++) {
-
+        var i = 0;
+        for (i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
                 found = pages[i] = req.body;
                 console.log('Page ' + found.id + ' updated');
-                save(pages);
+                break;
             }
         }
+        if (found && found.idx !== -1) {
+            // Move page:
+            // - delete from previous position
+            pages.splice(i, 1);
+            // - insert at new position
+            pages.splice(found.idx, 0, found);
+            console.log('Page moved from index ' + i + ' to index ' + found.idx);
+            // - no need to keep the idx attribute in the page
+            delete found.idx;
+        }
+        if (found)
+            save(pages);
         res.send(found ? found : 404);
     });
 });

@@ -123,5 +123,16 @@ Ext.define('TE.controller.Editor', {
         var store = this.getPagesStore();
         store.add(page);
         store.sync();
+
+        // // TEST create at specific index (0 = first position)
+        // var idx = 1;
+        // page.set('idx', idx);
+        // store.insert(idx, page);
+        // store.sync({
+        //     callback: function(batch, options) {
+        //         page.set('idx', -1);
+        //         console.log('-1');
+        //     }
+        // });
     }
 });

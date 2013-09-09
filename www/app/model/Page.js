@@ -1,6 +1,6 @@
 Ext.define('TE.model.Page', {
 	extend: 'Ext.data.Model',
-	fields: [ 'name', 'kind' ],
+	fields: [ 'name', 'kind', { name: 'idx', type: 'int', defaultValue: -1 }  ],
 
     proxy: {
         type: 'rest',
