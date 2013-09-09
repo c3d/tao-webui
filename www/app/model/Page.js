@@ -4,7 +4,7 @@ Ext.define('TE.model.Page', {
 
     proxy: {
         type: 'rest',
-        url: 'rest/pages',
+        url: 'pages',
         reader: {
             type: 'json',
             root: 'pages'

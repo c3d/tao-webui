@@ -11,16 +11,16 @@ app.use(express.bodyParser());
 //                   POST          GET        PUT         DELETE
 // Resource          (Create)      (Read)     (Update)    (Delete)
 //
-// /rest/pages       Create one    List all   Not used    Not used 
-// /rest/pages/:id   Error         Get one    Update one  Delete one
+// /pages            Create one    List all   Not used    Not used 
+// /pages/:id        Error         Get one    Update one  Delete one
 
-app.get('/rest/pages', function(req, res) {
+app.get('/pages', function(req, res) {
     getPages(function(err, pages) {
         res.send(err ? 500 : pages);
     });
 });
 
-app.get('/rest/pages/:id', function(req, res) {
+app.get('/pages/:id', function(req, res) {
     getPages(function(err, pages) {
         var found = [];
         for (var i = 0; i < pages.length; i++) {
@@ -32,7 +32,7 @@ app.get('/rest/pages/:id', function(req, res) {
     });
 });
 
-app.post('/rest/pages', function (req, res) {
+app.post('/pages', function (req, res) {
     getPages(function(err, pages) {
         var page = req.body;
         page.id = allocatePageId(pages);
@@ -45,7 +45,7 @@ app.post('/rest/pages', function (req, res) {
     });
 });
 
-app.put('/rest/pages/:id', function(req, res) {
+app.put('/pages/:id', function(req, res) {
     getPages(function(err, pages) {
         var found = null;
         for (var i = 0; i < pages.length; i++) {
@@ -60,7 +60,7 @@ app.put('/rest/pages/:id', function(req, res) {
     });
 });
 
-app.delete('/rest/pages/:id', function(req, res) {
+app.delete('/pages/:id', function(req, res) {
     getPages(function(err, pages) {
         var found = false;
         for (var i = 0; i < pages.length; i++) {
