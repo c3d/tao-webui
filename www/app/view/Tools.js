@@ -26,19 +26,6 @@ Ext.define('TE.view.Tools', {
         itemId: 'placeholder'
     }],
 
-    // REVISIT: move code to controller.Editor
-
-    initComponent: function() {
-        this.callParent(arguments);
-
-        var themepanel = this.getComponent('themepanel');
-
-        themepanel.add(Ext.create('TE.view.blueclaire.Theme'));
-
-        themepanel.add(Ext.create('TE.view.vellum.Theme'));
-        themepanel.add(Ext.create('TE.view.white.Theme'));
-    },
-
     setPageTemplates: function(tmpl) {
         var comp = this.items.items[1];
         // Placeholder may be deleted, not objects passed to this function (they are cached)

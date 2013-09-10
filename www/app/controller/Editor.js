@@ -22,6 +22,9 @@ Ext.define('TE.controller.Editor', {
 
     init: function() {
         this.control({
+            '#themepanel': {
+                render: this.loadThemes
+            },
             'pagetemplate': {
                 click: this.pageTemplateClicked,
                 contextmenu: this.showPageTemplateContextMenu
@@ -46,6 +49,12 @@ Ext.define('TE.controller.Editor', {
                 click: this.pageAfterMenuItemClicked
             }
         });
+    },
+
+    loadThemes: function() {
+        this.getThemePanel().add(Ext.create('TE.view.blueclaire.Theme'));
+        this.getThemePanel().add(Ext.create('TE.view.vellum.Theme'));
+        this.getThemePanel().add(Ext.create('TE.view.white.Theme'));
     },
 
     themeClicked: function(theme) {
