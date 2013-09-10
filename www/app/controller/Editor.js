@@ -186,8 +186,12 @@ Ext.define('TE.controller.Editor', {
                 newrecord.set('idx', index - 1);
                 newrecord.save({
                     success: function() {
-                        store.reload();
-                        me._updateMovePageButtons(id);
+                        store.reload({
+                            callback: function(records, operation, success) {
+                                if (success)
+                                    me._updateMovePageButtons(id);
+                            }
+                        });
                     }
                 });
             }
@@ -208,8 +212,12 @@ Ext.define('TE.controller.Editor', {
                 newrecord.set('idx', index + 1);
                 newrecord.save({
                     success: function() {
-                        store.reload();
-                        me._updateMovePageButtons(id);
+                        store.reload({
+                            callback: function(records, operation, success) {
+                                if (success)
+                                    me._updateMovePageButtons(id);
+                            }
+                        });
                     }
                 });
             }
