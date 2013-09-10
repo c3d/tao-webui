@@ -17,7 +17,9 @@ Ext.define('TE.controller.Editor', {
         { ref: 'pagelist', selector: 'pagelist' },
         { ref: 'themePanel', selector: '#themepanel' },
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
-        { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true }
+        { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true },
+        { ref: 'pageMoveBeforeBtn', selector: 'pagelist toolbar button#movePageBeforeBtn' },
+        { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button#movePageAfterBtn' }
     ],
 
     init: function() {
@@ -43,10 +45,16 @@ Ext.define('TE.controller.Editor', {
                 click: this.newPageMenuItemClicked
             },
             '#ctx-menu-move-page-before': {
-                click: this.pageBeforeMenuItemClicked
+                click: this.movePageBefore
             },
             '#ctx-menu-move-page-after': {
-                click: this.pageAfterMenuItemClicked
+                click: this.movePageAfter
+            },
+            'pagelist toolbar button#movePageBeforeBtn': {
+                click: this.movePageBefore
+            },
+            'pagelist toolbar button#movePageAfterBtn': {
+                click: this.movePageAfter
             }
         });
     },
@@ -67,7 +75,7 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('pagetemplate'), function(child) {
             child.toggleSelected(false);
         })
-        Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
+        this.getPagelist().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
         this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
     },
@@ -76,7 +84,7 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
             child.toggleSelected(child === pt);
         });
-        Ext.ComponentQuery.query('pagelist')[0].getSelectionModel().deselectAll();
+        this.getPagelist().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
     },
 
@@ -90,20 +98,30 @@ Ext.define('TE.controller.Editor', {
 
         // Reload record, applying the suitable data model for the page
         // REVISIT Use a store to cache data
+        var id = record.get('id');
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
-        exactmodel.load(record.get('id'), {
+        exactmodel.load(id, {
             scope: this,
             success: function(newrecord, operation) {
                 newrecord.generic_record = record;
                 ctrl.display(newrecord);
             }
         });
+
+        this._updateMovePageButtons(id);
+    },
+
+    _updateMovePageButtons: function(id) {
+        // Enable or disable page move buttons. id identifies the currently selected page.
+        var rowIndex = this.getPagesStore().find('id', id);
+        var last = this.getPagesStore().count() - 1;
+        this.getPageMoveBeforeBtn().setDisabled(rowIndex === 0);
+        this.getPageMoveAfterBtn().setDisabled(rowIndex === last);
     },
 
     showPageContextMenu: function(table, td, cellIndex, record, tr, rowIndex, e, eOpts) {
         e.stopEvent();
         var menu = this.getPageContextMenu();
-        menu.setPage(record.get('id'));
         var last = this.getPagesStore().count() - 1;
         menu.getComponent('ctx-menu-move-page-before').setDisabled(rowIndex === 0);
         menu.getComponent('ctx-menu-move-page-after').setDisabled(rowIndex === last);
@@ -154,11 +172,12 @@ Ext.define('TE.controller.Editor', {
         // });
     },
 
-    pageBeforeMenuItemClicked: function() {
-        var pageId = this.getPageContextMenu().getPage();
+    movePageBefore: function() {
+        var me = this;
+        var record = this.getPagelist().getSelectionModel().getSelection()[0];
+        var id = record.get('id');
         var store = this.getPagesStore();
-        var index = store.find('id', pageId);
-        var record = store.findRecord('id', pageId);
+        var index = store.find('id', id);
         var ctrl = this.application.getController(record.getControllerName());
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
         exactmodel.load(record.get('id'), {
@@ -168,17 +187,19 @@ Ext.define('TE.controller.Editor', {
                 newrecord.save({
                     success: function() {
                         store.reload();
+                        me._updateMovePageButtons(id);
                     }
                 });
             }
         });
     },
 
-    pageAfterMenuItemClicked: function() {
-        var pageId = this.getPageContextMenu().getPage();
+    movePageAfter: function() {
+        var me = this;
+        var record = this.getPagelist().getSelectionModel().getSelection()[0];
+        var id = record.get('id');
         var store = this.getPagesStore();
-        var index = store.find('id', pageId);
-        var record = store.findRecord('id', pageId);
+        var index = store.find('id', id);
         var ctrl = this.application.getController(record.getControllerName());
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
         exactmodel.load(record.get('id'), {
@@ -188,6 +209,7 @@ Ext.define('TE.controller.Editor', {
                 newrecord.save({
                     success: function() {
                         store.reload();
+                        me._updateMovePageButtons(id);
                     }
                 });
             }

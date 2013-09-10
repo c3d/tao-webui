@@ -22,5 +22,24 @@ Ext.define('TE.view.PageList', {
         flex: 1,
         dataIndex: 'name',
         sortable: false
-    }]
+    }],
+
+    initComponent: function() {
+        Ext.apply(this, {
+            tbar: [ '->', // Right align buttons
+            {
+                xtype: 'button',
+                text: tr('Move page before'),
+                itemId: 'movePageBeforeBtn',
+                disabled: true
+            },{
+                xtype: 'button',
+                text: tr('Move page after'),
+                itemId: 'movePageAfterBtn',
+                disabled: true
+            }]
+        });
+
+        this.callParent(arguments);
+    }
 });
