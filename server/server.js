@@ -110,13 +110,17 @@ app.listen(PORT, null, function() {
 
 // Helpers
 
-var cached_pages = null;
-function getPages(callback)
+// Read and cache <name>.json
+// Example: getData('pages', function(error, pages) { ... } )
+var cached = {
+    pages: null
+}
+function getData(name, callback)
 {
-    if (cached_pages !== null) {
-        callback(null, cached_pages);
+    if (cached[name] !== null) {
+        callback(null, cached[name]);
     } else {
-        var file = __dirname + '/data/pages.json';
+        var file = __dirname + '/data/' + name + '.json';
         fs.readFile(file, 'utf8', function (err, data) {
             if (err) {
                 console.log('File read error: ' + err);
@@ -124,16 +128,21 @@ function getPages(callback)
             } else {
                 if (data.trim().length === 0)
                     data = '[]';
-                cached_pages = JSON.parse(data);
-                callback(null, cached_pages);
+                cached[name] = JSON.parse(data);
+                callback(null, cached[name]);
             }
         });
     }
 }
 
+function getPages(callback)
+{
+    getData('pages', callback);
+}
+
 function save(pages)
 {
-    cached_pages = pages;
+    cached.pages = pages;
     fs.writeFileSync(__dirname + '/data/saved_pages.json', JSON.stringify(pages));
     writeTaoDocument(pages);
 }
