@@ -172,7 +172,8 @@ Ext.define('TE.controller.Editor', {
         // });
     },
 
-    movePageBefore: function() {
+    // delta = +/- 1
+    movePage: function(delta) {
         var me = this;
         var record = this.getPagelist().getSelectionModel().getSelection()[0];
         var id = record.get('id');
@@ -183,7 +184,7 @@ Ext.define('TE.controller.Editor', {
         exactmodel.load(record.get('id'), {
             scope: this,
             success: function(newrecord, operation) {
-                newrecord.set('idx', index - 1);
+                newrecord.set('idx', index + delta);
                 newrecord.save({
                     success: function() {
                         store.reload({
@@ -198,29 +199,11 @@ Ext.define('TE.controller.Editor', {
         });
     },
 
+    movePageBefore: function() {
+        this.movePage(-1);
+    },
+
     movePageAfter: function() {
-        var me = this;
-        var record = this.getPagelist().getSelectionModel().getSelection()[0];
-        var id = record.get('id');
-        var store = this.getPagesStore();
-        var index = store.find('id', id);
-        var ctrl = this.application.getController(record.getControllerName());
-        var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
-        exactmodel.load(record.get('id'), {
-            scope: this,
-            success: function(newrecord, operation) {
-                newrecord.set('idx', index + 1);
-                newrecord.save({
-                    success: function() {
-                        store.reload({
-                            callback: function(records, operation, success) {
-                                if (success)
-                                    me._updateMovePageButtons(id);
-                            }
-                        });
-                    }
-                });
-            }
-        });
+        this.movePage(+1);
     }
 });
