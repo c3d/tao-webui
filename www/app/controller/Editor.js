@@ -291,7 +291,7 @@ Ext.define('TE.controller.Editor', {
 
     editImage: function() {
         var record = this.selectedImage();
-        if (record.get('url').indexOf('http') !== 0)
+        if (record.get('url').indexOf('://') === -1)
         {
             console.log('Don\'t know how to edit local file (yet)');
             return;

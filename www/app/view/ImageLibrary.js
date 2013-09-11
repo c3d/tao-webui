@@ -18,7 +18,7 @@ Ext.define('TE.view.ImageLibrary', {
             width: 100,
             renderer: function(v, meta, rec, rowIndex) {
                 var imgsrc = url = rec.get('url');
-                if (url.indexOf('http') !== 0)
+                if (url.indexOf('://') === -1)
                     imgsrc = '/imagelibrary/' + url;
                 return '<img src="' + imgsrc + '" width=\"80\" title=\"' + url + '\" />';
             },
