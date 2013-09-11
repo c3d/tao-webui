@@ -40,6 +40,12 @@ Ext.define('TE.view.PageList', {
                     icon: 'app/resources/images/page-down.gif',
                     action: 'pageAfter',
                     disabled: true
+                },{
+                    xtype: 'button',
+                    text: tr('Delete page'),
+                    icon: 'app/resources/images/delete.png',
+                    action: 'pageDelete',
+                    disabled: true
                 },
                 ' ', // Spacer
                 {

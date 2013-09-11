@@ -20,7 +20,8 @@ Ext.define('TE.controller.Editor', {
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
         { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true },
         { ref: 'pageMoveBeforeBtn', selector: 'pagelist toolbar button[action=pageBefore]' },
-        { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button[action=pageAfter]' }
+        { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button[action=pageAfter]' },
+        { ref: 'pageDeleteBtn', selector: 'pagelist toolbar button[action=pageDelete]' }
     ],
 
     init: function() {
@@ -40,7 +41,7 @@ Ext.define('TE.controller.Editor', {
                 cellcontextmenu: this.showPageContextMenu
             },
             '#ctx-menu-delete-page': {
-                click: this.deletePageMenuItemClicked
+                click: this.deletePage
             },
             '#ctx-menu-new-page': {
                 click: this.newPageMenuItemClicked
@@ -56,6 +57,9 @@ Ext.define('TE.controller.Editor', {
             },
             'pagelist toolbar button[action=pageAfter]': {
                 click: this.movePageAfter
+            },
+            'pagelist toolbar button[action=pageDelete]': {
+                click: this.deletePage
             },
             'pagelist toolbar button[action=showPicLibrary]': {
                 click: this.showImageLibrary
@@ -112,15 +116,25 @@ Ext.define('TE.controller.Editor', {
             }
         });
 
-        this._updateMovePageButtons(id);
+        this._updatePageButtons();
     },
 
-    _updateMovePageButtons: function(id) {
+    _updatePageButtons: function() {
         // Enable or disable page move buttons. id identifies the currently selected page.
+        var selected = this.selectedPage();
+        if (selected === undefined)
+        {
+            this.getPageMoveBeforeBtn().setDisabled(true);
+            this.getPageMoveAfterBtn().setDisabled(true);
+            this.getPageDeleteBtn().setDisabled(true);
+            return;
+        }
+        var id = selected.get('id');
         var rowIndex = this.getPagesStore().find('id', id);
         var last = this.getPagesStore().count() - 1;
         this.getPageMoveBeforeBtn().setDisabled(rowIndex === 0);
         this.getPageMoveAfterBtn().setDisabled(rowIndex === last);
+        this.getPageDeleteBtn().setDisabled(false);
     },
 
     showPageContextMenu: function(table, td, cellIndex, record, tr, rowIndex, e, eOpts) {
@@ -138,10 +152,11 @@ Ext.define('TE.controller.Editor', {
         menu.showBy(t);
     },
 
-    deletePageMenuItemClicked: function(item, e) {
-        var pageId = this.getPageContextMenu().getPage();
+    deletePage: function() {
+        var me = this;
         var store = this.getPagesStore();
-        var page = store.findRecord('id', pageId);
+        var page = this.selectedPage();
+        var pageId = page.get('id');
 
         var box = Ext.create(Ext.window.MessageBox);
         box.confirm(tr('Delete page'),
@@ -150,6 +165,7 @@ Ext.define('TE.controller.Editor', {
                         if (button === 'yes') {
                             store.remove(page);
                             store.sync();
+                            me._updatePageButtons();
                         }
                     });
     },
@@ -176,10 +192,14 @@ Ext.define('TE.controller.Editor', {
         // });
     },
 
+    selectedPage: function() {
+        return this.getPagelist().getSelectionModel().getSelection()[0];
+    },
+
     // delta = +/- 1
     movePage: function(delta) {
         var me = this;
-        var record = this.getPagelist().getSelectionModel().getSelection()[0];
+        var record = this.selectedPage();
         var id = record.get('id');
         var store = this.getPagesStore();
         var index = store.find('id', id);
@@ -194,7 +214,7 @@ Ext.define('TE.controller.Editor', {
                         store.reload({
                             callback: function(records, operation, success) {
                                 if (success)
-                                    me._updateMovePageButtons(id);
+                                    me._updatePageButtons();
                             }
                         });
                     }
