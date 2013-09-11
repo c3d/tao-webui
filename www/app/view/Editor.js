@@ -6,7 +6,7 @@ Ext.define('TE.view.Editor', {
     items: [{
         xtype: 'pagelist',
         region: 'south',
-        height: 200,
+        height: 300,
         collapsible: true,
         split: true, // enable resizing
         margins: '0 3 3 3'

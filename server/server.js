@@ -13,15 +13,18 @@ app.use(express.bodyParser());
 //
 // /pages            Create one    List all   Not used    Not used 
 // /pages/:id        Error         Get one    Update one  Delete one
+//
+// /images           [like pages]
+// /images/:id       [like pages]
 
 app.get('/pages', function(req, res) {
-    getPages(function(err, pages) {
+    getData('pages', function(err, pages) {
         res.send(err ? 500 : pages);
     });
 });
 
 app.get('/pages/:id', function(req, res) {
-    getPages(function(err, pages) {
+    getData('pages', function(err, pages) {
         var found = [];
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
@@ -33,7 +36,7 @@ app.get('/pages/:id', function(req, res) {
 });
 
 app.post('/pages', function (req, res) {
-    getPages(function(err, pages) {
+    getData('pages', function(err, pages) {
         var page = req.body;
         page.id = allocatePageId(pages);
 
@@ -53,7 +56,7 @@ app.post('/pages', function (req, res) {
 });
 
 app.put('/pages/:id', function(req, res) {
-    getPages(function(err, pages) {
+    getData('pages', function(err, pages) {
         var found = null;
         var i = 0;
         for (i = 0; i < pages.length; i++) {
@@ -80,7 +83,7 @@ app.put('/pages/:id', function(req, res) {
 });
 
 app.delete('/pages/:id', function(req, res) {
-    getPages(function(err, pages) {
+    getData('pages', function(err, pages) {
         var found = false;
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
@@ -95,10 +98,20 @@ app.delete('/pages/:id', function(req, res) {
 });
 
 
+app.get('/images', function(req, res) {
+    getData('images', function(err, pages) {
+        res.send(err ? 500 : pages);
+    });
+});
+
+
+// Accessing the image library
+
+app.use('/imagelibrary', express.static(__dirname + '/data/images'));
+
 // Serve static files
 
 app.use(express.static( __dirname + '/../www'));
-
 
 // Start server
 
@@ -113,7 +126,8 @@ app.listen(PORT, null, function() {
 // Read and cache <name>.json
 // Example: getData('pages', function(error, pages) { ... } )
 var cached = {
-    pages: null
+    pages: null,
+    images: null
 }
 function getData(name, callback)
 {
@@ -133,11 +147,6 @@ function getData(name, callback)
             }
         });
     }
-}
-
-function getPages(callback)
-{
-    getData('pages', callback);
 }
 
 function save(pages)

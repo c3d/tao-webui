@@ -23,9 +23,12 @@ function tr(key)
         'Caption': 'Légende',
         'Bullet text': 'Corps du texte',
         'New page': 'Nouvelle page',
-        '_Theme default_', '_Police du thème_',
+        '_Theme default_', '_Police du thème_', // Underscores are used in server
+        'Move page before': 'Déplacer page avant',
+        'Move page after': 'Déplacer page après',
         'Move before': 'Déplacer avant',
         'Move after': 'Déplacer après',
+        'Image Library...': 'Images...',
 
         'Blue Claire': 'Bleu Claire',
         'Main Title Slide': 'Titre',

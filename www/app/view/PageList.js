@@ -26,20 +26,28 @@ Ext.define('TE.view.PageList', {
 
     initComponent: function() {
         Ext.apply(this, {
-            tbar: [ '->', // Right align buttons
-            {
-                xtype: 'button',
-                text: tr('Move page before'),
-                icon: 'app/resources/images/page-up.gif',
-                itemId: 'movePageBeforeBtn',
-                disabled: true
-            },{
-                xtype: 'button',
-                text: tr('Move page after'),
-                icon: 'app/resources/images/page-down.gif',
-                itemId: 'movePageAfterBtn',
-                disabled: true
-            }]
+            tbar: [
+                '->', // Right align buttons
+                {
+                    xtype: 'button',
+                    text: tr('Move page before'),
+                    icon: 'app/resources/images/page-up.gif',
+                    action: 'pageBefore',
+                    disabled: true
+                },{
+                    xtype: 'button',
+                    text: tr('Move page after'),
+                    icon: 'app/resources/images/page-down.gif',
+                    action: 'pageAfter',
+                    disabled: true
+                },
+                ' ', // Spacer
+                {
+                    xtype: 'button',
+                    text: tr('Image library...'),
+                    action: 'showPicLibrary'
+                }
+            ]
         });
 
         this.callParent(arguments);

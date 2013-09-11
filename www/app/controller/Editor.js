@@ -1,13 +1,14 @@
 Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
 
-    stores: [ 'Pages' ],
-    models: [ 'Page' ],
+    stores: [ 'Pages', 'Images' ],
+    models: [ 'Page', 'Image' ],
     views: [
         'Editor',
         'PageList',
         'PageListContextMenu',
         'PageTemplateContextMenu',
+        'ImageLibrary',
         'Tools'
     ],
     refs: [
@@ -18,8 +19,8 @@ Ext.define('TE.controller.Editor', {
         { ref: 'themePanel', selector: '#themepanel' },
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
         { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true },
-        { ref: 'pageMoveBeforeBtn', selector: 'pagelist toolbar button#movePageBeforeBtn' },
-        { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button#movePageAfterBtn' }
+        { ref: 'pageMoveBeforeBtn', selector: 'pagelist toolbar button[action=pageBefore]' },
+        { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button[action=pageAfter]' }
     ],
 
     init: function() {
@@ -50,11 +51,14 @@ Ext.define('TE.controller.Editor', {
             '#ctx-menu-move-page-after': {
                 click: this.movePageAfter
             },
-            'pagelist toolbar button#movePageBeforeBtn': {
+            'pagelist toolbar button[action=pageBefore]': {
                 click: this.movePageBefore
             },
-            'pagelist toolbar button#movePageAfterBtn': {
+            'pagelist toolbar button[action=pageAfter]': {
                 click: this.movePageAfter
+            },
+            'pagelist toolbar button[action=showPicLibrary]': {
+                click: this.showImageLibrary
             }
         });
     },
@@ -205,5 +209,9 @@ Ext.define('TE.controller.Editor', {
 
     movePageAfter: function() {
         this.movePage(+1);
+    },
+
+    showImageLibrary: function() {
+        Ext.widget('teimagelibrary');
     }
 });
