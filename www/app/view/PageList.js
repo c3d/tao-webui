@@ -30,11 +30,13 @@ Ext.define('TE.view.PageList', {
             {
                 xtype: 'button',
                 text: tr('Move page before'),
+                icon: 'app/resources/images/page-up.gif',
                 itemId: 'movePageBeforeBtn',
                 disabled: true
             },{
                 xtype: 'button',
                 text: tr('Move page after'),
+                icon: 'app/resources/images/page-down.gif',
                 itemId: 'movePageAfterBtn',
                 disabled: true
             }]
