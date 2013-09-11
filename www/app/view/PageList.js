@@ -51,6 +51,7 @@ Ext.define('TE.view.PageList', {
                 {
                     xtype: 'button',
                     text: tr('Image library...'),
+                    icon: 'app/resources/images/image.png',
                     action: 'showPicLibrary'
                 }
             ]

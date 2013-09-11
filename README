@@ -1,9 +1,20 @@
-Usage:
+Usage
+-----
 
 1) ./start_server.sh
 2) Connect to http://localhost:3000/
 
 Browser requirements
+--------------------
 
 Google Chrome: tested with Google Chrome 29
 IE: requires IE >= 9
+
+Licenses
+--------
+
+www/app/resources/images/image.png:
+  Author:  Everaldo Coelho - http://www.everaldo.com/
+  License: LGPL
+  Free for commercial use (no backlink)
+  https://www.iconfinder.com/icons/3719/image_icon
