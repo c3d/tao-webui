@@ -41,6 +41,12 @@ Ext.define('TE.view.ImageLibrary', {
                 disabled: true
             }, {
                 xtype: 'button',
+                text: tr('Edit'),
+                icon: 'app/resources/images/edit.png',
+                action: 'edit',
+                disabled: true
+            }, {
+                xtype: 'button',
                 text: tr('Add URL...'),
                 icon: 'app/resources/images/add.png',
                 action: 'addUrl'

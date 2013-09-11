@@ -104,6 +104,23 @@ app.get('/images', function(req, res) {
     });
 });
 
+app.put('/images/:id', function(req, res) {
+    getData('images', function(err, images) {
+        var found = null;
+        var i = 0;
+        for (i = 0; i < images.length; i++) {
+            if (images[i].id == req.params.id) {
+                found = images[i] = req.body;
+                console.log('Image ' + found.id + ' updated');
+                break;
+            }
+        }
+        if (found)
+            saveImages(images);
+        res.send(found ? found : 404);
+    });
+});
+
 app.delete('/images/:id', function(req, res) {
     getData('images', function(err, images) {
         var found = false;

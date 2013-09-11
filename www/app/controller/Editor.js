@@ -6,6 +6,7 @@ Ext.define('TE.controller.Editor', {
     models: [ 'Page', 'Image' ],
     views: [
         'Editor',
+        'EditImageURL',
         'PageList',
         'PageListContextMenu',
         'PageTemplateContextMenu',
@@ -20,11 +21,12 @@ Ext.define('TE.controller.Editor', {
         { ref: 'themePanel', selector: '#themepanel' },
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
         { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true },
-        { ref: 'pageMoveBeforeBtn', selector: 'pagelist toolbar button[action=pageBefore]' },
-        { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button[action=pageAfter]' },
-        { ref: 'pageDeleteBtn', selector: 'pagelist toolbar button[action=pageDelete]' },
+        { ref: 'pageMoveBeforeBtn', selector: 'pagelist button[action=pageBefore]' },
+        { ref: 'pageMoveAfterBtn', selector: 'pagelist button[action=pageAfter]' },
+        { ref: 'pageDeleteBtn', selector: 'pagelist button[action=pageDelete]' },
         { ref: 'imageLibraryGrid', selector: 'teimagelibrary gridpanel' },
-        { ref: 'imageDeleteBtn', selector: 'teimagelibrary gridpanel toolbar button[action=delete]' }
+        { ref: 'imageDeleteBtn', selector: 'teimagelibrary button[action=delete]' },
+        { ref: 'imageEditBtn', selector: 'teimagelibrary button[action=edit]' }
     ],
 
     init: function() {
@@ -58,23 +60,33 @@ Ext.define('TE.controller.Editor', {
             '#ctx-menu-move-page-after': {
                 click: this.movePageAfter
             },
-            'pagelist toolbar button[action=pageBefore]': {
+            'pagelist button[action=pageBefore]': {
                 click: this.movePageBefore
             },
-            'pagelist toolbar button[action=pageAfter]': {
+            'pagelist button[action=pageAfter]': {
                 click: this.movePageAfter
             },
-            'pagelist toolbar button[action=pageDelete]': {
+            'pagelist button[action=pageDelete]': {
                 click: this.deletePage
             },
-            'pagelist toolbar button[action=showPicLibrary]': {
+            'pagelist button[action=showPicLibrary]': {
                 click: this.showImageLibrary
             },
             'teimagelibrary gridpanel': {
-                select: this.libraryImageClicked
+                select: this.libraryImageClicked,
+                itemdblclick: this.editImage
             },
-            'teimagelibrary gridpanel toolbar button[action=delete]': {
+            'teimagelibrary button[action=delete]': {
                 click: this.deleteImage
+            },
+            'teimagelibrary button[action=addUrl]': {
+                click: this.addImageUrl
+            },
+            'teimagelibrary button[action=edit]': {
+                click: this.editImage
+            },
+            'teeditimageurl button[action=save]': {
+                click: this.saveImage
             }
         });
     },
@@ -212,7 +224,6 @@ Ext.define('TE.controller.Editor', {
         var ctrl = this.application.getController(record.getControllerName());
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
         exactmodel.load(record.get('id'), {
-            scope: this,
             success: function(newrecord, operation) {
                 newrecord.set('idx', index + delta);
                 newrecord.save({
@@ -243,6 +254,7 @@ Ext.define('TE.controller.Editor', {
 
     libraryImageClicked: function() {
         this.getImageDeleteBtn().setDisabled(false);
+        this.getImageEditBtn().setDisabled(false);
     },
 
     selectedImage: function() {
@@ -251,7 +263,6 @@ Ext.define('TE.controller.Editor', {
 
     deleteImage: function() {
         var me = this;
-        var store = this.getImagesStore();
         var image = this.selectedImage();
 
         var box = Ext.create(Ext.window.MessageBox);
@@ -260,6 +271,7 @@ Ext.define('TE.controller.Editor', {
                     '<br><br>' + image.get('displayname'),
                     function(button) {
                         if (button === 'yes') {
+                            var store = me.getImagesStore();
                             store.remove(image);
                             store.sync();
                             me._updateImageLibraryButtons();
@@ -269,5 +281,30 @@ Ext.define('TE.controller.Editor', {
 
     _updateImageLibraryButtons: function() {
         this.getImageDeleteBtn().setDisabled(this.selectedImage() === undefined);
+    },
+
+    addImageUrl: function() {
+        // TODO
+    },
+
+    editImage: function() {
+        var record = this.selectedImage();
+        if (record.get('url').indexOf('http') !== 0)
+        {
+            console.log('Don\'t know how to edit local file (yet)');
+            return;
+        }
+        var view = Ext.widget('teeditimageurl');
+        view.down('form').loadRecord(record);
+    },
+
+    saveImage: function(button) {
+        var win = button.up('window'),
+            form = win.down('form'),
+            record = form.getRecord(),
+            values = form.getValues();
+        record.set(values);
+        win.close();
+        this.getImagesStore().sync();
     }
 });
