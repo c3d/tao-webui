@@ -23,12 +23,18 @@ function tr(key)
         'Caption': 'Légende',
         'Bullet text': 'Corps du texte',
         'New page': 'Nouvelle page',
-        '_Theme default_', '_Police du thème_', // Underscores are used in server
-        'Move page before': 'Déplacer page avant',
-        'Move page after': 'Déplacer page après',
+        '_Theme default_': '_Police du thème_', // Underscores are used in server
+        'Move page before': 'Déplacer la page avant',
+        'Move page after': 'Déplacer la page après',
         'Move before': 'Déplacer avant',
         'Move after': 'Déplacer après',
-        'Image Library...': 'Images...',
+        'Image library': 'Bibliothèque d\'images',
+        'Image library...': 'Images...',
+        'Add URL...': 'Ajouter une URL...',
+        'Add file...': 'Ajouter un fichier...',
+        'Name': 'Nom',
+        'Delete image': 'Supprimer une image',
+        'Are you sure you want to delete this image?': 'Voulez-vous vraiment supprimer cette image ?',
 
         'Blue Claire': 'Bleu Claire',
         'Main Title Slide': 'Titre',

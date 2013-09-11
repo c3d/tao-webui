@@ -2,7 +2,7 @@ Ext.define('TE.view.ImageLibrary', {
     extend: 'Ext.window.Window',
     alias: 'widget.teimagelibrary',
 
-    title: tr('Image Library'),
+    title: tr('Image library'),
     layout: 'fit',
     autoShow: true,
 
@@ -33,9 +33,23 @@ Ext.define('TE.view.ImageLibrary', {
         dockedItems: [{
             xtype: 'toolbar',
             dock: 'bottom',
-            items: [
-                { xtype: 'button', text: 'Button 1' }
-            ]
+            items: [{
+                xtype: 'button',
+                text: tr('Delete'),
+                icon: 'app/resources/images/delete.png',
+                action: 'delete',
+                disabled: true
+            }, {
+                xtype: 'button',
+                text: tr('Add URL...'),
+                icon: 'app/resources/images/add.png',
+                action: 'addUrl'
+            }, {
+                xtype: 'button',
+                text: tr('Add file...'),
+                icon: 'app/resources/images/add.png',
+                action: 'addFile'
+            }]
         }]
     }]
 });

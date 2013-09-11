@@ -104,6 +104,21 @@ app.get('/images', function(req, res) {
     });
 });
 
+app.delete('/images/:id', function(req, res) {
+    getData('images', function(err, images) {
+        var found = false;
+        for (var i = 0; i < images.length; i++) {
+            if (images[i].id == req.params.id) {
+                console.log('Image ' + req.params.id + ' deleted (index ' + i + ')');
+                images.splice(i, 1);
+                saveImages(images);
+                found = true;
+            }
+        }
+        res.send(found ? { success: true } : 404);
+    });
+});
+
 
 // Accessing the image library
 
@@ -154,6 +169,12 @@ function save(pages)
     cached.pages = pages;
     fs.writeFileSync(__dirname + '/data/saved_pages.json', JSON.stringify(pages));
     writeTaoDocument(pages);
+}
+
+function saveImages(images)
+{
+    cached.images = images;
+    fs.writeFileSync(__dirname + '/data/saved_images.json', JSON.stringify(images));
 }
 
 function allocatePageId(pages)

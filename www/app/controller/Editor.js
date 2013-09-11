@@ -1,5 +1,6 @@
 Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
+    requires: [ 'Ext.window.MessageBox' ],
 
     stores: [ 'Pages', 'Images' ],
     models: [ 'Page', 'Image' ],
@@ -21,7 +22,9 @@ Ext.define('TE.controller.Editor', {
         { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true },
         { ref: 'pageMoveBeforeBtn', selector: 'pagelist toolbar button[action=pageBefore]' },
         { ref: 'pageMoveAfterBtn', selector: 'pagelist toolbar button[action=pageAfter]' },
-        { ref: 'pageDeleteBtn', selector: 'pagelist toolbar button[action=pageDelete]' }
+        { ref: 'pageDeleteBtn', selector: 'pagelist toolbar button[action=pageDelete]' },
+        { ref: 'imageLibraryGrid', selector: 'teimagelibrary gridpanel' },
+        { ref: 'imageDeleteBtn', selector: 'teimagelibrary gridpanel toolbar button[action=delete]' }
     ],
 
     init: function() {
@@ -66,6 +69,12 @@ Ext.define('TE.controller.Editor', {
             },
             'pagelist toolbar button[action=showPicLibrary]': {
                 click: this.showImageLibrary
+            },
+            'teimagelibrary gridpanel': {
+                select: this.libraryImageClicked
+            },
+            'teimagelibrary gridpanel toolbar button[action=delete]': {
+                click: this.deleteImage
             }
         });
     },
@@ -230,5 +239,35 @@ Ext.define('TE.controller.Editor', {
 
     showImageLibrary: function() {
         Ext.widget('teimagelibrary');
+    },
+
+    libraryImageClicked: function() {
+        this.getImageDeleteBtn().setDisabled(false);
+    },
+
+    selectedImage: function() {
+        return this.getImageLibraryGrid().getSelectionModel().getSelection()[0];
+    },
+
+    deleteImage: function() {
+        var me = this;
+        var store = this.getImagesStore();
+        var image = this.selectedImage();
+
+        var box = Ext.create(Ext.window.MessageBox);
+        box.confirm(tr('Delete image'),
+                    tr('Are you sure you want to delete this image?') +
+                    '<br><br>' + image.get('displayname'),
+                    function(button) {
+                        if (button === 'yes') {
+                            store.remove(image);
+                            store.sync();
+                            me._updateImageLibraryButtons();
+                        }
+                    });
+    },
+
+    _updateImageLibraryButtons: function() {
+        this.getImageDeleteBtn().setDisabled(this.selectedImage() === undefined);
     }
 });
