@@ -284,7 +284,9 @@ Ext.define('TE.controller.Editor', {
     },
 
     addImageUrl: function() {
-        // TODO
+        var record = Ext.create(this.getImageModel(), { url: 'url', displayname: 'disp name' });
+        var view = Ext.widget('teeditimageurl');
+        view.down('form').loadRecord(record);
     },
 
     editImage: function() {
@@ -302,9 +304,14 @@ Ext.define('TE.controller.Editor', {
         var win = button.up('window'),
             form = win.down('form'),
             record = form.getRecord(),
-            values = form.getValues();
+            values = form.getValues(),
+            store = this.getImagesStore();
         record.set(values);
         win.close();
-        this.getImagesStore().sync();
+        if (record.get('id') === undefined)
+        {
+            store.add(record);
+        }
+        store.sync();
     }
 });

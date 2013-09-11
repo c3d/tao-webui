@@ -38,7 +38,7 @@ app.get('/pages/:id', function(req, res) {
 app.post('/pages', function (req, res) {
     getData('pages', function(err, pages) {
         var page = req.body;
-        page.id = allocatePageId(pages);
+        page.id = allocateId(pages);
 
         var idx = pages.length; // Insert at end by default
         if (page.idx !== -1) {
@@ -101,6 +101,19 @@ app.delete('/pages/:id', function(req, res) {
 app.get('/images', function(req, res) {
     getData('images', function(err, pages) {
         res.send(err ? 500 : pages);
+    });
+});
+
+app.post('/images', function (req, res) {
+    getData('images', function(err, images) {
+        var image = req.body;
+        image.id = allocateId(images);
+        images.push(image);
+        console.log('Image ' + image.id + ' created');
+        saveImages(images);
+        var rsp = { success: true, images: [] };
+        rsp.images[0] = image;
+        res.send(rsp);
     });
 });
 
@@ -194,11 +207,11 @@ function saveImages(images)
     fs.writeFileSync(__dirname + '/data/saved_images.json', JSON.stringify(images));
 }
 
-function allocatePageId(pages)
+function allocateId(arr)
 {
     var ids = {};
-    pages.forEach(function(page) {
-        ids[page.id] = 1;
+    arr.forEach(function(elt) {
+        ids[elt.id] = 1;
     });
     var id = 1;
     while (id in ids)
