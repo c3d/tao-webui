@@ -5,7 +5,6 @@ Ext.define('TE.view.EditImageURL', {
     title: tr('Edit image'),
 
     width: 400,
-    layout: 'fit',
     autoShow: true,
     modal: true,
 
@@ -13,14 +12,21 @@ Ext.define('TE.view.EditImageURL', {
 
         this.items = [{
             xtype: 'form',
+            border: false,
+            bodyPadding: 5,
+
+            defaultType: 'textfield',
+            fieldDefaults: {
+                labelWidth: 100,
+                anchor: '100%'
+            },
+
             items: [{
-                xtype: 'textfield',
                 name: 'displayname',
                 fieldLabel: tr('Name')
             },{
-                xtype: 'textfield',
                 name: 'url',
-                fieldLabel: 'Image URL'
+                fieldLabel: tr('Image URL')
             }]
         }];
 
