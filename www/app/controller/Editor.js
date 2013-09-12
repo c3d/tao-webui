@@ -301,17 +301,14 @@ Ext.define('TE.controller.Editor', {
         var record = Ext.create(this.getImageModel(), { file: '', description: '' });
         var view = Ext.widget('teeditimagefile');
         view.setTitle(tr('Add image file'));
+        view.down('filefield').allowBlank = false;
         view.down('form').loadRecord(record);
     },
 
     editImage: function() {
         var record = this.selectedImage();
-        if (record.get('file').indexOf('://') === -1)
-        {
-            console.log('Don\'t know how to edit local file (yet)');
-            return;
-        }
-        var view = Ext.widget('teeditimageurl');
+        var isFile = (record.get('file').indexOf('://') === -1);
+        var view = Ext.widget(isFile ? 'teeditimagefile' : 'teeditimageurl');
         view.down('form').loadRecord(record);
     },
 
@@ -340,20 +337,28 @@ Ext.define('TE.controller.Editor', {
             form = formp.getForm(),
             store = this.getImagesStore();
 
-        if (form.isValid()) {
+        if (!form.isValid())
+            return;
+
+        if (formp.down('filefield').getValue().length !== 0) {
             form.submit({
                 url: '/image-upload',
                 success: function(form, action) {
                     win.close();
                     record.set(values);
                     record.set('file', action.result.file);
-                    store.add(record);
+                    if (record.get('id') === undefined)
+                        store.add(record);
                     store.sync();
                 },
                 failure: function(form, action) {
                     Ext.Msg.alert(tr('Upload failed'), action.result.msg);
                 }
             });
+        } else {
+            win.close();
+            record.set(values);
+            store.sync();
         }
     }
 });

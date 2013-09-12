@@ -29,7 +29,6 @@ Ext.define('TE.view.EditImageFile', {
                 xtype: 'filefield',
                 name: 'file',
                 fieldLabel: tr('File'),
-                allowBlank: false,
                 buttonText: tr('Browse...'),
 
                 listeners: {
@@ -47,7 +46,7 @@ Ext.define('TE.view.EditImageFile', {
         }];
 
         this.buttons = [{
-            text: tr('Upload'),
+            text: tr('OK'),
             action: 'upload'
         },{
             text: tr('Cancel'),

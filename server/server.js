@@ -121,17 +121,25 @@ app.post('/images', function (req, res) {
 
 app.put('/images/:id', function(req, res) {
     getData('images', function(err, images) {
-        var found = null;
+        var prevfile, found = null;
         var i = 0;
         for (i = 0; i < images.length; i++) {
             if (images[i].id == req.params.id) {
+                prevfile = images[i].file;
                 found = images[i] = req.body;
                 console.log('Image ' + found.id + ' updated');
                 break;
             }
         }
-        if (found)
+        if (found) {
             saveImages(images);
+            if (prevfile.indexOf('://') === -1) {
+                fs.unlink(IMAGES_DIR + '/' + prevfile, function(err) {
+                    console.log('Deleting file: ' + prevfile);
+                    res.send(err ? 500 : found);
+                });
+            }
+        }
         res.send(found ? found : 404);
     });
 });
