@@ -6,6 +6,7 @@ Ext.define('TE.controller.Editor', {
     models: [ 'Page', 'Image' ],
     views: [
         'Editor',
+        'EditImageFile',
         'EditImageURL',
         'PageList',
         'PageListContextMenu',
@@ -82,11 +83,17 @@ Ext.define('TE.controller.Editor', {
             'teimagelibrary button[action=addUrl]': {
                 click: this.addImageUrl
             },
+            'teimagelibrary button[action=addFile]': {
+                click: this.addImageFile
+            },
             'teimagelibrary button[action=edit]': {
                 click: this.editImage
             },
             'teeditimageurl button[action=save]': {
-                click: this.saveImage
+                click: this.saveImageUrl
+            },
+            'teeditimagefile button[action=upload]': {
+                click: this.uploadImage
             }
         });
     },
@@ -284,15 +291,22 @@ Ext.define('TE.controller.Editor', {
     },
 
     addImageUrl: function() {
-        var record = Ext.create(this.getImageModel(), { url: '', description: '' });
+        var record = Ext.create(this.getImageModel(), { file: '', description: '' });
         var view = Ext.widget('teeditimageurl');
-        view.setTitle(tr('Add image form URL'));
+        view.setTitle(tr('Add image from URL'));
+        view.down('form').loadRecord(record);
+    },
+
+    addImageFile: function() {
+        var record = Ext.create(this.getImageModel(), { file: '', description: '' });
+        var view = Ext.widget('teeditimagefile');
+        view.setTitle(tr('Add image file'));
         view.down('form').loadRecord(record);
     },
 
     editImage: function() {
         var record = this.selectedImage();
-        if (record.get('url').indexOf('://') === -1)
+        if (record.get('file').indexOf('://') === -1)
         {
             console.log('Don\'t know how to edit local file (yet)');
             return;
@@ -301,19 +315,45 @@ Ext.define('TE.controller.Editor', {
         view.down('form').loadRecord(record);
     },
 
-    saveImage: function(button) {
+    saveImageUrl: function(button) {
         var win = button.up('window'),
             form = win.down('form'),
             record = form.getRecord(),
             values = form.getValues(),
             store = this.getImagesStore();
         win.close();
+
         // Basic validation
-        if (values.url.trim() === '')
+        if (values.file.trim() === '')
             return;
         record.set(values);
         if (record.get('id') === undefined)
             store.add(record);
         store.sync();
+    },
+
+    uploadImage: function(button) {
+        var win = button.up('window'),
+            formp = win.down('form'),
+            record = formp.getRecord(),
+            values = formp.getValues(),
+            form = formp.getForm(),
+            store = this.getImagesStore();
+
+        if (form.isValid()) {
+            form.submit({
+                url: '/image-upload',
+                success: function(form, action) {
+                    win.close();
+                    record.set(values);
+                    record.set('file', action.result.file);
+                    store.add(record);
+                    store.sync();
+                },
+                failure: function(form, action) {
+                    Ext.Msg.alert(tr('Upload failed'), action.result.msg);
+                }
+            });
+        }
     }
 });

@@ -25,7 +25,7 @@ Ext.define('TE.view.EditImageURL', {
                 name: 'description',
                 fieldLabel: tr('Description')
             },{
-                name: 'url',
+                name: 'file',
                 fieldLabel: tr('Image URL')
             }]
         }];

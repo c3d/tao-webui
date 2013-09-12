@@ -14,13 +14,13 @@ Ext.define('TE.view.ImageLibrary', {
 
         columns: [{
             header: '',
-            dataIndex: 'url',
+            dataIndex: 'file',
             width: 100,
             renderer: function(v, meta, rec, rowIndex) {
-                var imgsrc = url = rec.get('url');
-                if (url.indexOf('://') === -1)
-                    imgsrc = '/imagelibrary/' + url;
-                return '<img src="' + imgsrc + '" width=\"80\" title=\"' + url + '\" />';
+                var imgsrc = file = rec.get('file');
+                if (file.indexOf('://') === -1)
+                    imgsrc = '/imagelibrary/' + file;
+                return '<img src="' + imgsrc + '" width=\"80\" title=\"' + file + '\" />';
             },
             sortable: false
         },{

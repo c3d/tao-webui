@@ -7,7 +7,7 @@ Ext.define('TE.model.Image', {
         // - a relative file name, used as-is in the generated Tao document but
         // not by the editor which will build a URL using a common convention
         // with the server (e.g.: 'file.png' => '/imagelibrary/file.png')
-        'url',
+        'file',
         'description'
     ],
 

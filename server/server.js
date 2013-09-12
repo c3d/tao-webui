@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 
+var IMAGES_DIR = __dirname + '/data/images';
+
 // Required to parse JSON body in REST requests
 app.use(express.bodyParser());
 
@@ -136,23 +138,52 @@ app.put('/images/:id', function(req, res) {
 
 app.delete('/images/:id', function(req, res) {
     getData('images', function(err, images) {
-        var found = false;
+        var found = undefined;
         for (var i = 0; i < images.length; i++) {
             if (images[i].id == req.params.id) {
-                console.log('Image ' + req.params.id + ' deleted (index ' + i + ')');
+                console.log('Image ' + req.params.id + ' deleted');
+                found = images[i];
                 images.splice(i, 1);
                 saveImages(images);
-                found = true;
             }
         }
-        res.send(found ? { success: true } : 404);
+        if (found) {
+            var success = { success: true };
+            if (found.file.indexOf('://') === -1) {
+                fs.unlink(IMAGES_DIR + '/' + found.file, function(err) {
+                    res.send(err ? 500 : success);
+                });
+            }
+            res.send(success);
+        } else {
+            res.send(404);
+        }
     });
 });
 
+app.post('/image-upload', function(req, res, next) {
+    // req.files.<name of form field>
+    if (typeof req.files.file === undefined)
+    {
+        res.send(400);
+        return;
+    }
+
+    findUnusedImageFileName(req.files.file.name, function(err, name) {
+        if (err)
+            throw err;
+        fs.rename(req.files.file.path, IMAGES_DIR + '/' + name, function(err) {
+                if (err)
+                    throw err;
+                res.send(JSON.stringify({ success: true, file: name }));
+            }
+        );
+    });
+});
 
 // Accessing the image library
 
-app.use('/imagelibrary', express.static(__dirname + '/data/images'));
+app.use('/imagelibrary', express.static(IMAGES_DIR));
 
 // Serve static files
 
@@ -219,6 +250,21 @@ function allocateId(arr)
     return id;
 }
 
+// If file name exists in image directory, generate modified name. Otherwise keep name.
+// Call callback(err, unused_name)
+function findUnusedImageFileName(name, callback)
+{
+    fs.exists(IMAGES_DIR + '/' + name, function(exists) {
+        if (exists) {
+            var dot = name.indexOf('.');
+            var left = name.substring(0, dot);
+            var right = name.substring(dot + 1);
+            findUnusedImageFileName(left + '@.' + right, callback);
+        } else {
+            callback(undefined, name);
+        }
+    });
+}
 
 function writeTaoDocument(pages)
 {
