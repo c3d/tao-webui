@@ -1,10 +1,10 @@
 [
-{ "id":"1", "url":"https://www.google.com/images/srpr/logo4w.png", "displayname":"The Google logo"},
-{ "id":"2", "url":"http://rndimg.com/ImageStore/OilPaintingBlue/640x480_OilPaintingBlue_0c0dcf66dc944ff5a5cdc8f26f09f2ab.jpg", "displayname":"A 640x480 blue background"},
-{ "id":"3", "url":"http://rndimg.com/ImageStore/OilPaintingRed/800x600_OilPaintingRed_ab9f23f8251748b59fb78864d2b96c5e.jpg", "displayname":"A 800x600 red background"},
-{ "id":"4", "url":"http://rndimg.com/ImageStore/OilPaintingOrange/700x250_OilPaintingOrange_b03fae4bb7554693a94699c8e71156fe.jpg", "displayname":"A 700x250 orange background"},
-{ "id":"5", "url":"Lenna.png", "displayname":"The well-known Len(n)a" },
-{ "id":"6", "url":"small.png", "displayname":"A small picture" },
-{ "id":"7", "url":"big.png", "displayname":"A big picture" }
+{ "id":"1", "url":"https://www.google.com/images/srpr/logo4w.png", "description":"The Google logo"},
+{ "id":"2", "url":"http://rndimg.com/ImageStore/OilPaintingBlue/640x480_OilPaintingBlue_0c0dcf66dc944ff5a5cdc8f26f09f2ab.jpg", "description":"A 640x480 blue background"},
+{ "id":"3", "url":"http://rndimg.com/ImageStore/OilPaintingRed/800x600_OilPaintingRed_ab9f23f8251748b59fb78864d2b96c5e.jpg", "description":"A 800x600 red background"},
+{ "id":"4", "url":"http://rndimg.com/ImageStore/OilPaintingOrange/700x250_OilPaintingOrange_b03fae4bb7554693a94699c8e71156fe.jpg", "description":"A 700x250 orange background"},
+{ "id":"5", "url":"Lenna.png", "description":"The well-known Len(n)a" },
+{ "id":"6", "url":"small.png", "description":"A small picture" },
+{ "id":"7", "url":"big.png", "description":"A big picture" }
 ]
   

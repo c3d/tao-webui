@@ -268,7 +268,7 @@ Ext.define('TE.controller.Editor', {
         var box = Ext.create(Ext.window.MessageBox);
         box.confirm(tr('Delete image'),
                     tr('Are you sure you want to delete this image?') +
-                    '<br><br>' + image.get('displayname'),
+                    '<br><br>' + image.get('description'),
                     function(button) {
                         if (button === 'yes') {
                             var store = me.getImagesStore();
@@ -284,7 +284,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     addImageUrl: function() {
-        var record = Ext.create(this.getImageModel(), { url: '', displayname: '' });
+        var record = Ext.create(this.getImageModel(), { url: '', description: '' });
         var view = Ext.widget('teeditimageurl');
         view.setTitle(tr('Add image form URL'));
         view.down('form').loadRecord(record);

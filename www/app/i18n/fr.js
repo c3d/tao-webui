@@ -32,7 +32,7 @@ function tr(key)
         'Image library...': 'Images...',
         'Add URL...': 'Ajouter une URL...',
         'Add file...': 'Ajouter un fichier...',
-        'Name': 'Nom',
+        'Description': null,
         'Delete image': 'Supprimer une image',
         'Are you sure you want to delete this image?': 'Voulez-vous vraiment supprimer cette image ?',
 

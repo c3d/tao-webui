@@ -24,9 +24,9 @@ Ext.define('TE.view.ImageLibrary', {
             },
             sortable: false
         },{
-            header: tr('Name'),
+            header: tr('Description'),
             flex: 1,
-            dataIndex: 'displayname',
+            dataIndex: 'description',
             sortable: false
         }],
 
