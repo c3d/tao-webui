@@ -4,7 +4,17 @@
     <title>Tao Editor Prototype</title>
     <link rel="stylesheet" type="text/css" href="ext-4/resources/css/ext-all-neptune.css">
     <link rel="stylesheet" type="text/css" href="app.css">
-    <script type="text/javascript" src="ext-4/ext-debug.js"></script>
+    <script type="text/javascript">
+        function ErrorHandler() {
+            document.write('<img src="http://www.javascriptkit.com/Wallace.gif"/><p>' +
+            'Cannot load ExtJS!<p>Either you did not download the ExtJS SDK, ' +
+            'or you did not extract it to the expected location.<p>Here is how to fix this:<p>' +
+            '<ul><li> Download ExtJS 4.2.1. from <a href="http://www.sencha.com/products/extjs/download/ext-js-4.2.1/2281"> ' +
+            'this link</a><li> Extract it under ./www/ext-4 (or make a symbolic link)<li> Reload this page' +
+            '<li> Enjoy ;-)</ul>');
+        }
+    </script>
+    <script type="text/javascript" src="ext-4/ext-debug.js" onerror="ErrorHandler()"></script>
     <!-- Load translations (Ext and application) -->
     <!-- <script type="text/javascript" src="ext-4/locale/ext-lang-fr.js"></script> -->
     <!-- <script type="text/javascript" src="app/i18n/fr.js" charset="UTF-8"></script> -->
