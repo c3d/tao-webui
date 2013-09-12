@@ -307,12 +307,13 @@ Ext.define('TE.controller.Editor', {
             record = form.getRecord(),
             values = form.getValues(),
             store = this.getImagesStore();
-        record.set(values);
         win.close();
+        // Basic validation
+        if (values.url.trim() === '')
+            return;
+        record.set(values);
         if (record.get('id') === undefined)
-        {
             store.add(record);
-        }
         store.sync();
     }
 });
