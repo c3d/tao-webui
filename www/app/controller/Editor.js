@@ -284,8 +284,9 @@ Ext.define('TE.controller.Editor', {
     },
 
     addImageUrl: function() {
-        var record = Ext.create(this.getImageModel(), { url: 'url', displayname: 'disp name' });
+        var record = Ext.create(this.getImageModel(), { url: '', displayname: '' });
         var view = Ext.widget('teeditimageurl');
+        view.setTitle(tr('Add image form URL'));
         view.down('form').loadRecord(record);
     },
 
