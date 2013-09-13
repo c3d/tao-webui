@@ -370,7 +370,7 @@ Ext.define('TE.controller.Editor', {
             field = win.targetField,
             image = this.selectedImage();
         field.setValue(image.get('file'));
-        field.focus(); // So that automatic save gets triggered when field loses focus
         win.close();
+        this.application.getController('PageControllerBase').updatePage();
     }
 });
