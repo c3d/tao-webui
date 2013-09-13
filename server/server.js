@@ -3,6 +3,9 @@ var app = express();
 var fs = require('fs');
 
 var IMAGES_DIR = __dirname + '/data/images';
+// DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
+// => each time the server is restarted the configuration is the same
+var preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
 
 // Required to parse JSON body in REST requests
 app.use(express.bodyParser());
@@ -133,14 +136,16 @@ app.put('/images/:id', function(req, res) {
         }
         if (found) {
             saveImages(images);
-            if (prevfile.indexOf('://') === -1) {
-                fs.unlink(IMAGES_DIR + '/' + prevfile, function(err) {
-                    console.log('Deleting file: ' + prevfile);
+            if (prevfile.indexOf('://') === -1 && prevfile !== found.file) {
+                deleteImageFile(prevfile, function (err) {
                     res.send(err ? 500 : found);
                 });
+            } else {
+                res.send(found);
             }
-        }
-        res.send(found ? found : 404);
+        } else {
+           res.send(404);
+    }
     });
 });
 
@@ -156,13 +161,9 @@ app.delete('/images/:id', function(req, res) {
             }
         }
         if (found) {
-            var success = { success: true };
-            if (found.file.indexOf('://') === -1) {
-                fs.unlink(IMAGES_DIR + '/' + found.file, function(err) {
-                    res.send(err ? 500 : success);
-                });
-            }
-            res.send(success);
+            deleteImageFile(found.file, function(err) {
+                res.send(err ? 500 : { success: true })
+            })
         } else {
             res.send(404);
         }
@@ -272,6 +273,23 @@ function findUnusedImageFileName(name, callback)
             callback(undefined, name);
         }
     });
+}
+
+// If name is a file in IMAGES_DIR and is not in the 'preserve' list, delete it
+function deleteImageFile(name, callback)
+{
+    if (name.indexOf('://') === -1) {
+        if (preserve_files.indexOf(name) !== -1) {
+            console.log('Debug: file ' + name + ' not deleted (in preserve_files)');
+            callback();
+        } else {
+            console.log('Delete image file: ' + name);
+            fs.unlink(IMAGES_DIR + '/' + name, callback);
+        }
+    } else {
+        // name is a URL, nothing to do
+        callback();
+    }
 }
 
 function writeTaoDocument(pages)
