@@ -21,7 +21,7 @@ Ext.define('TE.view.properties.blueclaire.PictureSlide', {
                         fieldLabel: tr('Page name')
                     },
                     {
-                        xtype: 'textfield',
+                        xtype: 'teimagepickerfield',
                         name: 'picture',
                         fieldLabel: tr('Picture')
                     },

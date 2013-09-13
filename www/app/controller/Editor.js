@@ -8,6 +8,7 @@ Ext.define('TE.controller.Editor', {
         'Editor',
         'EditImageFile',
         'EditImageURL',
+        'ImagePickerField',
         'PageList',
         'PageListContextMenu',
         'PageTemplateContextMenu',
@@ -27,7 +28,8 @@ Ext.define('TE.controller.Editor', {
         { ref: 'pageDeleteBtn', selector: 'pagelist button[action=pageDelete]' },
         { ref: 'imageLibraryGrid', selector: 'teimagelibrary gridpanel' },
         { ref: 'imageDeleteBtn', selector: 'teimagelibrary button[action=delete]' },
-        { ref: 'imageEditBtn', selector: 'teimagelibrary button[action=edit]' }
+        { ref: 'imageEditBtn', selector: 'teimagelibrary button[action=edit]' },
+        { ref: 'imageChooseBtn', selector: 'teimagelibrary button[action=choose]' }
     ],
 
     init: function() {
@@ -74,7 +76,7 @@ Ext.define('TE.controller.Editor', {
                 click: this.showImageLibrary
             },
             'teimagelibrary gridpanel': {
-                select: this.libraryImageClicked,
+                select: this._updateImageLibraryButtons,
                 itemdblclick: this.editImage
             },
             'teimagelibrary button[action=delete]': {
@@ -85,6 +87,9 @@ Ext.define('TE.controller.Editor', {
             },
             'teimagelibrary button[action=addFile]': {
                 click: this.addImageFile
+            },
+            'teimagelibrary button[action=choose]': {
+                click: this.chooseImage
             },
             'teimagelibrary button[action=edit]': {
                 click: this.editImage
@@ -259,11 +264,6 @@ Ext.define('TE.controller.Editor', {
         Ext.widget('teimagelibrary');
     },
 
-    libraryImageClicked: function() {
-        this.getImageDeleteBtn().setDisabled(false);
-        this.getImageEditBtn().setDisabled(false);
-    },
-
     selectedImage: function() {
         return this.getImageLibraryGrid().getSelectionModel().getSelection()[0];
     },
@@ -287,7 +287,10 @@ Ext.define('TE.controller.Editor', {
     },
 
     _updateImageLibraryButtons: function() {
-        this.getImageDeleteBtn().setDisabled(this.selectedImage() === undefined);
+        var disable = this.selectedImage() === undefined;
+        this.getImageDeleteBtn().setDisabled(disable);
+        this.getImageEditBtn().setDisabled(disable);
+        this.getImageChooseBtn().setDisabled(disable);
     },
 
     addImageUrl: function() {
@@ -360,5 +363,14 @@ Ext.define('TE.controller.Editor', {
             record.set(values);
             store.sync();
         }
+    },
+
+    chooseImage: function(button) {
+        var win = button.findParentByType('teimagelibrary'),
+            field = win.targetField,
+            image = this.selectedImage();
+        field.setValue(image.get('file'));
+        field.focus(); // So that automatic save gets triggered when field loses focus
+        win.close();
     }
 });
