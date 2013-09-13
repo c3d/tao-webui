@@ -104,9 +104,9 @@ Ext.define('TE.controller.Editor', {
     },
 
     loadThemes: function() {
-        this.getThemePanel().add(Ext.create('TE.view.blueclaire.Theme'));
-        this.getThemePanel().add(Ext.create('TE.view.vellum.Theme'));
-        this.getThemePanel().add(Ext.create('TE.view.white.Theme'));
+        this.getThemePanel().add(Ext.create('TE.themes.blueclaire.view.Theme'));
+        this.getThemePanel().add(Ext.create('TE.themes.vellum.view.Theme'));
+        this.getThemePanel().add(Ext.create('TE.themes.white.view.Theme'));
     },
 
     selectDefaultTheme: function() {
@@ -215,7 +215,8 @@ Ext.define('TE.controller.Editor', {
         var tmpl = this.getPageTemplateContextMenu().getPageTemplate();
         var model = tmpl.getModelClassName();
         var page = Ext.create(model);
-        page.set('kind', model.replace('TE.model.', ''));
+        // Example: TE.themes.blueclaire.model.PictureSlide -> blueclaire.PictureSlide
+        page.set('kind', model.replace('TE.themes.', '').replace('.model', ''));
         page.set('name', tr('New page'));
         var store = this.getPagesStore();
         store.add(page);
