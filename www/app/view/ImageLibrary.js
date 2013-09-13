@@ -5,6 +5,7 @@ Ext.define('TE.view.ImageLibrary', {
     title: tr('Image library'),
     layout: 'fit',
     autoShow: true,
+    modal: true,
     showChooseButton: false,
     targetField: null,
 
