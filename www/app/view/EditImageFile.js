@@ -40,6 +40,11 @@ Ext.define('TE.view.EditImageFile', {
                         var desc = this.up().down('#descfield');
                         if (desc.getValue().length === 0)
                             desc.setValue(node.value);
+                    },
+                    afterrender: function(cmp) {
+                        cmp.fileInputEl.set({
+                            accept: 'image/*'
+                        });
                     }
                 }
             }]
