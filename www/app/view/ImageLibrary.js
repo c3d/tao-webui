@@ -28,6 +28,14 @@ Ext.define('TE.view.ImageLibrary', {
                 },
                 sortable: false
             },{
+                header: tr('Type'),
+                dataIndex: 'file',
+                width: 60,
+                sortable: false,
+                renderer: function(v, meta, rec, rowIndex) {
+                    return (file.indexOf('://') === -1) ? tr('File') : tr('URL');
+                }
+            },{
                 header: tr('Description'),
                 flex: 1,
                 dataIndex: 'description',
