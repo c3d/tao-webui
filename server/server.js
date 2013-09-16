@@ -2,7 +2,9 @@ var express = require('express');
 var app = express();
 var fs = require('fs');
 
-var IMAGES_DIR = __dirname + '/data/images';
+var DOC_DIR = __dirname + '/data';
+
+var IMAGES_DIR = DOC_DIR + '/images';
 // DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
 // => each time the server is restarted the configuration is the same
 var preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
@@ -181,12 +183,27 @@ app.post('/image-upload', function(req, res, next) {
     findUnusedImageFileName(req.files.file.name, function(err, name) {
         if (err)
             throw err;
-        fs.rename(req.files.file.path, IMAGES_DIR + '/' + name, function(err) {
-                if (err)
-                    throw err;
-                res.send(JSON.stringify({ success: true, file: name }));
+
+        var rename = function() {
+            fs.rename(req.files.file.path, IMAGES_DIR + '/' + name, function(err) {
+                    if (err)
+                        throw err;
+                    res.send(JSON.stringify({ success: true, file: name }));
+                }
+            );
+        }
+        fs.exists(IMAGES_DIR, function(exists) {
+            if (exists) {
+                rename();
+            } else {
+                console.log('Creating ' + IMAGES_DIR);
+                fs.mkdir(IMAGES_DIR, function(err) {
+                    if (err)
+                        throw err;
+                    rename();
+                });
             }
-        );
+        })
     });
 });
 
@@ -219,32 +236,44 @@ function getData(name, callback)
     if (cached[name] !== null) {
         callback(null, cached[name]);
     } else {
-        var file = __dirname + '/data/' + name + '.json';
-        fs.readFile(file, 'utf8', function (err, data) {
-            if (err) {
-                console.log('File read error: ' + err);
-                callback(err);
-            } else {
-                if (data.trim().length === 0)
-                    data = '[]';
-                cached[name] = JSON.parse(data);
+        var file = DOC_DIR + '/' + name + '.json';
+        fs.exists(file, function(exists) {
+            if (!exists) {
+                console.log(file + ' does not exist');
+                cached[name] = [];
                 callback(null, cached[name]);
+            } else {
+                fs.readFile(file, 'utf8', function (err, data) {
+                    if (err) {
+                        console.log('File read error: ' + err);
+                        callback(err);
+                    } else {
+                        if (data.trim().length === 0)
+                            data = '[]';
+                        cached[name] = JSON.parse(data);
+                        callback(null, cached[name]);
+                    }
+                });
             }
-        });
+        })
     }
 }
 
 function save(pages)
 {
+    var path = DOC_DIR + '/saved_pages.json';
+    console.log('Saving ' + path);
     cached.pages = pages;
-    fs.writeFileSync(__dirname + '/data/saved_pages.json', JSON.stringify(pages));
+    fs.writeFileSync(path, JSON.stringify(pages));
     writeTaoDocument(pages);
 }
 
 function saveImages(images)
 {
+    var path = DOC_DIR + '/saved_images.json';
+    console.log('Saving ' + path);
     cached.images = images;
-    fs.writeFileSync(__dirname + '/data/saved_images.json', JSON.stringify(images));
+    fs.writeFileSync(path, JSON.stringify(images));
 }
 
 function allocateId(arr)
@@ -325,7 +354,7 @@ function writeTaoDocument(pages)
         ddd += getTmpl(page).generate(page);
     }
 
-    var file = __dirname + '/data/doc.ddd';
+    var file = DOC_DIR + '/doc.ddd';
     fs.writeFileSync(file, ddd);
 
     var err = '';
