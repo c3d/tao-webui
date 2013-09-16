@@ -1,8 +1,14 @@
+// Usage
+// node server.js [path/to/document/directory]
+
 var express = require('express');
 var app = express();
 var fs = require('fs');
 
-var DOC_DIR = __dirname + '/data';
+var DOC_DIR = process.argv[2] || __dirname + '/data';
+if (DOC_DIR[0] !== '/')
+    DOC_DIR = __dirname + '/' + DOC_DIR;
+console.log('Document directory: ' + DOC_DIR);
 
 var IMAGES_DIR = DOC_DIR + '/images';
 // DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
