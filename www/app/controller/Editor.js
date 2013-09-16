@@ -42,6 +42,7 @@ Ext.define('TE.controller.Editor', {
             },
             'pagetemplate': {
                 click: this.pageTemplateClicked,
+                dblclick: this.newPageFromTemplate,
                 contextmenu: this.showPageTemplateContextMenu
             },
             'theme': {
@@ -212,7 +213,10 @@ Ext.define('TE.controller.Editor', {
     },
 
     newPageMenuItemClicked: function() {
-        var tmpl = this.getPageTemplateContextMenu().getPageTemplate();
+        this.newPageFromTemplate(this.getPageTemplateContextMenu().getPageTemplate());
+    },
+
+    newPageFromTemplate: function(tmpl) {
         var model = tmpl.getModelClassName();
         var page = Ext.create(model);
         // Example: TE.themes.blueclaire.model.PictureSlide -> blueclaire.PictureSlide
