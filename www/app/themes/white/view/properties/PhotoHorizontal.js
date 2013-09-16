@@ -1,4 +1,4 @@
-Ext.define('TE.view.properties.white.PhotoHorizontal', {
+Ext.define('TE.themes.white.view.properties.PhotoHorizontal', {
     extend: 'Ext.Container',
 
     initComponent: function() {
