@@ -17,7 +17,7 @@ Ext.define('TE.view.ImageLibrary', {
             store: 'Images',
 
             columns: [{
-                header: '',
+                header: tr('Preview'),
                 dataIndex: 'file',
                 width: 100,
                 renderer: function(v, meta, rec, rowIndex) {

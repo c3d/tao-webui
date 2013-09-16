@@ -34,6 +34,7 @@ function tr(key)
         'Add image from URL': 'Ajouter une image (URL)',
         'Add file...': 'Ajouter un fichier...',
         'Add image file': 'Ajouter un fichier image',
+        'Preview': 'Aperçu',
         'Description': null,
         'Type': null,
         'File': 'Fichier',
