@@ -6,6 +6,7 @@ var app = express();
 var fs = require('fs');
 var httpProxy = require('http-proxy');
 var url = require('url');
+var http = require('http');
 
 var DOC_DIR = process.argv[2] || __dirname + '/data';
 if (DOC_DIR[0] !== '/')
@@ -227,15 +228,17 @@ app.use(express.static( __dirname + '/../www'));
 
 var THEME_BASE_URL = {
     // Example:
-    // Forward /app/themes/mytheme/* to http://host/some/path/*
-    'mytheme': 'http://host/some/path'
+    // - (Client files) Forward incoming HTTP requests for /app/themes/blueclaire/*
+    //   to http://localhost/~jerome/my_blue/*
+    // - (Server files) GET .ddd generation code from:
+    //   http://localhost/~jerome/my_blue/server/<PageName>.js
+    //'blueclaire': 'http://localhost/~jerome/my_blue'
 };
 
 var proxy = new httpProxy.RoutingProxy();
 Object.keys(THEME_BASE_URL).forEach(function(theme) {
 
-    console.log('Proxying rule: theme \'' + theme + '\' (/app/themes/' +
-                theme + '/*) is at: ' + THEME_BASE_URL[theme]);
+    console.log('Remote theme \'' + theme + '\' at: ' + THEME_BASE_URL[theme]);
 
     app.use('/app/themes/' + theme, function(req, res) {
         var dest = url.parse(THEME_BASE_URL[theme]);
@@ -354,23 +357,114 @@ function deleteImageFile(name, callback)
     }
 }
 
+var exporter = [];
+var loadInProgress = 0;
+var forceReload = true; // Do not reuse files from cache after restart
 function writeTaoDocument(pages)
 {
     var missing = [];
     var getTmpl = function(page)
     {
-        // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
-        var modname = './export/' + page.kind.replace('.', '/');
-        var modfile = modname + '.js';
-        if (fs.existsSync(modfile) === false)
+        var kind = page.kind;
+        return exporter[kind] || (exporter[kind] = loadExporter(kind));
+
+        function loadExporter(kind)
         {
-            if (missing.indexOf(page.kind) == -1)
-                missing.push(page.kind);
-            var empty = function() { return ''; }
-            return { header: empty, generate: empty };
+            // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
+            var modname = './export/' + kind.replace('.', '/');
+            var modfile = modname + '.js';
+            if (fs.existsSync(modfile) === false)
+                return loadExporterFromCache(kind);
+            console.log('Loading ' + modname);
+            return require(modname);
         }
 
-        return require(modname);
+        function loadExporterFromCache(kind)
+        {
+            var modname = './export_cache/' + kind.replace('.', '/');
+            var modfile = modname + '.js';
+            if (fs.existsSync(modfile) === false || forceReload)
+            {
+                function error(msg) {
+                    if (msg)
+                        console.log(msg);
+                    if (missing.indexOf(kind) == -1)
+                        missing.push(kind);
+                    var empty = function() { return ''; }
+                    return { header: empty, generate: empty };
+                }
+                var dot = kind.indexOf('.');
+                var theme = kind.substring(0, dot);
+                if (THEME_BASE_URL.hasOwnProperty(theme))
+                {
+                    var file = kind.substring(dot + 1) + '.js';
+                    var dst = THEME_BASE_URL[theme] + '/server/' + file;
+                    var dstu = url.parse(dst);
+                    console.log('Fetching ' + dst);
+
+                    function createDir(dir)
+                    {
+                        if (!fs.existsSync(dir))
+                        {
+                            console.log('Creating ' + dir);
+                            fs.mkdirSync(dir);
+                        }
+                        return true;
+                    }
+                    var cachedir = __dirname + '/export_cache';
+                    if (!createDir(cachedir))
+                        return;
+                    var themedir = cachedir + '/' + theme;
+                    if (!createDir(themedir))
+                        return;
+                    var filepath = themedir + '/' + file;
+
+                    function beginLoad()
+                    {
+                        loadInProgress++;
+                    }
+                    function endLoad()
+                    {
+                        if (--loadInProgress === 0) {
+                            writeTaoDocument(pages);
+                        }
+                    }
+                    beginLoad();
+                    (function (buffer, dstpath, modname) {
+                        http.get({ host: dstu.host, port: dstu.port || 80, path: dstu.path },
+                            function(res) {
+                                res.on('data', function(chunk) {
+                                    buffer += chunk;
+                                });
+                                res.on('end', function() {
+                                    console.log('Saving ' + dstpath);
+                                    fs.writeFile(dstpath, buffer, function(err) {
+                                        if (err) {
+                                            console.log(err);
+                                            endLoad();
+                                            return;
+                                        }
+                                        try {
+                                            exporter[kind] = require(modname);
+                                        } catch (e) {
+                                            console.log('require() failed');
+                                            return;
+                                        }
+                                        console.log('Exporter for ' + kind + ' loaded');
+                                        endLoad();
+                                    });
+                                })
+                        }).on('error', function(e) {
+                            console.log('Download failed [' + dst + ']');
+                            endLoad();
+                        });
+                    }('', filepath, modname));
+                    return error('Download in progress');
+                }
+                return error('No local file nor remote URL for ' + kind);
+            }
+            return require(modname);
+        }
     }
 
     var ddd = '';
