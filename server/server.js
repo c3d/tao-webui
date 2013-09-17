@@ -4,6 +4,8 @@
 var express = require('express');
 var app = express();
 var fs = require('fs');
+var httpProxy = require('http-proxy');
+var url = require('url');
 
 var DOC_DIR = process.argv[2] || __dirname + '/data';
 if (DOC_DIR[0] !== '/')
@@ -220,6 +222,31 @@ app.use('/imagelibrary', express.static(IMAGES_DIR));
 // Serve static files
 
 app.use(express.static( __dirname + '/../www'));
+
+// Proxy themes not available locally
+
+var THEME_BASE_URL = {
+    // Example:
+    // Forward /app/themes/mytheme/* to http://host/some/path/*
+    'mytheme': 'http://host/some/path'
+};
+
+var proxy = new httpProxy.RoutingProxy();
+Object.keys(THEME_BASE_URL).forEach(function(theme) {
+
+    console.log('Proxying rule: theme \'' + theme + '\' (/app/themes/' +
+                theme + '/*) is at: ' + THEME_BASE_URL[theme]);
+
+    app.use('/app/themes/' + theme, function(req, res) {
+        var dest = url.parse(THEME_BASE_URL[theme]);
+        req.url = dest.pathname + '/' + req.url;
+        req.headers.host = dest.host;
+        proxy.proxyRequest(req, res, {
+            host: dest.host,
+            port: dest.port || 80
+        })
+    });
+});
 
 // Start server
 

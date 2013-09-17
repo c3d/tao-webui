@@ -2,5 +2,7 @@
 
 #export PORT=3000
 cd server
-[ -e node_modules ] || npm install express htmlparser ent
+for m in express htmlparser ent http-proxy ; do
+  [ -e node_modules/$m ] || npm install $m
+done
 node server.js
