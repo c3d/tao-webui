@@ -1,5 +1,12 @@
 var esc = require('../../util').escape;
-var header = require('./common.js').header;
+
+function header(ctx)
+{
+    if (ctx.hasOwnProperty('blueclaire'))
+        return '';
+    ctx['blueclaire'] = 1;
+    return 'import BlueClaireTheme\n';
+}
 
 function esc_html(txt)
 {
@@ -25,6 +32,6 @@ function generate(page)
 }
 
 module.exports = {
-	header:   header,
+    header:   header,
     generate: generate
 }

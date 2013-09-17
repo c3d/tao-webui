@@ -1,6 +1,13 @@
 var esc = require('../../util').escape;
 var htmlToSlideContent = require('../../util').htmlToSlideContent;
-var header = require('./common.js').header;
+
+function header(ctx)
+{
+    if (ctx.hasOwnProperty('blueclaire'))
+        return '';
+    ctx['blueclaire'] = 1;
+    return 'import BlueClaireTheme\n';
+}
 
 function esc_html(txt)
 {
