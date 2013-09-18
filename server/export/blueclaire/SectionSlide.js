@@ -1,4 +1,4 @@
-var esc = require('../../util').escape;
+var u = require(__dirname + '/../../util');
 
 function header(ctx)
 {
@@ -13,17 +13,17 @@ function generate(page)
     var empty = true;
     var ddd = '';
     ddd += 'theme "BlueClaire"\n'
-    ddd += 'section_slide "' + esc(page.name) + '",\n';
+    ddd += 'section_slide "' + u.escape(page.name) + '",\n';
     if (page.title != '')
     {
-    	ddd += '    title\n';
-    	ddd += '        text "' + esc(page.title) + '"\n';
+        ddd += '    title\n';
+        ddd += '        text "' + u.escape(page.title) + '"\n';
         empty = false;
     }
     if (page.subtitle != '')
     {
-    	ddd += '    subtitle\n';
-    	ddd += '        text "' + esc(page.subtitle) + '"\n';
+        ddd += '    subtitle\n';
+        ddd += '        text "' + u.escape(page.subtitle) + '"\n';
         empty = false;
     }
     if (empty)
@@ -32,6 +32,6 @@ function generate(page)
 }
 
 module.exports = {
-	header:   header,
+    header:   header,
     generate: generate
 }

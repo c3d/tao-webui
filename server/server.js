@@ -7,16 +7,54 @@ var fs = require('fs');
 var httpProxy = require('http-proxy');
 var url = require('url');
 var http = require('http');
+var path = require('path');
 
-var DOC_DIR = process.argv[2] || __dirname + '/data';
-if (DOC_DIR[0] !== '/')
-    DOC_DIR = __dirname + '/' + DOC_DIR;
-console.log('Document directory: ' + DOC_DIR);
+var VERBOSE = false;
+
+// Process command line
+var argv = process.argv;
+for (var i = 2; i < argv.length; i++)
+{
+    var arg = argv[i];
+    if (arg === '-h') {
+        console.log('Usage: ' + argv[0] + ' ' + argv[1] +
+                    ' [-v] [/path/to/document/directory]');
+        console.log('\nOptions:');
+        console.log('    -v    Verbose output');
+        return;
+    } else if (arg === '-v') {
+        VERBOSE = true;
+    } else if (arg.indexOf('-') === 0) {
+        console.log('Unknown option: ' + arg);
+        return;
+    } else if (arg.trim().length === 0) {
+        // Ignored
+    } else {
+        DOC_DIR = path.resolve(arg);
+    }
+}
+
+var DEFAULT_DOC_DIR = path.resolve(__dirname + '/data');
+var DOC_DIR = DOC_DIR || DEFAULT_DOC_DIR;
+verbose('Document directory: ' + DOC_DIR);
+
+// TEST mode is enabled when no document path (or the path to the test document)
+// is given on the command line.
+// - A predefined document is available when the server is started.
+// - Any editing operation won't be destructive, i.e., the document
+//   will be available in its initial state when the server is restarted.
+var TEST_MODE = (DOC_DIR === DEFAULT_DOC_DIR);
+if (TEST_MODE) {
+    verbose('Test mode is ON (default document will be preserved on restart)');
+}
 
 var IMAGES_DIR = DOC_DIR + '/images';
-// DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
-// => each time the server is restarted the configuration is the same
-var preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
+var preserve_files = [];
+if (TEST_MODE) {
+    // DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
+    // => each time the server is restarted the configuration is the same
+    preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
+}
 
 // Required to parse JSON body in REST requests
 app.use(express.bodyParser());
@@ -63,7 +101,7 @@ app.post('/pages', function (req, res) {
             delete page.idx;
         }
         pages.splice(idx, 0, page);
-        console.log('Page ' + page.id + ' created (index ' + idx + ')');
+        verbose('Page ' + page.id + ' created (index ' + idx + ')');
         save(pages);
         var rsp = { success: true, pages: [] };
         rsp.pages[0] = page;
@@ -78,7 +116,7 @@ app.put('/pages/:id', function(req, res) {
         for (i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
                 found = pages[i] = req.body;
-                console.log('Page ' + found.id + ' updated');
+                verbose('Page ' + found.id + ' updated');
                 break;
             }
         }
@@ -88,7 +126,7 @@ app.put('/pages/:id', function(req, res) {
             pages.splice(i, 1);
             // - insert at new position
             pages.splice(found.idx, 0, found);
-            console.log('Page ' + found.id + ' moved from index ' + i + ' to index ' + found.idx);
+            verbose('Page ' + found.id + ' moved from index ' + i + ' to index ' + found.idx);
             // - no need to keep the idx attribute in the page
             delete found.idx;
         }
@@ -103,7 +141,7 @@ app.delete('/pages/:id', function(req, res) {
         var found = false;
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
-                console.log('Page ' + req.params.id + ' deleted (index ' + i + ')');
+                verbose('Page ' + req.params.id + ' deleted (index ' + i + ')');
                 pages.splice(i, 1);
                 save(pages);
                 found = true;
@@ -125,7 +163,7 @@ app.post('/images', function (req, res) {
         var image = req.body;
         image.id = allocateId(images);
         images.push(image);
-        console.log('Image ' + image.id + ' created');
+        verbose('Image ' + image.id + ' created');
         saveImages(images);
         var rsp = { success: true, images: [] };
         rsp.images[0] = image;
@@ -141,7 +179,7 @@ app.put('/images/:id', function(req, res) {
             if (images[i].id == req.params.id) {
                 prevfile = images[i].file;
                 found = images[i] = req.body;
-                console.log('Image ' + found.id + ' updated');
+                verbose('Image ' + found.id + ' updated');
                 break;
             }
         }
@@ -165,7 +203,7 @@ app.delete('/images/:id', function(req, res) {
         var found = undefined;
         for (var i = 0; i < images.length; i++) {
             if (images[i].id == req.params.id) {
-                console.log('Image ' + req.params.id + ' deleted');
+                verbose('Image ' + req.params.id + ' deleted');
                 found = images[i];
                 images.splice(i, 1);
                 saveImages(images);
@@ -205,7 +243,7 @@ app.post('/image-upload', function(req, res, next) {
             if (exists) {
                 rename();
             } else {
-                console.log('Creating ' + IMAGES_DIR);
+                verbose('Creating ' + IMAGES_DIR);
                 fs.mkdir(IMAGES_DIR, function(err) {
                     if (err)
                         throw err;
@@ -238,7 +276,7 @@ var THEME_BASE_URL = {
 var proxy = new httpProxy.RoutingProxy();
 Object.keys(THEME_BASE_URL).forEach(function(theme) {
 
-    console.log('Remote theme \'' + theme + '\' at: ' + THEME_BASE_URL[theme]);
+    verbose('Remote theme \'' + theme + '\' at: ' + THEME_BASE_URL[theme]);
 
     app.use('/app/themes/' + theme, function(req, res) {
         var dest = url.parse(THEME_BASE_URL[theme]);
@@ -298,7 +336,7 @@ function getData(name, callback)
 function save(pages)
 {
     var path = DOC_DIR + '/saved_pages.json';
-    console.log('Saving ' + path);
+    verbose('Saving ' + path);
     cached.pages = pages;
     fs.writeFileSync(path, JSON.stringify(pages));
     writeTaoDocument(pages);
@@ -307,7 +345,7 @@ function save(pages)
 function saveImages(images)
 {
     var path = DOC_DIR + '/saved_images.json';
-    console.log('Saving ' + path);
+    verbose('Saving ' + path);
     cached.images = images;
     fs.writeFileSync(path, JSON.stringify(images));
 }
@@ -345,10 +383,10 @@ function deleteImageFile(name, callback)
 {
     if (name.indexOf('://') === -1) {
         if (preserve_files.indexOf(name) !== -1) {
-            console.log('Debug: file ' + name + ' not deleted (in preserve_files)');
+            verbose('Debug: file ' + name + ' not deleted (in preserve_files)');
             callback();
         } else {
-            console.log('Delete image file: ' + name);
+            verbose('Delete image file: ' + name);
             fs.unlink(IMAGES_DIR + '/' + name, callback);
         }
     } else {
@@ -371,17 +409,17 @@ function writeTaoDocument(pages)
         function loadExporter(kind)
         {
             // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
-            var modname = './export/' + kind.replace('.', '/');
+            var modname = __dirname + '/export/' + kind.replace('.', '/');
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false)
                 return loadExporterFromCache(kind);
-            console.log('Loading ' + modname);
+            verbose('Loading ' + modname);
             return require(modname);
         }
 
         function loadExporterFromCache(kind)
         {
-            var modname = './export_cache/' + kind.replace('.', '/');
+            var modname = __dirname + '/export_cache/' + kind.replace('.', '/');
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false || forceReload)
             {
@@ -400,13 +438,13 @@ function writeTaoDocument(pages)
                     var file = kind.substring(dot + 1) + '.js';
                     var dst = THEME_BASE_URL[theme] + '/server/' + file;
                     var dstu = url.parse(dst);
-                    console.log('Fetching ' + dst);
+                    verbose('Fetching ' + dst);
 
                     function createDir(dir)
                     {
                         if (!fs.existsSync(dir))
                         {
-                            console.log('Creating ' + dir);
+                            verbose('Creating ' + dir);
                             fs.mkdirSync(dir);
                         }
                         return true;
@@ -437,7 +475,7 @@ function writeTaoDocument(pages)
                                     buffer += chunk;
                                 });
                                 res.on('end', function() {
-                                    console.log('Saving ' + dstpath);
+                                    verbose('Saving ' + dstpath);
                                     fs.writeFile(dstpath, buffer, function(err) {
                                         if (err) {
                                             console.log(err);
@@ -450,7 +488,7 @@ function writeTaoDocument(pages)
                                             console.log('require() failed');
                                             return;
                                         }
-                                        console.log('Exporter for ' + kind + ' loaded');
+                                        verbose('Exporter for ' + kind + ' loaded');
                                         endLoad();
                                     });
                                 })
@@ -489,5 +527,11 @@ function writeTaoDocument(pages)
     {
         err = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
     }
-    console.log(file + ' saved' + err);
+    verbose(file + ' saved' + err);
+}
+
+function verbose()
+{
+    if (VERBOSE)
+        console.log.apply(console, arguments);
 }

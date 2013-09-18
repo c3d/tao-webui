@@ -1,8 +1,12 @@
 #!/bin/sh
 
-#export PORT=3000
-cd server
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd )"
+
+(
+cd $SCRIPTPATH/server
 for m in express htmlparser ent http-proxy ; do
   [ -e node_modules/$m ] || npm install $m
 done
-node server.js
+)
+#export PORT=3000
+node $SCRIPTPATH/server/server.js -v $*

@@ -1,4 +1,4 @@
-var esc = require('../../util').escape;
+var esc = require(__dirname + '/../../util').escape;
 
 function header()
 {
