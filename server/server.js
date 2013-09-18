@@ -335,7 +335,7 @@ function getData(name, callback)
 
 function save(pages)
 {
-    var path = DOC_DIR + '/saved_pages.json';
+    var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'pages.json';
     verbose('Saving ' + path);
     cached.pages = pages;
     fs.writeFileSync(path, JSON.stringify(pages));
@@ -344,7 +344,7 @@ function save(pages)
 
 function saveImages(images)
 {
-    var path = DOC_DIR + '/saved_images.json';
+    var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'images.json';
     verbose('Saving ' + path);
     cached.images = images;
     fs.writeFileSync(path, JSON.stringify(images));
