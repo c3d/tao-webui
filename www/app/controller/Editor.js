@@ -37,9 +37,6 @@ Ext.define('TE.controller.Editor', {
             '#themepanel': {
                 render: this.loadThemes
             },
-            'editor': {
-                afterlayout: this.selectDefaultTheme
-            },
             'pagetemplate': {
                 click: this.pageTemplateClicked,
                 dblclick: this.newPageFromTemplate,
@@ -115,7 +112,7 @@ Ext.define('TE.controller.Editor', {
         Ext.each(['blueclaire', 'vellum', 'white'], load, this);
     },
 
-    selectDefaultTheme: function() {
+    onLaunch: function() {
         var dflt = this.getThemePanel().items.items[0];
         this.themeClicked(dflt);
     },
