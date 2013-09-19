@@ -18,15 +18,20 @@ for (var i = 2; i < argv.length; i++)
     var arg = argv[i];
     if (arg === '-h') {
         console.log('Usage: ' + argv[0] + ' ' + argv[1] +
-                    ' [-v] [/path/to/document/directory]');
+                    ' [-v] [/path/to/document/directory | /path/to/ddd/file]');
         console.log('\nOptions:');
         console.log('    -v    Verbose output');
+        console.log('\nIf the path to an existing directory is given, the server will');
+        console.log('create doc.ddd in there. Otherwise the path is interpreted as a');
+        console.log('file name and the server will attempt to save the DDD code');
+        console.log('to this file.\n');
+        console.log('If no path is given, a default test document is loaded.');
         return;
     } else if (arg === '-v') {
         VERBOSE = true;
     } else if (arg.indexOf('-') === 0) {
         console.log('Unknown option: ' + arg);
-        return;
+        return 1;
     } else if (arg.trim().length === 0) {
         // Ignored
     } else {
@@ -36,7 +41,18 @@ for (var i = 2; i < argv.length; i++)
 
 var DEFAULT_DOC_DIR = path.resolve(__dirname + '/data');
 var DOC_DIR = DOC_DIR || DEFAULT_DOC_DIR;
-verbose('Document directory: ' + DOC_DIR);
+var DOC_FILENAME = '';
+if (fs.existsSync(DOC_DIR) && fs.statSync(DOC_DIR).isDirectory()) {
+    DOC_FILENAME = 'doc.ddd';
+} else {
+    DOC_FILENAME = path.basename(DOC_DIR);
+    DOC_DIR = path.dirname(DOC_DIR);
+    if (!fs.existsSync(DOC_DIR) || !fs.statSync(DOC_DIR).isDirectory()) {
+        console.log('Error: ' + DOC_DIR + ' is not a directory');
+        return 1;
+    }
+}
+verbose('Document: ' + DOC_DIR + '/' + DOC_FILENAME);
 
 // TEST mode is enabled when no document path (or the path to the test document)
 // is given on the command line.
@@ -54,6 +70,10 @@ if (TEST_MODE) {
     // DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
     // => each time the server is restarted the configuration is the same
     preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
+}
+
+function docPath() {
+    return DOC_DIR + '/' + DOC_FILENAME;
 }
 
 // Required to parse JSON body in REST requests
@@ -519,7 +539,7 @@ function writeTaoDocument(pages)
         ddd += getTmpl(page).generate(page);
     }
 
-    var file = DOC_DIR + '/doc.ddd';
+    var file = DOC_DIR + '/' + DOC_FILENAME;
     fs.writeFileSync(file, ddd);
 
     var err = '';
