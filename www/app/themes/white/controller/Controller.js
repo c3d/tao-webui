@@ -1,13 +1,12 @@
 Ext.define('TE.themes.white.controller.Controller', {
     extend: 'TE.controller.PageControllerBase',
 
-    models: [
-        'white.TitleAndBullets',
-        'white.PhotoHorizontal'
-    ],
-    views: [
-        'properties.white.TitleAndBullets',
-        'properties.white.PhotoHorizontal'
+    requires: [
+        'TE.themes.white.model.TitleAndBullets',
+        'TE.themes.white.model.PhotoHorizontal',
+
+        'TE.themes.white.view.properties.TitleAndBullets',
+        'TE.themes.white.view.properties.PhotoHorizontal'
     ],
 
     init: function() {

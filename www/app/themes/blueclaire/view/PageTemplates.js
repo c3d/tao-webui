@@ -2,9 +2,10 @@ Ext.define('TE.themes.blueclaire.view.PageTemplates', {
     extend: 'TE.view.PageTemplates',
     requires: 'TE.view.PageTemplate',
 
-    title: tr('Blue Claire'),
+    title: tr('Blue Claire', 'blueclaire'),
 
     initComponent: function() {
+
         var names = [
             'MainTitleSlide',
             'SectionSlide',

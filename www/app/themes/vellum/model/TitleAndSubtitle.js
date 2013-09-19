@@ -1,4 +1,4 @@
-Ext.define('TE.model.vellum.TitleAndSubtitle', {
+Ext.define('TE.themes.vellum.model.TitleAndSubtitle', {
 	extend: 'TE.model.Page',
     fields: [ 'title', 'subtitle' ]
 })

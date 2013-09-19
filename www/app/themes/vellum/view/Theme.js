@@ -9,8 +9,8 @@ Ext.define('TE.themes.vellum.view.Theme', {
     initComponent: function() {
         var trans = TE.i18n.Translate;
         if (trans.lang === 'fr')
-            trans.register(Ext.create('TE.themes.vellum.i18n.fr').translations);
-        this.caption = tr('Vellum');
+            trans.register(Ext.create('TE.themes.vellum.i18n.fr').translations, 'vellum');
+        this.caption = tr('Vellum', 'vellum');
         this.callParent(arguments);
     }
  });

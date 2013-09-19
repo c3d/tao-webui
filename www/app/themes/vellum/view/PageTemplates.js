@@ -2,7 +2,7 @@ Ext.define('TE.themes.vellum.view.PageTemplates', {
     extend: 'TE.view.PageTemplates',
     requires: 'TE.view.PageTemplate',
 
-    title: tr('Vellum'),
+    title: tr('Vellum', 'vellum'),
 
     initComponent: function() {
         var names = [

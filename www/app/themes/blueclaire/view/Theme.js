@@ -9,9 +9,10 @@ Ext.define('TE.themes.blueclaire.view.Theme', {
 
     initComponent: function() {
         var trans = TE.i18n.Translate;
-        if (trans.lang === 'fr')
-            trans.register(Ext.create('TE.themes.blueclaire.i18n.fr').translations);
-        this.caption = tr('Blue Claire');
+        if (trans.lang === 'fr') {
+            trans.register(Ext.create('TE.themes.blueclaire.i18n.fr').translations, 'blueclaire');
+        }
+        this.caption = tr('Blue Claire', 'blueclaire');
         this.callParent(arguments);
     }
  });

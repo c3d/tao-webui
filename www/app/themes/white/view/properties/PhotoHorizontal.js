@@ -18,17 +18,17 @@ Ext.define('TE.themes.white.view.properties.PhotoHorizontal', {
                     {
                         xtype: 'textfield',
                         name: 'name',
-                        fieldLabel: tr('Page name')
+                        fieldLabel: tr('Page name', 'white')
                     },
                     {
                         xtype: 'textfield',
                         name: 'photo',
-                        fieldLabel: tr('Photo')
+                        fieldLabel: tr('Photo', 'white')
                     },
                     {
                         xtype: 'textfield',
                         name: 'caption',
-                        fieldLabel: tr('Caption')
+                        fieldLabel: tr('Caption', 'white')
                     }
                 ]
             }

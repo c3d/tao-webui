@@ -1,51 +1,60 @@
+// Example:
+//   register({'Name': 'Nom' });
+//   register({'Name': { 'default': 'NOM', 'user': 'Identifiant'} }, 'mymodule');
+//   tr('Name') // = 'Nom'
+//   tr('Name', 'mymodule')  // = 'NOM'
+//   tr('Name', 'mymodule', 'user')  // = 'Identifiant'
+
 Ext.define('TE.i18n.Translate', {
     singleton: true,
     lang: 'en',
 
-    translations: [],
+    translations: {},
 
-    // Return a translation function that will reflect the current language
-    // at the time it is called
-    // tr('source text' [, 'context'])
+    // Return the translation function
     getTr: function() {
         var me = this;
 
-        return function(txt, ctx) {
+        return function(txt, module, variant) {
             if (me.lang == 'en')
                 return txt;
 
-            for (var i = 0; i < me.translations.length; i++) {
-                var trans = me.translations[i];
-                if (trans.hasOwnProperty(txt))
+            module = module || 'default';
+
+            if (me.translations.hasOwnProperty(module) &&
+                me.translations[module].hasOwnProperty(txt)) {
+
+                var trans = me.translations[module][txt]; // string or null or object
+                if (typeof variant === 'undefined' || variant === 'default')
                 {
-                    var t = trans[txt];
-                    if (typeof ctx !== 'undefined')
-                    {
-                        if (t && t.hasOwnProperty(ctx))
-                            return t[ctx] || txt;
-                    }
-                    else
-                    {
-                        if (typeof t === 'string')
-                            return t;
-                        if (t === null)
-                            return txt;
-                    }
+                    if (typeof trans === 'string')
+                        return trans;
+                    if (trans === null)
+                        return txt;
+                    variant = 'default';
+                }
+                if (trans.hasOwnProperty(variant))
+                {
+                    if (typeof trans[variant] === 'string')
+                        return trans[variant];
+                    if (trans[variant] === null)
+                        return txt;
                 }
             }
             
-            console.log('No \'' + me.lang + '\' translation for: [' + txt + ']');
+            console.log("No '" + me.lang + "' translation for: [" + txt +
+                        "] (variant '" + (variant || 'default') + "' in module '" +
+                        module + "')");
             return txt;
         };
     },
 
-    // Example:
-    //   register({'Name': 'Nom' });
-    //   register({'Name': {'user': 'Identifiant'}, 'Name': {'file': 'Chemin' } });
-    //   tr('Name') // = 'Nom'
-    //   tr('Name', 'user')  // = 'Identifiant'
-    //   tr('Name', 'file')  // = 'Chemin'
-    register: function(trans) {
-        this.translations.push(trans);
+    // Add translations
+    register: function(trans, modulename) {
+        modulename = modulename || 'default';
+        if (this.translations.hasOwnProperty(modulename))
+            console.log("Warning: translations already registered for module '" + modulename +
+                        "', overriding previous ones");
+        this.translations[modulename] = trans;
     }
 });

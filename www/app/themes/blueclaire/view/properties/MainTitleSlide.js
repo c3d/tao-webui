@@ -18,17 +18,17 @@ Ext.define('TE.themes.blueclaire.view.properties.MainTitleSlide', {
                     {
                         xtype: 'textfield',
                         name: 'name',
-                        fieldLabel: tr('Page name')
+                        fieldLabel: tr('Page name', 'blueclaire')
                     },
                     {
                         xtype: 'textfield',
                         name: 'title',
-                        fieldLabel: tr('Title')
+                        fieldLabel: tr('Title', 'blueclaire')
                     },
                     {
                         xtype: 'textfield',
                         name: 'subtitle',
-                        fieldLabel: tr('Subtitle')
+                        fieldLabel: tr('Subtitle', 'blueclaire')
                     }
                 ]
             }

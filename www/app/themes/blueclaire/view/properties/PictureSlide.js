@@ -18,17 +18,17 @@ Ext.define('TE.themes.blueclaire.view.properties.PictureSlide', {
                     {
                         xtype: 'textfield',
                         name: 'name',
-                        fieldLabel: tr('Page name')
+                        fieldLabel: tr('Page name', 'blueclaire')
                     },
                     {
                         xtype: 'teimagepickerfield',
                         name: 'picture',
-                        fieldLabel: tr('Picture')
+                        fieldLabel: tr('Picture', 'blueclaire')
                     },
                     {
                         xtype: 'numberfield',
                         name: 'scalepercent',
-                        fieldLabel: tr('Scale (%)')
+                        fieldLabel: tr('Scale (%)', 'blueclaire')
                     }
                 ]
             }

@@ -9,8 +9,8 @@ Ext.define('TE.themes.white.view.Theme', {
     initComponent: function() {
         var trans = TE.i18n.Translate;
         if (trans.lang === 'fr')
-            trans.register(Ext.create('TE.themes.white.i18n.fr').translations);
-        this.caption = tr('White');
+            trans.register(Ext.create('TE.themes.white.i18n.fr').translations, 'white');
+        this.caption = tr('White', 'white');
         this.callParent(arguments);
     }
  });

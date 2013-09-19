@@ -19,12 +19,12 @@ Ext.define('TE.themes.blueclaire.view.properties.Slide', {
                     {
                         xtype: 'textfield',
                         name: 'name',
-                        fieldLabel: tr('Page name')
+                        fieldLabel: tr('Page name', 'blueclaire')
                     },
                     {
                         xtype: 'customhtmleditor',
                         name: 'text',
-                        fieldLabel: tr('Text')
+                        fieldLabel: tr('Text', 'blueclaire')
                     }
                 ]
             }
