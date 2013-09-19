@@ -31,7 +31,7 @@ Ext.define('TE.view.EditImageURL', {
         }];
 
         this.buttons = [{
-            text: tr('Save'),
+            text: tr('OK'),
             action: 'save'
         },{
             text: tr('Cancel'),
