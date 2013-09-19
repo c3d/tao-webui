@@ -3,7 +3,7 @@ Ext.define('TE.view.PageList', {
     requires: [ 'TE.view.PageListContextMenu' ],
     alias: 'widget.pagelist',
 
-    title: 'Pages',
+    title: tr('Pages'),
     store: 'Pages',
 
     columns: [{

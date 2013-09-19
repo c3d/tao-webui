@@ -24,7 +24,7 @@ Ext.define('TE.themes.white.view.properties.TitleAndBullets', {
                     {
                         xtype: 'customhtmleditor',
                         name: 'bullets',
-                        fieldLabel: ('Bullet text')
+                        fieldLabel: tr('Bullet text')
                     }
                 ]
             }

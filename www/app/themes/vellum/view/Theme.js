@@ -5,5 +5,12 @@ Ext.define('TE.themes.vellum.view.Theme', {
         ptclassname: 'TE.themes.vellum.view.PageTemplates'
     },
     image: 'app/themes/vellum/resources/images/vellum.png',
-    caption: tr('Vellum')
+
+    initComponent: function() {
+        var trans = TE.i18n.Translate;
+        if (trans.lang === 'fr')
+            trans.register(Ext.create('TE.themes.vellum.i18n.fr').translations);
+        this.caption = tr('Vellum');
+        this.callParent(arguments);
+    }
  });

@@ -105,8 +105,9 @@ Ext.define('TE.controller.Editor', {
         function load(theme) {
             try {
                 this.getThemePanel().add(Ext.create('TE.themes.' + theme + '.view.Theme'));
-            } catch(e) {
+            } catch (e) {
                 console.log('Warning: failed to load theme: ' + theme);
+                console.log(e);
             }
         }
         Ext.each(['blueclaire', 'vellum', 'white'], load, this);
