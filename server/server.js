@@ -40,7 +40,7 @@ for (var i = 2; i < argv.length; i++)
     }
 }
 
-var DEFAULT_DOC_DIR = path.resolve(__dirname + '/data');
+var DEFAULT_DOC_DIR = path.resolve(__dirname + '/test_data');
 var DOC_DIR = DOC_DIR || DEFAULT_DOC_DIR;
 var DOC_FILENAME = '';
 if (fs.existsSync(DOC_DIR) && fs.statSync(DOC_DIR).isDirectory()) {

@@ -1,10 +1,26 @@
+Prerequisites
+-------------
+
+Download and extract the ExtJS4 SDK under ./www/ext-4.
+
 Usage
 -----
 
-0) Download and extract the ExtJS4 SDK under ./www/ext-4 
+ ** Running the debug version
+
 1) ./start_server.sh
 2) Connect to http://localhost:3000/
-3) Open ./server/data/doc.ddd in Tao Presentations
+3) Open ./server/test_data/doc.ddd in Tao Presentations
+
+./start_server.sh -h for help.
+
+ ** Running the "production" version
+
+1) make install
+2) ./install/start_server.sh
+3) Connect to http://localhost:3000/
+4) Open ./install/server/test_data/doc.ddd in Tao Presentations
+
 
 Browser requirements
 --------------------

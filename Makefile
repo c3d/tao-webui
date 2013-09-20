@@ -1,10 +1,6 @@
-.PHONY: help install clean
+.PHONY: install
 
-help:
-	@echo "Run 'make install' to copy the release version of the app to ./install"
-	@echo "    'make clean' to delete ./install"
-
-install:
+install: npm-install
 	mkdir -p install/www
 	cp www/index_nodebug.html install/www/index.html
 	cp www/app.{js,css} install/www
@@ -20,3 +16,9 @@ install:
 
 clean:
 	rm -rf install
+
+npm-install:
+	cd server && npm install
+
+npm-uninstall:
+	rm -rf server/node_modules
