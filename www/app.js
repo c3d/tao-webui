@@ -1,4 +1,4 @@
-var TE_lang = "fr";
+//var TE_lang = 'fr';
 var tr = function(txt) { throw 'tr() not set (should not happen)'; }
 
 Ext.application({

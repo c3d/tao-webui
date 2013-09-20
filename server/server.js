@@ -1,5 +1,5 @@
 // Usage
-// node server.js [path/to/document/directory]
+// node server.js [options]
 
 var express = require('express');
 var app = express();
@@ -8,6 +8,7 @@ var httpProxy = require('http-proxy');
 var url = require('url');
 var http = require('http');
 var path = require('path');
+var ejs = require('ejs');
 
 var VERBOSE = false;
 
@@ -277,6 +278,31 @@ app.post('/image-upload', function(req, res, next) {
 // Accessing the image library
 
 app.use('/imagelibrary', express.static(IMAGES_DIR));
+
+// Root document (index*.html) contains EJS markup for i18n
+
+app.get(/^\/+(index.*\.html|)$/, function(req, res) {
+    var path = req.params[0];
+    if (path === '')
+        path = 'index.html';
+
+    fs.readFile(__dirname + '/../www/' + path, { encoding: 'utf8' }, function(err, data) {
+        if (err)
+            return res.send(404);
+        var options = {
+            locals: {
+                setLanguage: function() {
+                    if (!req.query.lang)
+                        return '';
+                    verbose(path + ": language is '" + req.query.lang +"'");
+                    return '<script type="text/javascript" src="ext-4/locale/ext-lang-' + req.query.lang + '.js"></script>' +
+                           '<script type="text/javascript">var TE_lang = "' + req.query.lang + '";</script>';
+                }
+            }
+        };
+        res.send(ejs.render(data, options));
+    });
+});
 
 // Serve static files
 
