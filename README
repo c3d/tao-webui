@@ -1,7 +1,8 @@
 Prerequisites
 -------------
 
-Download and extract the ExtJS4 SDK under ./www/ext-4.
+- NodeJS version 0.10.* must be installed (http://nodejs.org)
+- The ExtJS4 SDK must be accessible under ./www/ext-4 (http://www.sencha.com/products/extjs/download)
 
 Usage
 -----
@@ -16,11 +17,10 @@ Usage
 
  ** Running the "production" version
 
-1) make install
+1) make -f Makefile.all install   # On Windows this assumes you have installed MSys
 2) ./install/start_server.sh
 3) Connect to http://localhost:3000/
 4) Open ./install/server/test_data/doc.ddd in Tao Presentations
-
 
 Browser requirements
 --------------------

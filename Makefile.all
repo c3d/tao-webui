@@ -1,6 +1,13 @@
 .PHONY: install
 
-install: npm-install js_header.txt
+deps: npm-install www/ext-4
+
+www/ext-4:
+	@echo "ExtJS 4 not found under www/ext-4"
+	@echo "Please install it from http://www.sencha.com/products/extjs/download"
+	@false
+
+install: deps js_header.txt
 	mkdir -p install
 	cp LICENSE install
 	mkdir -p install/www
