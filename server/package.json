@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "0.0.0",
+  "description": "Tao Editor server",
+  "private": true,
+  "main": "server.js",
+  "dependencies": {
+    "ejs": "~0.8.4",
+    "ent": "~0.1.0",
+    "express": "~3.3.5",
+    "htmlparser": "~1.7.6",
+    "http-proxy": "~0.10.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Taodyne SAS",
+  "license": "Taodyne Confidential (for now)"
+}
+
