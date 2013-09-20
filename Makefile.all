@@ -1,3 +1,22 @@
+# ******************************************************************************
+# Makefile                                                           Tao project
+# ******************************************************************************
+# File Description:
+# Makefile for the Tao Presentations Web User Interface.
+# ******************************************************************************
+# GNU General Public License Usage
+# This file may be used under the terms of the GNU General Public License
+# version 3.0 as published by the Free Software Foundation and appearing in the
+# file LICENSE included in the packaging of this file.
+#
+# Please review the following information to ensure the GNU General Public
+# License version 3.0 requirements will be met:
+# http://www.gnu.org/copyleft/gpl.html.
+#
+# (C) 2013 Jerome Forissier <jerome@taodyne.com>
+# (C) 2013 Taodyne SAS
+# ******************************************************************************
+
 .PHONY: install
 
 deps: npm-install www/ext-4
@@ -7,34 +26,34 @@ www/ext-4:
 	@echo "Please install it from http://www.sencha.com/products/extjs/download"
 	@false
 
-install: deps js_header.txt
-	mkdir -p install
-	cp LICENSE install
-	mkdir -p install/www
-	cp www/index_nodebug.html install/www/index.html
-	cp www/app.{js,css} install/www
-	cp -R www/app install/www
-	mkdir -p install/www/ext-4
-	cp www/ext-4/ext-all.js install/www/ext-4
-	mkdir -p install/www/ext-4/resources/ext-theme-neptune
-	cp www/ext-4/resources/ext-theme-neptune/ext-theme-neptune-all.css install/www/ext-4/resources/ext-theme-neptune
-	cp -R www/ext-4/resources/ext-theme-neptune/images install/www/ext-4/resources/ext-theme-neptune
-	mkdir -p install/server
-	cp -R server install
+# Install a production copy of the application under $(DEST)
+DEST=install
+install: deps
+	NOW=`date "+%d-%h-%Y %H:%M:%S"`; SHA1=`git rev-parse HEAD`; sed -e "s/@BUILD_DATE@/$${NOW}/" -e "s/@GIT_SHA1@/$${SHA1}/" <js_header.txt.in >js_header.txt
+	mkdir -p "$(DEST)"
+	cp LICENSE "$(DEST)"
+	mkdir -p "$(DEST)"/www
+	cp www/index_nodebug.html "$(DEST)"/www/index.html
+	cp www/app.{js,css} "$(DEST)"/www
+	cp -R www/app "$(DEST)"/www
+	mkdir -p "$(DEST)"/www/ext-4
+	cp www/ext-4/ext-all.js "$(DEST)"/www/ext-4
+	mkdir -p "$(DEST)"/www/ext-4/resources/ext-theme-neptune
+	cp www/ext-4/resources/ext-theme-neptune/ext-theme-neptune-all.css "$(DEST)"/www/ext-4/resources/ext-theme-neptune
+	cp -R www/ext-4/resources/ext-theme-neptune/images "$(DEST)"/www/ext-4/resources/ext-theme-neptune
+	mkdir -p "$(DEST)"/server
+	cp -R server "$(DEST)"
 	# Find all OUR .js files, copy them to install but prepend our copyright header
-	find install -name '*.js' -not -path 'server/node_modules/*' \
-		-exec mv {} {}_ \; \
-		-exec cp js_header.txt {} \; \
-		-exec bash -c "cat {}_ >> {}" \; \
-		-exec rm {}_ \;
-	cp start_server.sh install
-
-js_header.txt: js_header.txt.in
-	NOW=`date "+%d-%h-%Y %H:%M:%S"`; SHA1=`git rev-parse HEAD`; sed -e "s/@BUILD_DATE@/$${NOW}/" -e "s/@GIT_SHA1@/$${SHA1}/" $< >$@
+	find "$(DEST)" -name '*.js' -not -path 'server/node_modules/*' \
+		-exec mv "{}" "{}_" \; \
+		-exec cp js_header.txt "{}" \; \
+		-exec bash -c "cat \"{}_\" >> \"{}\"" \; \
+		-exec rm "{}_" \;
+	cp start_server.sh "$(DEST)"
 
 clean:
 	rm -f js_header.txt
-	rm -rf install
+	rm -rf "$(DEST)"
 
 npm-install:
 	cd server && npm install

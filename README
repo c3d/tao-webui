@@ -1,3 +1,14 @@
+The Tao Presentations Web User Interface (webui) is a tool to help users of
+Tao Presentations create documents based on predefined themes.
+
+It is made of two main parts, both running on the user's computer:
+- A NodeJS server,
+- A web application based on the ExtJS 4 framework from http://www.sencha.com/.
+
+The whole project is released under the GNU General Public Library License
+version 3.0 as published by the Free Software Foundation and appearing in the
+file LICENSE included in the packaging of this file.
+
 Prerequisites
 -------------
 
@@ -15,12 +26,15 @@ Usage
 
 ./start_server.sh -h for help.
 
- ** Running the "production" version
+ ** Running the "production" version, replacing the version bundled with Tao Presentations
 
 1) make -f Makefile.all install   # On Windows this assumes you have installed MSys
 2) ./install/start_server.sh
 3) Connect to http://localhost:3000/
 4) Open ./install/server/test_data/doc.ddd in Tao Presentations
+
+The ./install directory may be used as a drop-in replacement of the 'webui'
+directory bundled with the Tao Presentations application.
 
 Browser requirements
 --------------------
@@ -28,8 +42,8 @@ Browser requirements
 Google Chrome: tested with Google Chrome 29
 IE: requires IE >= 9
 
-Licenses
---------
+Licenses for images
+-------------------
 
 www/app/resources/images/image.png:
   Author:  Everaldo Coelho - http://www.everaldo.com/
