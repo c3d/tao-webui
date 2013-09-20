@@ -54,6 +54,9 @@ if (fs.existsSync(DOC_DIR) && fs.statSync(DOC_DIR).isDirectory()) {
     }
 }
 verbose('Document: ' + DOC_DIR + '/' + DOC_FILENAME);
+if (!fs.existsSync(docPath())) {
+   fs.writeFileSync(docPath(), 'nil\n');
+}
 
 // TEST mode is enabled when no document path (or the path to the test document)
 // is given on the command line.
