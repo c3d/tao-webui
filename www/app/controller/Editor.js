@@ -222,10 +222,19 @@ Ext.define('TE.controller.Editor', {
     newPageFromTemplate: function(tmpl) {
         var model = tmpl.getModelClassName();
         var page = Ext.create(model);
+        var store = this.getPagesStore();
         // Example: TE.themes.blueclaire.model.PictureSlide -> blueclaire.PictureSlide
         page.set('kind', model.replace('TE.themes.', '').replace('.model', ''));
-        page.set('name', tr('New page'));
-        var store = this.getPagesStore();
+        function unusedPageName() {
+            var i = 1;
+            var stem = tr('New page');
+            while (true) {
+                var n = stem + ' ' + i++;
+                if (store.find('name', n) === -1)
+                    return n;
+            }
+        }
+        page.set('name', unusedPageName());
         store.add(page);
         store.sync();
     },
