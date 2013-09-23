@@ -9,6 +9,7 @@ var url = require('url');
 var http = require('http');
 var path = require('path');
 var ejs = require('ejs');
+var crypto = require('crypto');
 
 var VERBOSE = false;
 
@@ -348,33 +349,45 @@ app.listen(PORT, null, function() {
 
 // Helpers
 
+// Data loaded from/saved to JSON files
+var cached_empty = {
+    pages: {
+        pages: [],
+        dddmd5: null // overwrite empty or 'nil' file only (except TEST_MODE)
+    },
+    images: {
+        images: []
+    }
+}
+var cached = cached_empty;
+cached.pages.pages = null;
+cached.images.images = null;
+
 // Read and cache <name>.json
 // Example: getData('pages', function(error, pages) { ... } )
-var cached = {
-    pages: null,
-    images: null
-}
 function getData(name, callback)
 {
-    if (cached[name] !== null) {
-        callback(null, cached[name]);
+    if (cached[name][name] !== null) {
+        callback(null, cached[name][name]);
     } else {
         var file = DOC_DIR + '/' + name + '.json';
         fs.exists(file, function(exists) {
             if (!exists) {
                 console.log(file + ' does not exist');
-                cached[name] = [];
-                callback(null, cached[name]);
+                cached[name][name] = [];
+                callback(null, []);
             } else {
                 fs.readFile(file, 'utf8', function (err, data) {
                     if (err) {
                         console.log('File read error: ' + err);
                         callback(err);
                     } else {
-                        if (data.trim().length === 0)
-                            data = '[]';
-                        cached[name] = JSON.parse(data);
-                        callback(null, cached[name]);
+                        if (data.trim().length === 0) {
+                            cached[name] = cached_empty[name];
+                        } else {
+                            cached[name] = JSON.parse(data);
+                        }
+                        callback(null, cached[name][name]);
                     }
                 });
             }
@@ -382,20 +395,32 @@ function getData(name, callback)
     }
 }
 
+// Save all pages to DDD document and JSON file
 function save(pages)
+{
+    var sum = writeTaoDocument(pages);
+    if (sum)
+        savePagesJSON(pages, sum);
+}
+
+// Save pages to JSON file
+function savePagesJSON(pages, dddmd5sum)
 {
     var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'pages.json';
     verbose('Saving ' + path);
-    cached.pages = pages;
-    fs.writeFileSync(path, JSON.stringify(pages));
-    writeTaoDocument(pages);
+    cached.pages.pages = pages;
+    var sav = {
+        dddmd5: dddmd5sum,
+        pages: pages
+    }
+    fs.writeFileSync(path, JSON.stringify(sav));
 }
 
 function saveImages(images)
 {
     var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'images.json';
     verbose('Saving ' + path);
-    cached.images = images;
+    cached.images.images = images;
     fs.writeFileSync(path, JSON.stringify(images));
 }
 
@@ -447,8 +472,31 @@ function deleteImageFile(name, callback)
 var exporter = [];
 var loadInProgress = 0;
 var forceReload = true; // Do not reuse files from cache after restart
+// Returns MD5 of saved file or null on error or if asynchronous operation is in progress
 function writeTaoDocument(pages)
 {
+    var prevmd5 = cached.pages.dddmd5;
+    console.log('PREV', prevmd5);
+    var md5;
+    try {
+        var ddd = fs.readFileSync(docPath(), 'utf8');
+        if (ddd.trim().length === 0 || ddd === 'nil\n')
+            md5 = prevmd5; // allow overwrite
+        else if (prevmd5 === null && TEST_MODE)
+            md5 = null;    // allow overwrite
+        else
+            md5 = crypto.createHash('md5').update(ddd).digest('hex');
+        console.log('CURR', md5);
+    } catch (e) {
+        md5 = prevmd5;
+    }
+    if (md5 !== prevmd5) {
+        console.log('MD5 sum of ' + docPath() + ' differs from the value it had when ' +
+                    'last saved (file not modified by us).\n' +
+                    'Will NOT overwrite file. Delete .ddd and save again if you wish.');
+        return null;
+    }
+
     var missing = [];
     var getTmpl = function(page)
     {
@@ -559,24 +607,39 @@ function writeTaoDocument(pages)
     for (var i = 0; i < pages.length; i++)
     {
         var page = pages[i];
-        ddd += getTmpl(page).header(ctx);
+        var tmpl = getTmpl(page);
+        if (!tmpl)
+            return null;  // Async GET in progress, will retry on complettion
+        ddd += tmpl.header(ctx);
     }
 
     for (var i = 0; i < pages.length; i++)
     {
         var page = pages[i];
-        ddd += getTmpl(page).generate(page);
+        var tmpl = getTmpl(page);
+        if (!tmpl)
+            return null;
+        ddd += tmpl.generate(page);
     }
 
-    var file = DOC_DIR + '/' + DOC_FILENAME;
-    fs.writeFileSync(file, ddd);
-
-    var err = '';
+    var warn = '';
     if (missing.length !== 0)
     {
-        err = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
+        warn = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
     }
-    verbose(file + ' saved' + err);
+    return writeDDD(ddd, warn);
+}
+
+
+// Write text to .ddd file and update cached MD5 sum
+function writeDDD(ddd, warn)
+{
+    var file = docPath();
+    warn = warn || '';
+    fs.writeFileSync(file, ddd);
+    verbose(file + ' saved' + warn);
+    cached.pages.dddmd5 = crypto.createHash('md5').update(ddd).digest('hex');
+    return cached.pages.dddmd5;
 }
 
 function verbose()
