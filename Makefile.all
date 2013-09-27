@@ -43,6 +43,8 @@ install: deps
 	cp -R www/ext-4/resources/ext-theme-neptune/images "$(DEST)"/www/ext-4/resources/ext-theme-neptune
 	mkdir -p "$(DEST)"/server
 	cp -R server "$(DEST)"
+	# DEST must NOT have trailing slash(es) or the subsequent find will not exclude the expected files
+	echo "$(DEST)" | sed 's/.*\(.\)$$/\1/' | grep -v -q /
 	# Find all OUR .js files, copy them to install but prepend our copyright header
 	find "$(DEST)" -name '*.js' -not -path '$(DEST)/server/node_modules/*' -and -not -path '$(DEST)/www/ext-4/*' \
 		-exec mv "{}" "{}_" \; \
