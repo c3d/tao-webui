@@ -44,7 +44,7 @@ install: deps
 	mkdir -p "$(DEST)"/server
 	cp -R server "$(DEST)"
 	# Find all OUR .js files, copy them to install but prepend our copyright header
-	find "$(DEST)" -name '*.js' -not -path 'server/node_modules/*' \
+	find "$(DEST)" -name '*.js' -not -path '$(DEST)/server/node_modules/*' -and -not -path '$(DEST)/www/ext-4/*' \
 		-exec mv "{}" "{}_" \; \
 		-exec cp js_header.txt "{}" \; \
 		-exec bash -c "cat \"{}_\" >> \"{}\"" \; \
