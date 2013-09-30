@@ -494,7 +494,6 @@ var forceReload = true; // Do not reuse files from cache after restart
 function writeTaoDocument(pages)
 {
     var prevmd5 = cached.pages.dddmd5;
-    console.log('PREV', prevmd5);
     var md5;
     try {
         var ddd = fs.readFileSync(docPath(), 'utf8');
@@ -504,7 +503,6 @@ function writeTaoDocument(pages)
             md5 = null;    // allow overwrite
         else
             md5 = crypto.createHash('md5').update(ddd).digest('hex');
-        console.log('CURR', md5);
     } catch (e) {
         md5 = prevmd5;
     }
