@@ -272,12 +272,14 @@ app.post('/image-upload', function(req, res, next) {
             throw err;
 
         var rename = function() {
-            fs.rename(req.files.file.path, IMAGES_DIR + '/' + name, function(err) {
-                    if (err)
-                        throw err;
-                    res.send(JSON.stringify({ success: true, file: name }));
-                }
-            );
+            // Do not use fs.rename() due to possible EXDEV
+            var is = fs.createReadStream(req.files.file.path);
+            var os = fs.createWriteStream(IMAGES_DIR + '/' + name);
+            is.pipe(os);
+            is.on('end',function() {
+                fs.unlink(req.files.file.path);
+                res.send(JSON.stringify({ success: true, file: name }));
+            });
         }
         fs.exists(IMAGES_DIR, function(exists) {
             if (exists) {
