@@ -1,7 +1,7 @@
-[
+{ "images": [
 { "id":"1", "file":"https://www.google.com/images/srpr/logo4w.png", "description":"The Google logo"},
 { "id":"2", "file":"Lenna.png", "description":"The well-known Len(n)a" },
 { "id":"3", "file":"small.png", "description":"A small picture" },
 { "id":"4", "file":"big.png", "description":"A big picture" }
-]
+]}
   

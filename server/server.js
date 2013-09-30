@@ -421,7 +421,10 @@ function saveImages(images)
     var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'images.json';
     verbose('Saving ' + path);
     cached.images.images = images;
-    fs.writeFileSync(path, JSON.stringify(images));
+    var sav = {
+        images: images
+    }
+    fs.writeFileSync(path, JSON.stringify(sav));
 }
 
 function allocateId(arr)
