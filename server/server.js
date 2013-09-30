@@ -81,6 +81,21 @@ function docPath() {
     return DOC_DIR + '/' + DOC_FILENAME;
 }
 
+function jsonFilePath(name, saving)
+{
+    saving = saving || false;
+    switch (name) {
+        case 'pages' :
+            return docPath().replace(/\.ddd$/, '') + '.json' + (TEST_MODE && saving ? '.saved' : '');
+
+        case 'images':
+            return docPath().replace(/\.ddd$/, '') + '_images.json' + (TEST_MODE && saving ? '.saved' : '');
+
+        default:
+            throw('Unexpected file name');
+    }
+}
+
 // Required to parse JSON body in REST requests
 app.use(express.bodyParser());
 
@@ -363,14 +378,14 @@ var cached = cached_empty;
 cached.pages.pages = null;
 cached.images.images = null;
 
-// Read and cache <name>.json
+// Read and cache JSON file (name = 'pages' or 'images')
 // Example: getData('pages', function(error, pages) { ... } )
 function getData(name, callback)
 {
     if (cached[name][name] !== null) {
         callback(null, cached[name][name]);
     } else {
-        var file = DOC_DIR + '/' + name + '.json';
+        var file = jsonFilePath(name);
         fs.exists(file, function(exists) {
             if (!exists) {
                 console.log(file + ' does not exist');
@@ -406,7 +421,7 @@ function save(pages)
 // Save pages to JSON file
 function savePagesJSON(pages, dddmd5sum)
 {
-    var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'pages.json';
+    var path = jsonFilePath('pages', true);
     verbose('Saving ' + path);
     cached.pages.pages = pages;
     var sav = {
@@ -418,7 +433,7 @@ function savePagesJSON(pages, dddmd5sum)
 
 function saveImages(images)
 {
-    var path = DOC_DIR + (TEST_MODE ? '/saved_' : '/') + 'images.json';
+    var path = jsonFilePath('images', true);
     verbose('Saving ' + path);
     cached.images.images = images;
     var sav = {
