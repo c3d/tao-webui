@@ -367,18 +367,15 @@ app.listen(PORT, null, function() {
 // Helpers
 
 // Data loaded from/saved to JSON files
-var cached_empty = {
+var cached = {
     pages: {
-        pages: [],
+        pages: null,
         dddmd5: null // overwrite empty or 'nil' file only (except TEST_MODE)
     },
     images: {
-        images: []
+        images: null
     }
-}
-var cached = cached_empty;
-cached.pages.pages = null;
-cached.images.images = null;
+};
 
 // Read and cache JSON file (name = 'pages' or 'images')
 // Example: getData('pages', function(error, pages) { ... } )
@@ -400,7 +397,8 @@ function getData(name, callback)
                         callback(err);
                     } else {
                         if (data.trim().length === 0) {
-                            cached[name] = cached_empty[name];
+                            console.log(file + ' is empty');
+                            cached[name][name] = [];
                         } else {
                             cached[name] = JSON.parse(data);
                         }
