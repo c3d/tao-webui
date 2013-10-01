@@ -358,10 +358,26 @@ Object.keys(THEME_BASE_URL).forEach(function(theme) {
 
 // Start server
 
+var server = http.createServer(app);
 var PORT = process.env.PORT || 3000;
-app.listen(PORT, null, function() {
-    console.log('Server listening on port ' + PORT);
+var currentPort = PORT;
+server.on('error', function(err) {
+    if (currentPort === PORT + 10) {
+        // No luck, ask for a dynamic port
+        currentPort = 0;
+    } else if (currentPort === 0) {
+        // listen(0) failed
+        throw 'Could not start server';
+    } else {
+        currentPort++;
+    }
+    server.listen(currentPort);
 });
+server.on('listening', function() {
+    // If you change this message, change it also in tao/webui.cpp
+    console.log('Server listening on port ' + server.address().port);
+});
+server.listen(currentPort);
 
 
 // Helpers
