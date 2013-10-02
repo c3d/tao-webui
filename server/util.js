@@ -256,7 +256,7 @@ var DomToSlideConverter = (function(nindent) {
                 }
                 if (dom.attribs && dom.attribs.size)
                 {
-                    var scale = 1 + 0.3 * (Number(dom.attribs.size) - 2);
+                    var scale = 1 + 0.36 * (Number(dom.attribs.size) - 2);
                     if (scale != 1)
                         output('font_size ' + scale + ' * theme_size(theme, slide_master, "story")\n');
                 }
