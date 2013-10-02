@@ -310,6 +310,18 @@ app.get(/^\/+(index.*\.html|)$/, function(req, res) {
     fs.readFile(__dirname + '/../www/' + path, { encoding: 'utf8' }, function(err, data) {
         if (err)
             return res.send(404);
+        function titleString() {
+            lang = req.query.lang || 'en';
+            switch (lang) {
+                case 'fr':
+                    return 'Éditeur Tao Presentations';
+                default:
+                    console.log("titleString() Unsupported language '" + lang + "', using 'en'");
+                    // Fallthrough
+                case 'en':
+                    return 'Tao Presentations Editor';
+            }
+        }
         var options = {
             locals: {
                 setLanguage: function() {
@@ -318,7 +330,8 @@ app.get(/^\/+(index.*\.html|)$/, function(req, res) {
                     verbose(path + ": language is '" + req.query.lang +"'");
                     return '<script type="text/javascript" src="ext-4/locale/ext-lang-' + req.query.lang + '.js"></script>' +
                            '<script type="text/javascript">var TE_lang = "' + req.query.lang + '";</script>';
-                }
+                },
+                title: DOC_FILENAME + ' - ' + titleString()
             }
         };
         res.send(ejs.render(data, options));
