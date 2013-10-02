@@ -258,7 +258,7 @@ var DomToSlideConverter = (function(nindent) {
                 }
                 if (dom.attribs && dom.attribs.color)
                 {
-                    output('color "' + dom.attribs.color + '"\n');
+                    output('color "#' + dom.attribs.color + '"\n');
                 }
                 if (dom.attribs && dom.attribs.size)
                 {
