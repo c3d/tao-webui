@@ -180,7 +180,7 @@ var DomToSlideConverter = (function(nindent) {
                     unindent();
                 break;
             case 'u':
-                output('underline 1\n');
+                output('underline\n');
                 indent();
                 dom.children.forEach(function(elt) {
                     convert(elt);
