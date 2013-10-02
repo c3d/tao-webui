@@ -233,7 +233,7 @@ var DomToSlideConverter = (function(nindent) {
                     });
                     break;
                 default:
-                    console.log('<li> outside of <ul>/<ol>');
+                    console.log('<li> outside of <ul>/<ul>');
                 }
                 if (dom.attribs && dom.attribs.style)
                     convertStyle(dom.attribs.style, true);
