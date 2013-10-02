@@ -19,10 +19,33 @@ var DomToSlideConverter = (function(nindent) {
 
     var indentString = '    ';
     var lineStart = true;
-    var listMode = ''; // '', 'ul', 'ol'
+    var listState = []; // array of list types ('ul' or 'ol'), innermost at end
     var prev = ''; // previous line
 
     var out = '';
+
+    function startList(type)
+    {
+        listState.push(type);
+    }
+
+    function endList()
+    {
+        listState.pop();
+    }
+
+    // Return the string to be used in Tao for the current level of unordered/ordered list
+    function currentListSymbol()
+    {
+        if (listState.length === 0)
+            return '';
+        var symbols = {
+            'ul': [ '*', '**', '***' ],
+            'ol': [ '+', '++', '+++' ],
+            'X':  [ '=', '--', '---' ]
+        };
+        return symbols[listState[listState.length-1]][listState.length-1];
+    }
 
     function output(txt)
     {
@@ -60,6 +83,23 @@ var DomToSlideConverter = (function(nindent) {
         nindent = 1;
     }
 
+    function outputAlign(value, revert)
+    {
+        if (value === 'left' || value === 'center' || value === 'right')
+        {
+            if (revert)
+            {
+                output('paragraph_break\n');
+                value = 'left';
+            }
+            output('align_' + value + '\n');
+        }
+        else
+        {
+            console.log('Unsupported [text-]align value: ' + value);
+        }
+    }
+
     // Output Tao code for 'style' attribute
     function convertStyle(style, revert)
     {
@@ -73,19 +113,7 @@ var DomToSlideConverter = (function(nindent) {
             switch (name)
             {
             case 'text-align':
-                if (value === 'left' || value === 'center' || value === 'right')
-                {
-                    if (revert)
-                    {
-                        output('paragraph_break\n');
-                        value = 'left';
-                    }
-                    output('align_' + value + '\n');
-                }
-                else
-                {
-                    console.log('Unsupported text-align value: ' + value);
-                }
+                outputAlign(value, revert);
                 break;
             case 'color':
                 // Ignored because text color overrides are not set by
@@ -99,6 +127,25 @@ var DomToSlideConverter = (function(nindent) {
             }
         })
 
+    }
+
+    function convertAttribs(attribs, revert)
+    {
+        revert = (typeof revert !== 'undefined') ? revert : false;
+        for (attr in attribs) {
+            var value = attribs[attr];
+            switch (attr)
+            {
+            case 'align':
+                outputAlign(value, revert)
+                break;
+            case 'style':
+                convertStyle(value, revert);
+                break;
+            default:
+                console.log('Attribute ignored: ' + attr + ': ' + value);
+            }
+        }
     }
 
     // Make sure all font names in comma-separated list are quoted with '' or ""
@@ -156,15 +203,15 @@ var DomToSlideConverter = (function(nindent) {
                 break;
             case 'div':
                 output('paragraph_break\n');
-                if (dom.attribs && dom.attribs.style)
-                    convertStyle(dom.attribs.style);
+                if (dom.attribs)
+                    convertAttribs(dom.attribs);
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
-                if (dom.attribs && dom.attribs.style)
+                if (dom.attribs)
                 {
                     output('paragraph_break\n');
-                    convertStyle(dom.attribs.style, true);
+                    convertAttribs(dom.attribs, true);
                 }
                 break;
             case 'span':
@@ -210,37 +257,28 @@ var DomToSlideConverter = (function(nindent) {
                 unindent();
                 break;
             case 'ul':
-                listMode = 'ul';
+                startList('ul');
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
+                endList();
                 break;
             case 'ol':
-                listMode = 'ol';
+                startList('ol');
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
+                endList();
                 break;
             case 'li':
                 if (dom.attribs && dom.attribs.style)
                     convertStyle(dom.attribs.style);
-                switch (listMode)
-                {
-                case 'ul':
-                    output('* ""\n');
-                    dom.children.forEach(function(elt) {
-                        convert(elt);
-                    });
-                    break;
-                case 'ol':
-                    output('+ ""\n');
-                    dom.children.forEach(function(elt) {
-                        convert(elt);
-                    });
-                    break;
-                default:
-                    console.log('<li> outside of <ul>/<ul>');
-                }
+                output(currentListSymbol() + '\n')
+                indent();
+                dom.children.forEach(function(elt) {
+                    convert(elt);
+                });
+                unindent();
                 if (dom.attribs && dom.attribs.style)
                     convertStyle(dom.attribs.style, true);
                 break;
