@@ -148,6 +148,12 @@ var DomToSlideConverter = (function(nindent) {
         case 'tag':
             switch(dom.name)
             {
+            case 'p':
+                output('paragraph_break\n');
+                dom.children.forEach(function(elt) {
+                    convert(elt);
+                });
+                break;
             case 'div':
                 output('paragraph_break\n');
                 if (dom.attribs && dom.attribs.style)
@@ -174,30 +180,30 @@ var DomToSlideConverter = (function(nindent) {
                     unindent();
                 break;
             case 'u':
-                output('text_span\n');
-                indent();
                 output('underline 1\n');
+                indent();
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
                 unindent();
                 break;
             case 'br':
-                output('text " " ; line_break\n');
+                if (/line_break$/.test(prev))
+                    output('text " "; line_break\n');
+                else
+                    output('line_break\n');
                 break;
             case 'b':
-                output('text_span\n');
-                indent();
                 output('bold\n');
+                indent();
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
                 unindent();
                 break;
             case 'i':
-                output('text_span\n');
-                indent();
                 output('italic\n');
+                indent();
                 dom.children.forEach(function(elt) {
                     convert(elt);
                 });
