@@ -23,7 +23,7 @@ function generate(page)
     if (page.subtitle != '')
     {
         ddd += '    subtitle\n';
-        ddd += '        text "' + u.escape(page.subtitle) + '"\n';
+        ddd += u.htmlToSlideContent(page.subtitle, 2);
         empty = false;
     }
     if (empty)

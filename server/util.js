@@ -15,9 +15,8 @@ function decodeHtml(txt)
     return escape(ent.decode(txt));
 }
 
-var DomToSlideConverter = (function() {
+var DomToSlideConverter = (function(nindent) {
 
-    var nindent = 1;
     var indentString = '    ';
     var lineStart = true;
     var listMode = ''; // '', 'ul', 'ol'
@@ -284,10 +283,14 @@ var DomToSlideConverter = (function() {
     }
 });
 
-// Convert HTML code produced by Ext.form.field.HtmlEditor to Tao code suitable
-// for use as the body of a "slide" command.
-function htmlToSlideContent(html)
+// Convert HTML code produced by Ext.form.field.HtmlEditor to a block code
+// suitable for use in Tao slides.
+// baseIndent is the level of indentation to use when starting the new block
+// (positive integer). Defaults to 1.
+function htmlToSlideContent(html, baseIndent)
 {
+    baseIndent = typeof baseIndent !== 'undefined' ? baseIndent : 1;
+
     // \n sometimes appear in the source html between html elements. They should
     // be discarder because:
     // (1) They are not meaningful (the html editor uses <div>'s for paragraph
@@ -306,7 +309,7 @@ function htmlToSlideContent(html)
     var parser = new htmlparser.Parser(handler);
     parser.parseComplete(html);
     //console.log(util.inspect(handler.dom, { depth:null }));
-    var res = DomToSlideConverter().convert(handler.dom);
+    var res = DomToSlideConverter(baseIndent).convert(handler.dom);
     //console.log('RES =\n' + res);
     return res;
 }
