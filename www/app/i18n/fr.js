@@ -13,7 +13,7 @@ Ext.define('TE.i18n.fr', {
         'Choose': 'Choisir',
         'Delete': 'Supprimer',
         'Delete image': 'Supprimer une image',
-        'Delete page': 'Supprimer une page',
+        'Delete page': 'Supprimer la page',
         'Description': null,
         'Edit': 'Modifier',
         'Edit image': 'Modifier l\'image',
