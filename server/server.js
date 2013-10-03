@@ -360,13 +360,23 @@ app.use(express.static( __dirname + '/../www'));
 
 // Proxy themes not available locally
 
+/*
+Testing
+cd ~/work/tao/webui/webui
+mv www/app/themes/blueclaire www/app/themes/blueclaire_
+mv server/export/blueclaire server/export/blueclaire_
+mkdir ~/Sites/my_blue
+cd ~/Sites/my_blue
+ln -s ~/work/tao/webui/webui/www/app/themes/blueclaire_ client
+ln -s ~/work/tao/webui/webui/server/export/blueclaire_ server
+*/
 var THEME_BASE_URL = {
     // Example:
     // - (Client files) Forward incoming HTTP requests for /app/themes/blueclaire/*
-    //   to http://localhost/~jerome/my_blue/*
+    //   to http://localhost/~jerome/my_blue/client/*
     // - (Server files) GET .ddd generation code from:
     //   http://localhost/~jerome/my_blue/server/<PageName>.js
-    //'blueclaire': 'http://localhost/~jerome/my_blue'
+    'blueclaire': 'http://localhost/~jerome/my_blue'
 };
 
 var proxy = new httpProxy.RoutingProxy();
@@ -376,7 +386,7 @@ Object.keys(THEME_BASE_URL).forEach(function(theme) {
 
     app.use('/app/themes/' + theme, function(req, res) {
         var dest = url.parse(THEME_BASE_URL[theme]);
-        req.url = dest.pathname + '/' + req.url;
+        req.url = dest.pathname + '/client/' + req.url;
         req.headers.host = dest.host;
         proxy.proxyRequest(req, res, {
             host: dest.host,
