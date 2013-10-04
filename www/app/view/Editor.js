@@ -22,6 +22,7 @@ Ext.define('TE.view.Editor', {
         itemId: 'centerpane',
         title: tr('Properties'),
         region: 'center',
+        autoScroll: true,
         margins: '3 3 0 0'
     }]
  });
