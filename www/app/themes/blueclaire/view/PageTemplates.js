@@ -10,7 +10,8 @@ Ext.define('TE.themes.blueclaire.view.PageTemplates', {
             'MainTitleSlide',
             'SectionSlide',
             'Slide',
-            'PictureSlide'
+            'PictureSlide',
+            'MovieSlide'
         ];
 
         this.items = [];
