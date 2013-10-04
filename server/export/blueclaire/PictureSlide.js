@@ -13,12 +13,12 @@ function generate(page)
     var empty = true;
     var ddd = '';
     ddd += 'theme "BlueClaire"\n'
-    ddd += 'slide "' + u.escape(page.name) + '",\n';
+    ddd += 'picture_slide "' + u.escape(page.name) + '",\n';
     if (page.picture != '')
     {
         ddd += '    locally\n';
         ddd += '        color "white"\n';
-        ddd += '        image 0, 0, ' + page.scalepercent + '%, ' + page.scalepercent + '%, "' + page.picture + '"\n';
+        ddd += '        image ' + page.imagex + ', ' + page.imagey + ', ' + page.scalepercent + '%, ' + page.scalepercent + '%, "' + page.picture + '"\n';
         empty = false;
     }
     if (empty)
