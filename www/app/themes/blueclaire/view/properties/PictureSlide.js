@@ -28,7 +28,7 @@ Ext.define('TE.themes.blueclaire.view.properties.PictureSlide', {
                     {
                         xtype: 'numberfield',
                         name: 'picturescalepercent',
-                        fieldLabel: tr('Scale (%)', 'blueclaire')
+                        fieldLabel: tr('Picture scale (%)', 'blueclaire')
                     },
                     {
                         xtype: 'numberfield',
