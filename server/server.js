@@ -554,7 +554,7 @@ function writeTaoDocument(pages, lang)
     var md5;
     try {
         var ddd = fs.readFileSync(docPath(), 'utf8');
-        if (ddd.trim().length === 0 || ddd === 'nil\n')
+        if (ddd.trim().length === 0 || ddd.trim() === 'nil')
             md5 = prevmd5; // allow overwrite
         else if (prevmd5 === null && TEST_MODE)
             md5 = null;    // allow overwrite
