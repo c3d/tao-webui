@@ -1,4 +1,5 @@
 Ext.define('TE.themes.blueclaire.view.properties.PictureSlide', {
+    requires: ['TE.util.CustomHtmlEditor'],
     extend: 'Ext.Container',
 
     initComponent: function() {
@@ -39,6 +40,16 @@ Ext.define('TE.themes.blueclaire.view.properties.PictureSlide', {
                         xtype: 'numberfield',
                         name: 'picturey',
                         fieldLabel: tr('Picture vertical position', 'blueclaire')
+                    },
+                    {
+                        xtype: 'customhtmleditor',
+                        name: 'leftcolumn',
+                        fieldLabel: tr('Left column text', 'blueclaire')
+                    },
+                    {
+                        xtype: 'customhtmleditor',
+                        name: 'rightcolumn',
+                        fieldLabel: tr('Right column text', 'blueclaire')
                     }
                 ]
             }

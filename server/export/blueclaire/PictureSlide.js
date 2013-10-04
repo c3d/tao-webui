@@ -21,6 +21,18 @@ function generate(page)
         ddd += '        image ' + page.picturex + ', ' + page.picturey + ', ' + page.picturescalepercent + '%, ' + page.picturescalepercent + '%, "' + page.picture + '"\n';
         empty = false;
     }
+    if (page.leftcolumn != '')
+    {
+        ddd += '    left_column\n';
+        ddd += u.htmlToSlideContent(page.leftcolumn, 2);
+        empty = false;
+    }
+    if (page.rightcolumn != '')
+    {
+        ddd += '    right_column\n';
+        ddd += u.htmlToSlideContent(page.rightcolumn, 2);
+        empty = false;
+    }
     if (empty)
         ddd += '    nil\n';
     return ddd;
