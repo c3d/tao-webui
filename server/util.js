@@ -117,8 +117,9 @@ var DomToSlideConverter = (function(nindent) {
                 break;
             case 'color':
                 // Ignored because text color overrides are not set by
-                // <div style: 'color: rgb(x,y,z);'>
+                // <div style="color: rgb(x,y,z)">
                 // but by <font color="#abcdef"> which is handled elsewhere.
+                // FIXME: not always true, sometimes we get <span style="color ...";>
                 // And, <div style: 'color: rgb(0,0,0);'> is used to restore
                 // the default color, which is done automatically by text_span.
                 break;
@@ -296,7 +297,8 @@ var DomToSlideConverter = (function(nindent) {
                 }
                 if (dom.attribs && dom.attribs.color)
                 {
-                    output('color "#' + dom.attribs.color + '"\n');
+                    var hash = dom.attribs.color.charAt(0) === '#' ? '' : '#';
+                    output('color "' + hash + dom.attribs.color + '"\n');
                 }
                 if (dom.attribs && dom.attribs.size)
                 {
