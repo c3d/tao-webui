@@ -4,9 +4,9 @@ Ext.define('TE.themes.blueclaire.model.PictureSlide', {
         // Local file path or URL
         'picture',
         // Picture size in % of original size
-        { name: 'scalepercent', type: 'float', defaultValue: 100 },
+        { name: 'picturescalepercent', type: 'float', defaultValue: 100 },
         // Picture position in pixels (relative to text area)
-        { name: 'imagex', type: 'float', defaultValue: 0 },
-        { name: 'imagey', type: 'float', defaultValue: 0 },
+        { name: 'picturex', type: 'float', defaultValue: 0 },
+        { name: 'picturey', type: 'float', defaultValue: 0 },
     ]
 })

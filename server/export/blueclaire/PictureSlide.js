@@ -18,7 +18,7 @@ function generate(page)
     {
         ddd += '    locally\n';
         ddd += '        color "white"\n';
-        ddd += '        image ' + page.imagex + ', ' + page.imagey + ', ' + page.scalepercent + '%, ' + page.scalepercent + '%, "' + page.picture + '"\n';
+        ddd += '        image ' + page.picturex + ', ' + page.picturey + ', ' + page.picturescalepercent + '%, ' + page.picturescalepercent + '%, "' + page.picture + '"\n';
         empty = false;
     }
     if (empty)
