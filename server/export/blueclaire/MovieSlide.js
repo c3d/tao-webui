@@ -19,6 +19,7 @@ function header(ctx)
 function generate(page)
 {
     var empty = true;
+    var hasMovie = false;
     var ddd = '';
     ddd += 'theme "BlueClaire"\n'
     ddd += 'picture_slide "' + u.escape(page.name) + '",\n';
@@ -28,13 +29,27 @@ function generate(page)
         ddd += '        color "white"\n';
         ddd += '        movie ' + page.moviex + ', ' + page.moviey + ', ' + page.moviescalepercent + '%, ' + page.moviescalepercent + '%, "' + page.movie + '"\n';
         empty = false;
+        hasMovie = true;
+    }
+    if (page.leftcolumn && page.leftcolumn !== '')
+    {
+        ddd += '    left_column\n';
+        ddd += u.htmlToSlideContent(page.leftcolumn, 2);
+        empty = false;
+    }
+    if (page.rightcolumn && page.rightcolumn !== '')
+    {
+        ddd += '    right_column\n';
+        ddd += u.htmlToSlideContent(page.rightcolumn, 2);
+        empty = false;
     }
     if (empty)
         ddd += '    nil\n';
-    else
+    if (hasMovie)
         ddd += 'on "pagechange",\n' +
                '    if prev_page_label = "' + u.escape(page.name) + '" then\n' +
                '        movie_drop "' + page.movie + '"\n';
+
     return ddd;
 }
 

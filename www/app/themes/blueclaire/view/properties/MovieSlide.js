@@ -39,6 +39,16 @@ Ext.define('TE.themes.blueclaire.view.properties.MovieSlide', {
                         xtype: 'numberfield',
                         name: 'moviey',
                         fieldLabel: tr('Movie vertical position', 'blueclaire')
+                    },
+                    {
+                        xtype: 'customhtmleditor',
+                        name: 'leftcolumn',
+                        fieldLabel: tr('Left column text', 'blueclaire')
+                    },
+                    {
+                        xtype: 'customhtmleditor',
+                        name: 'rightcolumn',
+                        fieldLabel: tr('Right column text', 'blueclaire')
                     }
                 ]
             }

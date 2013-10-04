@@ -8,5 +8,7 @@ Ext.define('TE.themes.blueclaire.model.MovieSlide', {
         // Movie position in pixels (relative to text area)
         { name: 'moviex', type: 'float', defaultValue: 0 },
         { name: 'moviey', type: 'float', defaultValue: 0 },
+        // Optional HTML/plain text for right/left columns
+        'leftcolumn', 'rightcolumn'
     ]
 })
