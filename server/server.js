@@ -376,7 +376,7 @@ var THEME_BASE_URL = {
     //   to http://localhost/~jerome/my_blue/client/*
     // - (Server files) GET .ddd generation code from:
     //   http://localhost/~jerome/my_blue/server/<PageName>.js
-    'blueclaire': 'http://localhost/~jerome/my_blue'
+    //'blueclaire': 'http://localhost/~jerome/my_blue'
 };
 
 var proxy = new httpProxy.RoutingProxy();
