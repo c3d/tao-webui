@@ -31,6 +31,10 @@ function generate(page)
     }
     if (empty)
         ddd += '    nil\n';
+    else
+        ddd += 'on "pagechange",\n' +
+               '    if prev_page_label = "' + u.escape(page.name) + '" then\n' +
+               '        movie_drop "' + page.movie + '"\n';
     return ddd;
 }
 
