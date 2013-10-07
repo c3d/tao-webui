@@ -1,6 +1,7 @@
 Ext.define('TE.model.Page', {
-	extend: 'Ext.data.Model',
-	fields: [ 'name', 'kind', { name: 'idx', type: 'int', defaultValue: -1 }  ],
+    extend: 'Ext.data.Model',
+    requires: [ 'TE.util.ServerErrors' ],
+    fields: [ 'name', 'kind', { name: 'idx', type: 'int', defaultValue: -1 }  ],
 
     proxy: {
         type: 'rest',
@@ -12,7 +13,18 @@ Ext.define('TE.model.Page', {
         // Do not send ?page=...&start=...&limit=...
         pageParam: undefined,
         startParam: undefined,
-        limitParam: undefined
+        limitParam: undefined,
+        listeners: {
+            exception: function (proxy, req, op) {
+                // Handle save/sync error from server
+                var msg;
+                if (req.status !== 200)
+                    msg = tr('HTTP error: ') + req.status + ' ' + req.statusText;
+                else
+                    msg = TE.util.ServerErrors.message(op.request.scope.reader.jsonData);
+                Ext.Msg.alert(tr('Error'), msg);
+            }
+        }
     },
 
     // Example: if kind = vellum.TitleAndSubtitle, returns 'vellum'

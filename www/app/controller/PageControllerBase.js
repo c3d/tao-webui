@@ -21,12 +21,14 @@ Ext.define('TE.controller.PageControllerBase', {
         
         record.set(values);
         if (record.dirty) {
-            // Push modified page to server
-            record.save();
-
-            // Update page list (2 models => 2 records)
             record.generic_record.set(record.getChanges());
-            record.generic_record.commit();
+            // Push modified page to server
+            record.save({
+                success: function() {
+                    record.generic_record.commit();
+                }
+                // Note: failure is handled at the proxy level (model/Pages.js)
+            });
         }
     }
 });
