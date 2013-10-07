@@ -10,6 +10,7 @@ var http = require('http');
 var path = require('path');
 var ejs = require('ejs');
 var crypto = require('crypto');
+var async = require('async');
 
 var VERBOSE = false;
 
@@ -157,16 +158,24 @@ app.post('/pages', function (req, res) {
         }
         pages.splice(idx, 0, page);
         verbose('Page ' + page.id + ' created (index ' + idx + ')');
-        save(pages, req);
-        var rsp = { success: true, pages: [] };
-        rsp.pages[0] = page;
-        res.send(rsp);
+        save(pages, req, function(err) {
+            var rsp = {};
+            if (err) {
+                rsp.success = false;
+                rsp.status = err;
+                rsp.filename = DOC_FILENAME;
+            } else {
+                rsp.success = true;
+                rsp.pages = [ page ];
+            }
+            res.send(rsp);
+        });
     });
 });
 
 app.put('/pages/:id', function(req, res) {
     getData('pages', function(err, pages) {
-        var found = null;
+        var ret, found = null;
         var i = 0;
         for (i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
@@ -185,9 +194,21 @@ app.put('/pages/:id', function(req, res) {
             // - no need to keep the idx attribute in the page
             delete found.idx;
         }
-        if (found)
-            save(pages, req);
-        res.send(found ? found : 404);
+        if (found) {
+            save(pages, req, function(err) {
+                var rsp = {};
+                if (err) {
+                    rsp.success = false;
+                    rsp.status = err;
+                    rsp.filename = DOC_FILENAME;
+                } else {
+                    rsp = found;
+                }
+                res.send(rsp);
+            });
+        } else {
+            res.send(404);
+        }
     });
 });
 
@@ -198,11 +219,22 @@ app.delete('/pages/:id', function(req, res) {
             if (pages[i].id == req.params.id) {
                 verbose('Page ' + req.params.id + ' deleted (index ' + i + ')');
                 pages.splice(i, 1);
-                save(pages, req);
+                save(pages, req, function(err) {
+                    var rsp = {};
+                    if (err) {
+                        rsp.success = false;
+                        rsp.status = err;
+                        rsp.filename = DOC_FILENAME;
+                    } else {
+                        rsp.success = true;
+                    }
+                    res.send(rsp);
+                });
                 found = true;
             }            
         }
-        res.send(found ? { success: true } : 404);
+        if (!found)
+            res.send(404);
     });
 });
 
@@ -467,12 +499,15 @@ function getData(name, callback)
 
 // Save all pages to DDD document and JSON file
 // req is the original HTTP request (may be used to retrieve language)
-function save(pages, req)
+function save(pages, req, callback)
 {
     var lang = req.cookies['taoeditorlang'] || 'en';
-    var sum = writeTaoDocument(pages, lang);
-    if (sum)
+    var sum = writeTaoDocument(pages, lang, function(err, sum) {
+        if (err)
+            return callback(err);
         savePagesJSON(pages, sum);
+        callback(null);
+    });
 }
 
 // Save pages to JSON file
@@ -545,10 +580,9 @@ function deleteImageFile(name, callback)
 }
 
 var exporter = [];
-var loadInProgress = 0;
 var forceReload = true; // Do not reuse files from cache after restart
-// Returns MD5 of saved file or null on error or if asynchronous operation is in progress
-function writeTaoDocument(pages, lang)
+// callback(err [, sum])
+function writeTaoDocument(pages, lang, callback)
 {
     var prevmd5 = cached.pages.dddmd5;
     var md5;
@@ -567,27 +601,38 @@ function writeTaoDocument(pages, lang)
         console.log('MD5 sum of ' + docPath() + ' differs from the value it had when ' +
                     'last saved (file not modified by us).\n' +
                     'Will NOT overwrite file. Delete .ddd and save again if you wish.');
-        return null;
+        return callback('ERR_FILECHANGED');
     }
 
     var missing = [];
-    var getTmpl = function(page)
+    // callback(err, tmpl)
+    var getTmpl = function(page, callback)
     {
         var kind = page.kind;
-        return exporter[kind] || (exporter[kind] = loadExporter(kind));
+        if (kind in exporter)
+            return callback(null, exporter[kind]);
+        loadExporter(kind, function (err, obj) {
+            if (err)
+                return callback(err);
+            exporter[kind] = obj;
+            callback(null, obj);
+        });
 
-        function loadExporter(kind)
+        // callback(err, obj)
+        function loadExporter(kind, callback)
         {
             // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
             var modname = __dirname + '/export/' + kind.replace('.', '/');
             var modfile = modname + '.js';
-            if (fs.existsSync(modfile) === false)
-                return loadExporterFromCache(kind);
+            if (fs.existsSync(modfile) === false) {
+                return loadExporterFromCache(kind, callback);
+            }
             verbose('Loading ' + modname);
-            return require(modname);
+            callback(null, require(modname));
         }
 
-        function loadExporterFromCache(kind)
+        // callback(err, obj)
+        function loadExporterFromCache(kind, callback)
         {
             var modname = __dirname + '/export_cache/' + kind.replace('.', '/');
             var modfile = modname + '.js';
@@ -621,57 +666,56 @@ function writeTaoDocument(pages, lang)
                     }
                     var cachedir = __dirname + '/export_cache';
                     if (!createDir(cachedir))
-                        return;
+                        return cb('ERR_MKCACHEDIR');
                     var themedir = cachedir + '/' + theme;
                     if (!createDir(themedir))
-                        return;
+                        return cb('ERR_MKTHEMECACHEDIR');
                     var filepath = themedir + '/' + file;
 
-                    function beginLoad()
-                    {
-                        loadInProgress++;
-                    }
-                    function endLoad()
-                    {
-                        if (--loadInProgress === 0) {
-                            writeTaoDocument(pages, lang);
-                        }
-                    }
-                    beginLoad();
-                    (function (buffer, dstpath, modname) {
+                    (function (buffer, dstpath, modname, cb) {
                         http.get({ host: dstu.host, port: dstu.port || 80, path: dstu.path },
                             function(res) {
                                 res.on('data', function(chunk) {
                                     buffer += chunk;
                                 });
                                 res.on('end', function() {
+                                    if (res.statusCode !== 200) {
+                                        console.log('HTTP status code ' + res.statusCode);
+                                        return cb('ERR_TMPLDLHTTP');
+                                    }
                                     verbose('Saving ' + dstpath);
                                     fs.writeFile(dstpath, buffer, function(err) {
                                         if (err) {
                                             console.log(err);
                                             endLoad();
-                                            return;
+                                            return cb('ERR_WRITETMPL');
                                         }
                                         try {
                                             exporter[kind] = require(modname);
                                         } catch (e) {
                                             console.log('require() failed');
-                                            return;
+                                            return cb('ERR_LOADTMPL');
                                         }
                                         verbose('Exporter for ' + kind + ' loaded');
-                                        endLoad();
+                                        return cb(null);
                                     });
                                 })
                         }).on('error', function(e) {
                             console.log('Download failed [' + dst + ']');
-                            endLoad();
+                            return callback('ERR_TMPLDL');
                         });
-                    }('', filepath, modname));
-                    return error('Download in progress');
+                    }('', filepath, modname, function(err) {
+                        if (err)
+                            return callback(err);
+                        callback(null, require(modname));
+                    }));
+                } else {
+                    verbose('No local file nor remote URL for ' + kind);
+                    return callback('ERR_NOTMPL');
                 }
-                return error('No local file nor remote URL for ' + kind);
+            } else {
+                return callback(null, require(modname));
             }
-            return require(modname);
         }
     }
 
@@ -692,42 +736,53 @@ function writeTaoDocument(pages, lang)
               '// overwrite a modified file.\n\n'
     }
     var ctx = {};
-    for (var i = 0; i < pages.length; i++)
-    {
-        var page = pages[i];
-        var tmpl = getTmpl(page);
-        if (!tmpl)
-            return null;  // Async GET in progress, will retry on complettion
-        ddd += tmpl.header(ctx);
-    }
 
-    for (var i = 0; i < pages.length; i++)
-    {
-        var page = pages[i];
-        var tmpl = getTmpl(page);
-        if (!tmpl)
-            return null;
-        ddd += tmpl.generate(page);
-    }
+    async.eachSeries(pages, function(page, cb) {
+        getTmpl(page, function(err, tmpl) {
+            if (err)
+                return cb(err);
+            ddd += tmpl.header(ctx);
+            cb(null);
+        })
+    }, function(err) {
+        if (err)
+            return callback(err);
 
-    var warn = '';
-    if (missing.length !== 0)
-    {
-        warn = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
-    }
-    return writeDDD(ddd, warn);
+        async.eachSeries(pages, function(page, cb) {
+            getTmpl(page, function(err, tmpl) {
+                if (err)
+                    return cb(err);
+                ddd += tmpl.generate(page);
+                cb(null);
+            })
+        }, function (err) {
+            if (err)
+                return callback(err)
+
+            var warn = '';
+            if (missing.length !== 0)
+                warn = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
+            writeDDD(ddd, warn, callback);
+        })
+    })
+
 }
 
 
 // Write text to .ddd file and update cached MD5 sum
-function writeDDD(ddd, warn)
+// callback(err [, md5sum])
+function writeDDD(ddd, warn, callback)
 {
     var file = docPath();
     warn = warn || '';
-    fs.writeFileSync(file, ddd);
+    try {
+        fs.writeFileSync(file, ddd);
+    } catch (e) {
+        return callback('ERR_FILEACCESS');
+    }
     verbose(file + ' saved' + warn);
     cached.pages.dddmd5 = crypto.createHash('md5').update(ddd).digest('hex');
-    return cached.pages.dddmd5;
+    callback(null, cached.pages.dddmd5);
 }
 
 function verbose()
