@@ -42,7 +42,7 @@ Ext.define('TE.i18n.fr', {
 
         // Error messages for all the error statuses that may be reported by the server
         // ERR_FILECHANGED
-        'The file %1 was not saved because it was modified outside this editor. To save it anyways, please delete the file and try again.':
-            "Le fichier %1 n'a pa pu être sauvé car il a été modifié en dehors de cet éditeur. Pour le sauver quand même, veuillez supprimer le fichier et recommencer."
+        'The file %1 was not saved because it was modified outside this editor. To save it anyways, please delete or empty the file and try again.':
+            "Le fichier %1 n'a pa pu être sauvé car il a été modifié en dehors de cet éditeur. Pour le sauver quand même, veuillez le supprimer ou le vider et recommencer."
     }
 })
