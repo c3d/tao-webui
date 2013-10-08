@@ -49,6 +49,9 @@ Ext.define('TE.controller.Editor', {
                 select: this.pageClicked,
                 cellcontextmenu: this.showPageContextMenu
             },
+            'pagelist dataview': {
+                beforedrop: this.dragAndDropPages
+            },
             '#ctx-menu-delete-page': {
                 click: this.deletePage
             },
@@ -275,6 +278,19 @@ Ext.define('TE.controller.Editor', {
 
     movePageAfter: function() {
         this.movePage(+1);
+    },
+
+    dragAndDropPages: function(node, data, dropRec, dropPosition) {
+        var record = this.selectedPage();
+        var id = record.get('id');
+        var store = this.getPagesStore();
+        var index = store.find('id', id);
+
+        var newId = dropRec.get('id');
+        var newIndex = store.find('id', newId);
+
+        var delta = newIndex - index;
+        this.movePage(delta);
     },
 
     showImageLibrary: function() {

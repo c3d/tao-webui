@@ -1,11 +1,19 @@
 Ext.define('TE.view.PageList', {
     extend: 'Ext.grid.Panel',
-    requires: [ 'TE.view.PageListContextMenu' ],
+    requires: [ 'TE.view.PageListContextMenu',
+                'Ext.grid.plugin.DragDrop',
+                'Ext.util.Point' ],
     alias: 'widget.pagelist',
-
     title: tr('Pages'),
     store: 'Pages',
-
+    xtype: 'grid',
+    viewConfig: {
+        plugins: {
+            ptype: 'gridviewdragdrop',
+            dragGroup: 'list',
+            dropGroup: 'list'
+        }
+    },
     columns: [{
         xtype: 'rownumberer',
         sortable: false
