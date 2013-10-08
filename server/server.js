@@ -97,6 +97,37 @@ function jsonFilePath(name, saving)
     }
 }
 
+// Read commands from stdin
+var stdinbuf ='';
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+process.stdin.on('data', function(chunk) {
+    // It seems 'chunk' is always a full line of text (ending with \n)
+    // but I think we cannot be certain, hence the while loop to split
+    // multiple lines
+    stdinbuf += chunk;
+    var i = 0, j;
+    var cmd;
+    while (i < stdinbuf.length) {
+        j = stdinbuf.indexOf('\n', i);
+        if (j === -1)
+            break;
+        cmd = stdinbuf.substring(i, j);
+        switch (cmd) {
+        case 'quit':
+            process.exit();
+            break;
+        case '':
+            break;
+        default:
+            console.log('? Unknown command: ' + cmd);
+        }
+        i = j + 1;
+    }
+    if (j !== -1)
+        stdinbuf = stdinbuf.substring(j + 1);
+});
+
 // Required to parse JSON body in REST requests
 app.use(express.bodyParser());
 // i18n
