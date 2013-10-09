@@ -6,8 +6,8 @@ Ext.define('TE.i18n.fr', {
         'Add image from URL': 'Ajouter une image (URL)',
         'Add file...': 'Ajouter un fichier...',
         'Add image file': 'Ajouter un fichier image',
-        'Are you sure you want to delete this image?': 'Voulez-vous vraiment supprimer cette image ?',
-        'Are you sure you want to delete this page?': 'Voulez-vous vraiment supprimer cette page ?',
+        'Are you sure you want to delete this image?': 'Voulez-vous vraiment supprimer cette image&nbsp;?',
+        'Are you sure you want to delete this page?': 'Voulez-vous vraiment supprimer cette page&nbsp;?',
         'Browse...': 'Choisir...',
         'Cancel': 'Annuler',
         'Choose': 'Choisir',
@@ -48,6 +48,6 @@ Ext.define('TE.i18n.fr', {
         // ERR_FILEACCESS
         'Could not write file %1.': "Impossible d'écrire dans le fichier %1.",
         // Other (less frequent) ERR_* codes
-        'Server error: ': 'Erreur du serveur: '
+        'Server error: ': 'Erreur du serveur&nbsp;: '
     }
 })
