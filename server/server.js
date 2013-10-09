@@ -185,10 +185,11 @@ app.post('/pages', function (req, res) {
         if (page.idx !== -1) {
             // Store at index specified by client
             idx = page.idx
-            delete page.idx;
         }
         pages.splice(idx, 0, page);
         verbose('Page ' + page.id + ' created (index ' + idx + ')');
+        if (page.idx)
+            delete page.idx;
         save(pages, req, function(err) {
             var rsp = {};
             if (err) {
@@ -222,10 +223,10 @@ app.put('/pages/:id', function(req, res) {
             // - insert at new position
             pages.splice(found.idx, 0, found);
             verbose('Page ' + found.id + ' moved from index ' + i + ' to index ' + found.idx);
-            // - no need to keep the idx attribute in the page
-            delete found.idx;
         }
         if (found) {
+            if (found.idx)
+                delete found.idx;
             save(pages, req, function(err) {
                 var rsp = {};
                 if (err) {
