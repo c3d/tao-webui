@@ -22,7 +22,20 @@ Ext.define('TE.model.Page', {
                     msg = tr('HTTP error: ') + req.status + ' ' + req.statusText;
                 else
                     msg = TE.util.ServerErrors.message(op.request.scope.reader.jsonData);
-                Ext.Msg.alert(tr('Error'), msg);
+                Ext.Msg.show({
+                    title: tr('Error'),
+                    msg: msg,
+                    icon: Ext.MessageBox.ERROR,
+                    buttons: Ext.MessageBox.OKCANCEL,
+                    buttonText: {
+                        ok: tr('Retry'),
+                        cancel: tr('OK')
+                    },
+                    fn: function(id) {
+                        if (id === 'ok')
+                            proxy.read(op); // Retry
+                    }
+                });
             }
         }
     },
