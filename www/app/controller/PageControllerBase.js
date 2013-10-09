@@ -16,6 +16,9 @@ Ext.define('TE.controller.PageControllerBase', {
     updatePage: function() {
         // Copy form values into record
         var form = this.getCenterpane().down('form');
+        if (!form.isValid())
+            return;
+
         var record = form.getRecord();
         var values = form.getValues();
         

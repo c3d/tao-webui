@@ -36,6 +36,7 @@ Ext.define('TE.i18n.fr', {
         'Preview': 'Aperçu',
         'Retry': 'Réessayer',
         'Themes': 'Thèmes',
+        'This name is already used': 'Ce nom est déjà utilisé',
         'Tools': 'Outils',
         'Type': null,
         'Upload failed': 'Erreur de transfert',

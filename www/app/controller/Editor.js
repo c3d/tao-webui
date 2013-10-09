@@ -99,6 +99,19 @@ Ext.define('TE.controller.Editor', {
                 click: this.uploadImage
             }
         });
+
+        // Page name validator
+        // To use it: set "trackResetOnLoad: true" on form and "vtype: 'pagename'" on form field
+        var store = this.getPagesStore();
+        Ext.apply(Ext.form.field.VTypes, {
+            pagename: function(val, field) {
+                if (field.originalValue === undefined || val === field.originalValue) {
+                    return true;
+                }
+                return (store.findExact('name', val) === -1);
+            },
+            pagenameText: tr('This name is already used')
+        });
     },
 
     loadThemes: function() {
