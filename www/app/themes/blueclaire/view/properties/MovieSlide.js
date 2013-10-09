@@ -8,6 +8,7 @@ Ext.define('TE.themes.blueclaire.view.properties.MovieSlide', {
                 xtype: 'form',
                 border: 0,
 			    padding: 10,
+                trackResetOnLoad: true,
 
 			    defaults: {
                     labelAlign: 'top',
@@ -18,6 +19,9 @@ Ext.define('TE.themes.blueclaire.view.properties.MovieSlide', {
                     {
                         xtype: 'textfield',
                         name: 'name',
+                        allowBlank: false,
+                        vtype: 'pagename',
+                        msgTarget: 'under',
                         fieldLabel: tr('Page name', 'blueclaire')
                     },
                     {
