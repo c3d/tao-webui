@@ -29,6 +29,9 @@ Ext.define('TE.controller.PageControllerBase', {
             record.save({
                 success: function() {
                     record.generic_record.commit();
+                    // setValues() will update each field's .originalValue so
+                    // the 'pagename' vtype (duplicate check) will work correctly
+                    form.getForm().setValues(values);
                 }
                 // Note: failure is handled at the proxy level (model/Pages.js)
             });
