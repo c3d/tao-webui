@@ -1,6 +1,7 @@
 Ext.define('TE.tree.PageList', {
     extend: 'Ext.panel.Panel',
     requires: [ 'TE.view.PageListContextMenu',
+                'TE.util.DropZone',
                 'Ext.util.Point', 
                 "Ext.panel.Panel", 
                 "Ext.view.View" ],
@@ -65,7 +66,7 @@ Ext.define('TE.tree.PageList', {
 				
 				// Initialize the drop zone in the current view
 				initDropZone: function(v) {
-					v.dropZone = Ext.create('Ext.view.DropZone', {
+					v.dropZone = Ext.create('TE.util.DropZone', {
 						view: v,
 						ddGroup: 'Drag',
 						indicatorHtml: '<div class="grid-drop-indicator"></div>',

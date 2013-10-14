@@ -45,3 +45,12 @@
 	text-align:center;
 	border-bottom: 1px solid #333333;
 }
+
+.grid-drop-indicator {
+	background-color: #77BC71;
+    height: 5px;
+    width:5px;
+    line-height: 0;
+    overflow: visible;
+    pointer-events: none;
+}
