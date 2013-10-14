@@ -4,6 +4,8 @@ Ext.define('TE.controller.PageControllerBase', {
         { ref: 'centerpane', selector: '#centerpane' }
     ],
 
+    timer: 0, // !== 0 if timer is running
+
     display: function(record) {
         var cp = this.getCenterpane();
         cp.removeAll();
@@ -11,12 +13,25 @@ Ext.define('TE.controller.PageControllerBase', {
         var view = Ext.create(vname);
         cp.add(view);
         cp.down('form').loadRecord(record);
+        if (this.timer === 0)
+            this.startSaveTimer();
+        else
+            console.log('Unexpected: timer !== 0');
     },
 
+    endDisplay: function() {
+        if (this.timer !== 0) {
+            clearTimeout(this.timer);
+            this.timer = 0;
+        }
+    },
+
+    // Save page immediately, if modified
     updatePage: function() {
+        var me = this;
         // Copy form values into record
-        var form = this.getCenterpane().down('form');
-        if (!form.isValid())
+        var form = me.getCenterpane().down('form');
+        if (!form || !form.isValid())
             return;
 
         var record = form.getRecord();
@@ -24,17 +39,37 @@ Ext.define('TE.controller.PageControllerBase', {
         
         record.set(values);
         if (record.dirty) {
-            record.generic_record.set(record.getChanges());
+            var mainctrl = this.application.getController('TE.controller.Editor');
+            mainctrl.setStatus(tr('Saving...'));
+            var changes = record.getChanges();
+            record.generic_record.set(changes);
+            // For each modified field, update its .originalValue so
+            // the 'pagename' vtype (duplicate check) will work correctly
+            form.getForm().getFields().each(function(field) {
+                if (field.name in changes)
+                    field.resetOriginalValue();
+                return true;
+            });
             // Push modified page to server
             record.save({
                 success: function() {
                     record.generic_record.commit();
-                    // setValues() will update each field's .originalValue so
-                    // the 'pagename' vtype (duplicate check) will work correctly
-                    form.getForm().setValues(values);
+                    me.startSaveTimer();
+                    mainctrl.setStatus(tr('Saved'));
                 }
                 // Note: failure is handled at the proxy level (model/Pages.js)
             });
+        } else {
+            me.startSaveTimer();
         }
+    },
+
+    startSaveTimer: function() {
+        if (this.timer !== 0)
+            return;
+        this.timer = Ext.defer(function() {
+            this.timer = 0;
+            this.updatePage();
+        }, 10000, this);
     }
 });

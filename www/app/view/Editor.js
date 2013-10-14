@@ -23,6 +23,21 @@ Ext.define('TE.view.Editor', {
         title: tr('Properties'),
         region: 'center',
         autoScroll: true,
-        margins: '3 3 0 0'
+        margins: '3 3 0 0',
+        bbar: {
+            xtype: 'toolbar',
+            items: [
+                '->',
+                {
+                    xtype: 'tbtext',
+                    itemId: 'statustext',
+                    text: '&nbsp;'
+                }, {
+                    xtype: 'button',
+                    text: tr('Save'),
+                    action: 'savepage'
+                }
+            ]
+        }
     }]
  });

@@ -29,7 +29,8 @@ Ext.define('TE.controller.Editor', {
         { ref: 'imageLibraryGrid', selector: 'teimagelibrary gridpanel' },
         { ref: 'imageDeleteBtn', selector: 'teimagelibrary button[action=delete]' },
         { ref: 'imageEditBtn', selector: 'teimagelibrary button[action=edit]' },
-        { ref: 'imageChooseBtn', selector: 'teimagelibrary button[action=choose]' }
+        { ref: 'imageChooseBtn', selector: 'teimagelibrary button[action=choose]' },
+        { ref: 'statusText', selector: '#centerpane toolbar #statustext'}
     ],
 
     init: function() {
@@ -97,6 +98,9 @@ Ext.define('TE.controller.Editor', {
             },
             'teeditimagefile button[action=upload]': {
                 click: this.uploadImage
+            },
+            '#centerpane button[action=savepage]': {
+                click: this.savePage
             }
         });
 
@@ -159,8 +163,12 @@ Ext.define('TE.controller.Editor', {
             child.toggleSelected(false);
         });
 
+        if (this.pagectrl)
+            this.pagectrl.endDisplay();
+
         // Make sure controller for the specific kind of page is loaded
         var ctrl = this.application.getController(record.getControllerName());
+        this.pagectrl = ctrl;
 
         // Reload record, applying the suitable data model for the page
         // REVISIT Use a store to cache data
@@ -402,5 +410,21 @@ Ext.define('TE.controller.Editor', {
         field.setValue(image.get('file'));
         win.close();
         this.application.getController('PageControllerBase').updatePage();
+    },
+
+    setStatus: function(msg) {
+        console.log('STATUS', msg);
+        this.getStatusText().setText(msg);
+        Ext.defer(function() {
+            var tbtext = this.getStatusText();
+            if (tbtext)
+                tbtext.setText('&nbsp;');
+        }, 2000, this);
+    },
+
+    savePage: function() {
+        if (!this.pagectrl)
+            return;
+        this.pagectrl.updatePage();
     }
 });
