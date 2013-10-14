@@ -14,11 +14,11 @@ Ext.define('TE.util.DropZone', {
         }
         return pos;
     },
-    
+
    getTargetFromEvent : function(e) {
         var node = e.getTarget(this.view.getItemSelector()),
             mouseX, nodeList, testNode, i, len, box;
-            
+
         if (!node) {
             mouseX = e.getPageX();
             for (i = 0, nodeList = this.view.getNodes(), len = nodeList.length; i < len; i++) {
@@ -31,6 +31,7 @@ Ext.define('TE.util.DropZone', {
         }
         return node;
     },
+
     positionIndicator: function(node, data, e) {
         var me = this,
             view = me.view,
@@ -38,39 +39,44 @@ Ext.define('TE.util.DropZone', {
             overRecord = view.getRecord(node),
             draggingRecords = data.records,
             indicatorX;
-            
 
-        if (!Ext.Array.contains(draggingRecords, overRecord) && (
-            pos == 'before' && !me.containsRecordAtOffset(draggingRecords, overRecord, -1) ||
-            pos == 'after' && !me.containsRecordAtOffset(draggingRecords, overRecord, 1)
-        )) {
-            me.valid = true;
+        if (!Ext.Array.contains(draggingRecords, overRecord))
+        {
+			indicatorX = Ext.fly(node).getX() - view.el.getX() - 1;
+			var posX = Ext.fly(node).getX();
+			var delta = Ext.fly(node).getX() - data.fromPosition[0];
+			posX = data.fromPosition[0] - posX;
+			if(posX == 0)
+			{
+				me.valid = false;
+				me.overRecord = overRecord;
+			}
+			else
+			{
+	            me.valid = true;
+			    if(delta > 0)
+				    indicatorX += Ext.fly(node).getWidth();
+	            me.getIndicator().setHeight(Ext.fly(node).getHeight()).showAt(indicatorX, 0);
 
-            if (me.overRecord != overRecord || me.currentPosition != pos) {
-
-                indicatorX = Ext.fly(node).getX() - view.el.getX() - 1;
-                
-		        var delta = indicatorX - data.fromPosition[0];
-		        if(delta > 0) 		
-					indicatorX += Ext.fly(node).getWidth();
-                me.getIndicator().setHeight(Ext.fly(node).getHeight()).showAt(indicatorX, 0);
-
-                // Cache the overRecord and the 'before' or 'after' indicator.
-                me.overRecord = overRecord;
-                me.currentPosition = pos;
-            }
+	            // Cache the overRecord and the 'before' or 'after' indicator.
+	            me.overRecord = overRecord;
+	        }
         } else {
             me.invalidateDrop();
         }
     },
-        // The mouse is over a View node
+
+     // The mouse is over a View node
     onNodeOver: function(node, dragZone, e, data) {
         var me = this;
+
+        /* Initial state of DnD */
+        me.valid = false;
+        me.getIndicator().setHeight(0).showAt(-500, 0);
 
         if (!Ext.Array.contains(data.records, me.view.getRecord(node))) {
             me.positionIndicator(node, data, e);
         }
         return me.valid ? me.dropAllowed : me.dropNotAllowed;
     },
-
 });

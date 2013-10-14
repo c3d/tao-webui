@@ -44,7 +44,7 @@ Ext.define('TE.tree.PageList', {
 						// Simple function to get always to correct total width
 				        compiled: true,
 				        totalWidth: function(value) {
-				        	return value * 322; // NUmber of items multiply by the size of a page container
+							return value * 290; // NUmber of items multiply by width of page container
 				        }
 				    }
 				],
@@ -91,17 +91,17 @@ Ext.define('TE.tree.PageList', {
     initComponent: function() {
         Ext.apply(this, {
             tbar: [
-                '>', // Right align buttons
+                '->', // Right align buttons
                 {
                     xtype: 'button',
                     text: tr('Move page before'),
-                    icon: 'app/resources/images/pageup.gif',
+                    icon: 'app/resources/images/page-up.gif',
                     action: 'pageBefore',
                     disabled: true
                 },{
                     xtype: 'button',
                     text: tr('Move page after'),
-                    icon: 'app/resources/images/pagedown.gif',
+                    icon: 'app/resources/images/page-down.gif',
                     action: 'pageAfter',
                     disabled: true
                 },{

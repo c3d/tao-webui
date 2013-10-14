@@ -266,7 +266,6 @@ Ext.define('TE.controller.Editor', {
                     success: function() {
                         store.reload({
                             callback: function(records, operation, success) {
-                            	console.log(store);
                                 if (success)
                                     me._updatePageButtons();
                             }
