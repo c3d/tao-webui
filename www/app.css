@@ -1,2 +1,56 @@
 .te-selectedicon { background: #D2E1F4 }
 .te-currenttheme { font-weight: bold }
+
+
+.page-container {
+	display: inline-block !important;
+	width: 290px;
+	margin-left: 30px;
+	height:225px;
+}
+
+.page-wrap {
+	height: 170px;	
+}
+
+.page-wrap .x-item-selected {
+	background-color: #B7CDE4;
+}
+
+.page-container:hover {
+	background-color: #93DBFF;
+}
+
+.page {
+	margin-top: 15px;
+	margin-left: 20px;
+	border: 1px solid #333333;
+	width: 252px;
+	-moz-box-shadow: -3px 3px 3px 0px #656565;
+	-webkit-box-shadow: -3px 3px 3px 0px #656565;
+	-o-box-shadow: -3px 3px 3px 0px #656565;
+	box-shadow: -3px 3px 3px 0px #656565;
+	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=225, Strength=3);
+}
+
+.page-img img {
+	width:250px; 
+	height: 150px;
+}
+
+.page-name {
+	background-color: #157FCC;
+	height: 40px;
+	color: #FFFFFF;
+	text-align:center;
+	border-bottom: 1px solid #333333;
+}
+
+.grid-drop-indicator {
+	background-color: #77BC71;
+    height: 5px;
+    width:5px;
+    line-height: 0;
+    overflow: visible;
+    pointer-events: none;
+}
