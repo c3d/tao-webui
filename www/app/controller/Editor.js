@@ -413,7 +413,6 @@ Ext.define('TE.controller.Editor', {
     },
 
     setStatus: function(msg) {
-        console.log('STATUS', msg);
         this.getStatusText().setText(msg);
         Ext.defer(function() {
             var tbtext = this.getStatusText();
