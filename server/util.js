@@ -83,29 +83,66 @@ var DomToSlideConverter = (function(nindent) {
         nindent = 1;
     }
 
-    function outputAlign(value, revert)
+    function outputAlign(value)
     {
-        if (value === 'left' || value === 'center' || value === 'right')
-        {
-            if (revert)
-            {
-                output('paragraph_break\n');
-                value = 'left';
-            }
-            output('align_' + value + '\n');
-        }
-        else
-        {
-            console.log('Unsupported [text-]align value: ' + value);
+        switch (value) {
+            case 'left':
+            case 'center':
+            case 'right':
+            case 'justify':
+                output('align_' + value + '\n');
+                break;
+            default:
+                console.log('Unsupported text-align value: ' + value);
         }
     }
 
-    // Output Tao code for 'style' attribute
-    function convertStyle(style, revert)
+    function outputTextDecoration(value)
     {
-        revert = (typeof revert !== 'undefined') ? revert : false;
+        if (value === 'underline')
+            output('underline\n');
+        else if (value === 'line-through')
+            output('strikeout\n');
+        else
+            console.log('Unsupported text-decoration value: ' + value);
+    }
 
-        var styles = style.match(/[^;]+/g); // split at ;, leave out empty elements
+    function outputFontFamily(value)
+    {
+        var descr = toTaoFontList(value);
+        if (descr.length)
+            output('font ' +  descr + '\n');
+    }
+
+    function outputFontSize(value)
+    {
+        var sz = 0;
+        switch (value) {
+            case 'xx-small':  sz = -2; break;
+            case 'x-small':   sz = -1; break;
+            case 'small':              break;
+            case 'medium':    sz =  1; break;
+            case 'large':     sz =  2; break;
+            case 'x-large':   sz =  3; break;
+            case 'xx-large':  sz =  4; break;
+            default:
+                console.log('Unsupported font_size value: ' + value);
+                return;
+        }
+        var scale = 1 + 0.3 * sz;
+        if (scale != 1)
+            output('font_size ' + scale + ' * theme_size(theme, slide_master, "story")\n');
+    }
+
+    function outputColor(value)
+    {
+        output('color "' + value + '"\n');
+    }
+
+    // Output Tao code for 'style' attribute
+    function convertStyle(style)
+    {
+        var styles = style.match(/[^;]+/g); // split at ; leave out empty elements
         styles.forEach(function(s) {
             var col = s.indexOf(':');
             var name = s.substring(0, col).trim();
@@ -113,35 +150,64 @@ var DomToSlideConverter = (function(nindent) {
             switch (name)
             {
             case 'text-align':
-                outputAlign(value, revert);
+                outputAlign(value);
+                break;
+            case 'text-decoration':
+                outputTextDecoration(value);
+                break;
+            case 'font-family':
+                outputFontFamily(value);
+                break;
+            case 'font-size':
+                outputFontSize(value);
                 break;
             case 'color':
-                // Ignored because text color overrides are not set by
-                // <div style="color: rgb(x,y,z)">
-                // but by <font color="#abcdef"> which is handled elsewhere.
-                // FIXME: not always true, sometimes we get <span style="color ...";>
-                // And, <div style: 'color: rgb(0,0,0);'> is used to restore
-                // the default color, which is done automatically by text_span.
+                outputColor(value);
                 break;
             default:
-                console.log('Style element ignored: ' + name + ': ' + value);
+                console.log('Unsupported style element: ' + name + ': ' + value);
             }
         })
-
     }
 
-    function convertAttribs(attribs, revert)
+    // Make sure all font names in comma-separated list are quoted with ""
+    // Discard font names following a name starting and ending with underscore (_)
+    // to handle special font names: '_default font_' or '_defaut_'
+    // (see app/util/CustomHtmlEditor.js)
+    // May return an empty string.
+    //
+    // Example:
+    //   (input)  >'foo', "bar", baz, _def_, glop<
+    //   (return) >"foo", "bar", "baz"<
+    function toTaoFontList(faces)
     {
-        revert = (typeof revert !== 'undefined') ? revert : false;
+        var processed = [];
+        var tab = faces.split(',');
+        for (var i = 0; i < tab.length; i++)
+        {
+            var face = tab[i].trim();
+            face = face.replace(/^\"|\"$|^\'|\'$/g, '');
+            if (face[0] === "_" && face[face.length - 1] === "_")
+                break;
+            face = '"' + face + '"';
+            processed.push(face);
+        }
+
+        return processed.length > 0 ? processed.join() : '';
+    }
+
+    function convertAttribs(dom)
+    {
+        var attribs = dom.attribs || [];
         for (attr in attribs) {
             var value = attribs[attr];
             switch (attr)
             {
             case 'align':
-                outputAlign(value, revert)
+                outputAlign(value)
                 break;
             case 'style':
-                convertStyle(value, revert);
+                convertStyle(value);
                 break;
             default:
                 console.log('Attribute ignored: ' + attr + ': ' + value);
@@ -149,30 +215,14 @@ var DomToSlideConverter = (function(nindent) {
         }
     }
 
-    // Make sure all font names in comma-separated list are quoted with '' or ""
-    // Quote names that are not quoted (with "")
-    // Discard font names starting and ending with underscore (_)
-    // to handle special font names: '_default font_' or '_defaut_'
-    // (see app/util/CustomHtmlEditor.js)
-    //
-    // Example:
-    //   (input)  >'foo', "bar", baz, _def_<
-    //   (return) >'foo', "bar", "baz"<
-    function checkFontFaces(faces)
+    function convertChildren(dom)
     {
-        var processed = [];
-        var tab = faces.split(',');
-        for (var i = 0; i < tab.length; i++)
+        if (dom.children)
         {
-            var face = tab[i].trim();
-            if (face[0] === "_" && face[face.length - 1] === "_")
-                continue;
-            if (face[0] !== "'" && face[0] !== '"')
-                face = '"' + face + '"';
-            processed.push(face);
+            dom.children.forEach(function(elt) {
+                convert(elt);
+            });
         }
-
-        return processed.length > 0 ? processed.join() : undefined;
     }
 
     function convert(dom)
@@ -197,42 +247,17 @@ var DomToSlideConverter = (function(nindent) {
             switch(dom.name)
             {
             case 'p':
-                output('paragraph_break\n');
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
-                break;
-            case 'div':
-                output('paragraph_break\n');
-                if (dom.attribs)
-                    convertAttribs(dom.attribs);
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
-                if (dom.attribs)
-                {
-                    output('paragraph_break\n');
-                    convertAttribs(dom.attribs, true);
-                }
+                output('paragraph\n');
+                indent();
+                convertAttribs(dom);
+                convertChildren(dom);
+                unindent();
                 break;
             case 'span':
-                if (dom.attribs)
-                {
-                    output('text_span\n');
-                    indent();
-                }
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
-                if (dom.attribs)
-                    unindent();
-                break;
-            case 'u':
-                output('underline\n');
+                output('text_span\n');
                 indent();
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
+                convertAttribs(dom);
+                convertChildren(dom);
                 unindent();
                 break;
             case 'br':
@@ -241,34 +266,26 @@ var DomToSlideConverter = (function(nindent) {
                 else
                     output('line_break\n');
                 break;
-            case 'b':
+            case 'strong':
                 output('bold\n');
                 indent();
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
+                convertChildren(dom);
                 unindent();
                 break;
-            case 'i':
+            case 'em':
                 output('italic\n');
                 indent();
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
+                convertChildren(dom);
                 unindent();
                 break;
             case 'ul':
                 startList('ul');
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
+                convertChildren(dom);
                 endList();
                 break;
             case 'ol':
                 startList('ol');
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
+                convertChildren(dom);
                 endList();
                 break;
             case 'li':
@@ -276,41 +293,10 @@ var DomToSlideConverter = (function(nindent) {
                     convertStyle(dom.attribs.style);
                 output(currentListSymbol() + '\n')
                 indent();
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
+                convertChildren(dom);
                 unindent();
                 if (dom.attribs && dom.attribs.style)
                     convertStyle(dom.attribs.style, true);
-                break;
-            case 'font':
-                var faces = (dom.attribs && dom.attribs.face) ? checkFontFaces(dom.attribs.face) : undefined;
-                var hasAttr = (dom.attribs && (faces || dom.attribs.color || dom.attribs.size));
-                if (hasAttr)
-                {
-                    output('text_span\n');
-                    indent();
-                }
-                if (faces)
-                {
-                    output('font ' + faces + '\n');
-                }
-                if (dom.attribs && dom.attribs.color)
-                {
-                    var hash = dom.attribs.color.charAt(0) === '#' ? '' : '#';
-                    output('color "' + hash + dom.attribs.color + '"\n');
-                }
-                if (dom.attribs && dom.attribs.size)
-                {
-                    var scale = 1 + 0.36 * (Number(dom.attribs.size) - 2);
-                    if (scale != 1)
-                        output('font_size ' + scale + ' * theme_size(theme, slide_master, "story")\n');
-                }
-                dom.children.forEach(function(elt) {
-                    convert(elt);
-                });
-                if (hasAttr)
-                    unindent();
                 break;
             default:
                 console.log('Unrecognized tag: ' + dom.name);

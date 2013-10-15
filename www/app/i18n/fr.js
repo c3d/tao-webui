@@ -1,7 +1,7 @@
 Ext.define('TE.i18n.fr', {
 
     translations: {
-        '_Theme default_': '_Police du thème_', // Underscores are used in server
+        'Theme default': 'Police du thème',
         'Add URL...': 'Ajouter une URL...',
         'Add image from URL': 'Ajouter une image (URL)',
         'Add file...': 'Ajouter un fichier...',

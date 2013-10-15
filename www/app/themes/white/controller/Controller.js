@@ -7,13 +7,5 @@ Ext.define('TE.themes.white.controller.Controller', {
 
         'TE.themes.white.view.properties.TitleAndBullets',
         'TE.themes.white.view.properties.PhotoHorizontal'
-    ],
-
-    init: function() {
-        this.control({
-            'textfield': {
-                blur: function() { this.updatePage(); }
-            }
-        });
-    }
+    ]
 });

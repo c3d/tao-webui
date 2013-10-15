@@ -1,0 +1,16 @@
+This subdirectory contains code extracted from:
+"Plugins and Extensions for EXT JS 4" by Harald Hanek
+  (https://github.com/harrydeluxe/extjs-ux.git)
+published under the MIT license (see LICENSE.txt), namely:
+
+  - ./ux/form/field/TinyMCE.js
+  - ./ux/form/field/TinyMCEWindowManager.js
+
+Please refer to the notice in ./ux/form/field/TinyMCE.js for information on
+additional authors.
+
+This subdirectory also includes the TinyMCE library (http://www.tinymce.com)
+in ./ux/form/field/tinymce, published under the LGPL license, see
+./ux/form/field/tinymce/license.txt.
+The language pack for French (version 2.2) was downloaded from :
+http://www.tinymce.com/i18n3x/index.php?ctrl=lang&act=download&pr_id=1

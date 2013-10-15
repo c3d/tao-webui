@@ -7,13 +7,5 @@ Ext.define('TE.themes.vellum.controller.Controller', {
 
         'TE.themes.vellum.view.properties.TitleAndSubtitle',
         'TE.themes.vellum.view.properties.TitleBulletsAndPhoto'
-    ],
-
-    init: function() {
-        this.control({
-            'textfield, customhtmleditor': {
-                blur: function() { this.updatePage(); }
-            }
-        });
-    }
+    ]
 });

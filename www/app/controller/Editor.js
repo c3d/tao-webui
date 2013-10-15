@@ -136,6 +136,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     themeClicked: function(theme) {
+        this.savePage();
         this.getTools().setPageTemplates(theme.getPageTemplatesPanel());
 
         Ext.each(Ext.ComponentQuery.query('theme'), function(child) {
@@ -151,6 +152,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     pageTemplateClicked: function(pt) {
+        this.savePage();
         Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
             child.toggleSelected(child === pt);
         });
@@ -159,6 +161,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     pageClicked: function(grid, record) {
+        this.savePage();
         Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
             child.toggleSelected(false);
         });
@@ -421,6 +424,7 @@ Ext.define('TE.controller.Editor', {
         }, 2000, this);
     },
 
+    // Send current page to server (if modified)
     savePage: function() {
         if (!this.pagectrl)
             return;

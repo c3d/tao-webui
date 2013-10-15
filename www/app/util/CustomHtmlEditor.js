@@ -1,107 +1,95 @@
-// http://www.sencha.com/forum/showthread.php?142836-HTML-Editor-focus-and-blur-event-issue
 Ext.define('TE.util.CustomHtmlEditor', {
-    extend: 'Ext.form.field.HtmlEditor',
+    extend: 'Ext.ux.form.field.TinyMCE',
     alias: 'widget.customhtmleditor',
 
-    fontFamilies: [
-        // Special font name that will be recognized by the code generator
-        tr('_Theme default_'),
+    config: {
+        height: 300
+    },
 
-        // Default fonts proposed by HtmlEditor
-        // FIXME: How can we add the fonts available on the system?
-        // Maybe we could ask the NodeJS server (assuming it is running
-        // on the same machine as Tao).
-        'Arial',
-        'Courier New',
-        'Helvetica',
-        'Tahoma',
-        'Times New Roman',
-        'Verdana',
+    tinymceConfig: {
+        plugins: 'searchreplace',
+        theme_advanced_buttons1: 'undo,redo,|,' +
+                                 'fontselect,fontsizeselect,|,' +
+                                 'bold,italic,underline,strikethrough,|,' +
+                                 'bullist,numlist,|,outdent,indent,|,' +
+                                 'justifyleft,justifycenter,justifyright,justifyfull,|,' +
+                                 'forecolor,|,charmap,|,removeformat,|,code',
+        theme_advanced_buttons2: '',
+        theme_advanced_buttons3: '',
+        theme_advanced_buttons4: ''
+    },
+
+    initComponent: function() {
+
+        // Note: if the TinyMCE language pack for 'lang' is not installed, the editor
+        // will not show up. Still, I prefer not to add a hardcoded language test here
+        // so that language support may be extended simply by adding files.
+        this.tinymceConfig.language = TE.i18n.Translate.lang;
+
+        this.tinymceConfig.theme_advanced_fonts =
+             // The server keeps the theme's default font when first font name matches '_*_'
+            tr('Theme default') + '=_theme default_,sans-serif;' +
+            'Arial=arial;' +
+            'Courier New=courier new;' +
+            'Times New Roman=times new roman;';
 
         // Fonts bundled with Tao
         // FIXME: except for fonts that are also installed system-wide,
         // these fonts cannot be used in the web browser. User will see
         // a default font instead. But Tao will display the correct font.
         // Maybe the NodeJS server could implement a font server?
-        // - Serif
-        'Bentham',
-        'Gentium Plus',
-        'Goudy Bookletter 1911',
-        'IM FELL English',
-        'IM FELL English SC',
-        'Old Standard TT',
-        'PT Serif',
-        // - Sans-serif
-        'Andika Basic',
-        'Cherry Cream Soda',
-        'Droid Sans',
-        'Droid Sans Mono',
-        'Ubuntu',
-        'Yanone Kaffeesatz',
-        // Handwriting
-        'Calligraffiti',
-        'Coming Soon',
-        'Dancing Script',
-        'Homemade Apple',
-        'Just Another Hand',
-        'Kristi',
-        'Tangerine',
-        // Misc.
-        'Allerta',
-        'Chewy',
-        'Geo',
-        'Kenia',
-        'Kranky',
-        'LeckerliOne',
-        'Lobster',
-        'Luckiest Guy',
-        'Mountains of Christmas',
-        'Orbitron',
-        'Permanent Marker',
-        'UnifrakturMaguntia',
-        'Unkempt'
-    ],
-
-    // Array of font family names. The first one that is present in
-    // fontFamilies will be selected on creation.
-    dfltFont: [ tr('_Theme default_') ],
-
-    listeners: {
-        afterrender: function(c) {
-            if (this.dfltFont)
-            {
-                for (var i = 0; i < c.dfltFont.length; i++)
-                {
-                    var name = c.dfltFont[i];
-                    if (c.fontFamilies.indexOf(name) !== -1)
-                    {
-                        c.relayCmd('fontName', name);
-                        break;
-                    }
-                }
-            }
-        }
-    },
-
-    initEvents: function () {
+        var fonts = [
+            // Serif
+            'Bentham',
+            'Gentium Plus',
+            'Goudy Bookletter 1911',
+            'IM FELL English',
+            'IM FELL English SC',
+            'Old Standard TT',
+            'PT Serif',
+            // Sans-serif
+            'Andika Basic',
+            'Cherry Cream Soda',
+            'Droid Sans',
+            'Droid Sans Mono',
+            'Ubuntu',
+            'Yanone Kaffeesatz',
+            // Handwriting
+            'Calligraffiti',
+            'Coming Soon',
+            'Dancing Script',
+            'Homemade Apple',
+            'Just Another Hand',
+            'Kristi',
+            'Tangerine',
+            // Misc.
+            'Allerta',
+            'Chewy',
+            'Geo',
+            'Kenia',
+            'Kranky',
+            'LeckerliOne',
+            'Lobster',
+            'Luckiest Guy',
+            'Mountains of Christmas',
+            'Orbitron',
+            'Permanent Marker',
+            'UnifrakturMaguntia',
+            'Unkempt'
+        ];
+        Ext.each(fonts, function(font) {
+            this.tinymceConfig.theme_advanced_fonts += font + '=' + font + ',sans-serif;';
+        }, this);
         this.callParent(arguments);
-        this.on({
-            scope: this,
-            initialize: this.onInitializeHtmlEditor
-        });
-    },
-
-    onInitializeHtmlEditor: function () {
-        var frameWin = this.getWin(),
-            fn = Ext.bind(this.onHtmlEditorBlur, this);
-
-        if (frameWin.attachEvent)
-            frameWin.attachEvent('blur', fn);
-        else
-            frameWin.addEventListener('blur', fn, false);
-    },
-
-    onHtmlEditorBlur: function(e) {
-        this.fireEvent('blur', this);
     }
+    // initEvents: function () {
+    //     this.callParent(arguments);
+    //     var me = this;
+    //     this.on({
+    //         scope: this,
+    //         editorcreated: function() {
+    //             var ed = this.getEditor();
+    //         }
+    //     });
+    // }
 });

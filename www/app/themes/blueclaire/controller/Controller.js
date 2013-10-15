@@ -13,13 +13,5 @@ Ext.define('TE.themes.blueclaire.controller.Controller', {
         'TE.themes.blueclaire.view.properties.PictureSlide',
         'TE.themes.blueclaire.view.properties.MovieSlide',
         'TE.themes.blueclaire.view.properties.Slide'
-    ],
-
-    init: function() {
-        this.control({
-            'textfield, customhtmleditor': {
-                blur: function() { this.updatePage(); }
-            }
-        });
-    }
+    ]
 });
