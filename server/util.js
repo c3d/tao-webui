@@ -42,7 +42,7 @@ var DomToSlideConverter = (function(nindent) {
         var symbols = {
             'ul': [ '*', '**', '***' ],
             'ol': [ '+', '++', '+++' ],
-            'X':  [ '=', '--', '---' ]
+            'X':  [ '-', '--', '---' ]
         };
         return symbols[listState[listState.length-1]][Math.min(listState.length-1, 2)];
     }
@@ -116,20 +116,32 @@ var DomToSlideConverter = (function(nindent) {
 
     function outputFontSize(value)
     {
-        var sz = 0;
-        switch (value) {
-            case 'xx-small':  sz = -2; break;
-            case 'x-small':   sz = -1; break;
-            case 'small':              break;
-            case 'medium':    sz =  1; break;
-            case 'large':     sz =  2; break;
-            case 'x-large':   sz =  3; break;
-            case 'xx-large':  sz =  4; break;
-            default:
-                console.log('Unsupported font_size value: ' + value);
-                return;
+        var scale = 1;
+        var re = /^(\d+(\.\d+)?)pt$/g;
+        var pt = re.exec(value);
+        if (pt)
+        {
+            scale = pt[1] / 14.0;
         }
-        var scale = 1 + 0.3 * sz;
+        else
+        {
+            // Normally we don't receive these font sizes because we have configured
+            // the HTML editor to output pt sizes
+            var sz = 0;
+            switch (value) {
+                case 'xx-small':  sz = -2; break;
+                case 'x-small':   sz = -1; break;
+                case 'small':              break;
+                case 'medium':    sz =  1; break;
+                case 'large':     sz =  2; break;
+                case 'x-large':   sz =  3; break;
+                case 'xx-large':  sz =  4; break;
+                default:
+                    console.log('Unsupported font_size value: ' + value);
+                    return;
+            }
+            scale = 1 + 0.3 * sz;
+        }
         if (scale != 1)
             output('font_size ' + scale + ' * theme_size(theme, slide_master, "story")\n');
     }
@@ -325,9 +337,9 @@ function htmlToSlideContent(html, baseIndent)
 
     // \n sometimes appear in the source html between html elements. They should
     // be discarder because:
-    // (1) They are not meaningful (the html editor uses <div>'s for paragraph
-    // breaks and <br> for line breaks),
-    // (2) Carriage returns cannot be inserted in the text strings due to the
+    // (1) They are not meaningful between html elements,
+    // (2) They never appear in the text (<br> is used instead)
+    // (3) Carriage returns cannot be inserted in the text strings due to the
     // Tao syntax we use: text "..."
     html = html.replace(/\n/g, '');
     var handler = new htmlparser.DefaultHandler(function(error, dom) {

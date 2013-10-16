@@ -16,7 +16,10 @@ Ext.define('TE.util.CustomHtmlEditor', {
                                  'forecolor,|,charmap,|,removeformat,|,code',
         theme_advanced_buttons2: '',
         theme_advanced_buttons3: '',
-        theme_advanced_buttons4: ''
+        theme_advanced_buttons4: '',
+        theme_advanced_font_sizes: '10pt,12pt,14pt,18pt,24pt,36pt,48pt',
+        font_size_style_values: '10pt,12pt,14pt,18pt,24pt,36pt,48pt',
+        content_css : 'tinymce_content.css' // override some defaults (default font size)
     },
 
     initComponent: function() {
