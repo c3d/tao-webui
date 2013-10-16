@@ -44,7 +44,7 @@ var DomToSlideConverter = (function(nindent) {
             'ol': [ '+', '++', '+++' ],
             'X':  [ '=', '--', '---' ]
         };
-        return symbols[listState[listState.length-1]][listState.length-1];
+        return symbols[listState[listState.length-1]][Math.min(listState.length-1, 2)];
     }
 
     function output(txt)
