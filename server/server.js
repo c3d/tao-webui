@@ -546,13 +546,13 @@ function save(pages, req, callback)
 function savePagesJSON(pages, dddmd5sum)
 {
     var path = jsonFilePath('pages', true);
-    verbose('Saving ' + path);
     cached.pages.pages = pages;
     var sav = {
         dddmd5: dddmd5sum,
         pages: pages
     }
     fs.writeFileSync(path, JSON.stringify(sav));
+    verbose(path + ' saved');
 }
 
 function saveImages(images)
