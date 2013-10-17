@@ -41,8 +41,7 @@ var DomToSlideConverter = (function(nindent) {
             return '';
         var symbols = {
             'ul': [ '*', '**', '***' ],
-            'ol': [ '+', '++', '+++' ],
-            'X':  [ '-', '--', '---' ]
+            'ol': [ '+', '++', '+++' ]
         };
         return symbols[listState[listState.length-1]][Math.min(listState.length-1, 2)];
     }
@@ -151,6 +150,26 @@ var DomToSlideConverter = (function(nindent) {
         output('color "' + value + '"\n');
     }
 
+    function outputPaddingLeft(value)
+    {
+        var re = /^(\d+)px$/g;
+        var rpx = re.exec(value);
+        if (!rpx) {
+            console.log('Unsupported padding-left value: ' + value);
+            return;
+        }
+        var px = rpx[1];
+        if (px < 30) {
+            // Nothing
+        } else if (px < 60) {
+            output('- ""\n');
+        } else if (px < 90) {
+            output('-- ""\n')
+        } else {
+            output('--- ""\n');
+        }
+    }
+
     // Output Tao code for 'style' attribute
     function convertStyle(style)
     {
@@ -175,6 +194,9 @@ var DomToSlideConverter = (function(nindent) {
                 break;
             case 'color':
                 outputColor(value);
+                break;
+            case 'padding-left':
+                outputPaddingLeft(value);
                 break;
             default:
                 console.log('Unsupported style element: ' + name + ': ' + value);
