@@ -34,7 +34,7 @@ install: deps
 	cp LICENSE "$(DEST)"
 	mkdir -p "$(DEST)"/www
 	cp www/index_nodebug.html "$(DEST)"/www/index.html
-	cp www/app.js www/app.css "$(DEST)"/www
+	cp www/app.js www/app.css www/tinymce_content.css "$(DEST)"/www
 	cp -R www/app "$(DEST)"/www
 	cp -R www/ext-tinymce "$(DEST)"/www
 	mkdir -p "$(DEST)"/www/ext-4
