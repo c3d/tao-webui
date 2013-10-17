@@ -39,8 +39,7 @@ Ext.define('TE.controller.PageControllerBase', {
         
         record.set(values);
         if (record.dirty) {
-            var mainctrl = this.application.getController('TE.controller.Editor');
-            mainctrl.setStatus(tr('Saving...'));
+            me.getCenterpane().fireEvent('saving');
             var changes = record.getChanges();
             record.generic_record.set(changes);
             // For each modified field, update its .originalValue so
@@ -55,7 +54,7 @@ Ext.define('TE.controller.PageControllerBase', {
                 success: function() {
                     record.generic_record.commit();
                     me.startSaveTimer();
-                    mainctrl.setStatus(tr('Saved'));
+                    me.getCenterpane().fireEvent('saved');
                 }
                 // Note: failure is handled at the proxy level (model/Pages.js)
             });

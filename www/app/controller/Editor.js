@@ -101,6 +101,14 @@ Ext.define('TE.controller.Editor', {
             },
             '#centerpane button[action=savepage]': {
                 click: this.savePage
+            },
+            '#centerpane': {
+                saving: function() {
+                    this.setStatus(tr('Saving...'));
+                },
+                saved: function() {
+                    this.setStatus(tr('Saved'));
+                }
             }
         });
 
