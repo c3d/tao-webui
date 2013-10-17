@@ -127,7 +127,7 @@ Ext.define('TE.controller.Editor', {
                 console.log(e);
             }
         }
-        Ext.each(['blueclaire', 'keyboard', 'vellum', 'white'], load, this);
+        Ext.each(['blueclaire', 'keyboard'], load, this);
     },
 
     onLaunch: function() {
