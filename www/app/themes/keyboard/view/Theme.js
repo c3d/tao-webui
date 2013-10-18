@@ -1,5 +1,5 @@
 Ext.define('TE.themes.keyboard.view.Theme', {
-    extend: 'TE.view.Theme',
+    extend: 'TE.themes.common.view.Theme',
     requires: ['TE.i18n.Translate'],
 
     statics: {
