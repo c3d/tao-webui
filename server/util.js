@@ -259,6 +259,28 @@ var DomToSlideConverter = (function(nindent) {
         }
     }
 
+    function generateList(dom)
+    {
+        if (dom.attribs && dom.attribs.style)
+            convertStyle(dom.attribs.style);
+        if (dom.children &&
+            dom.children.length == 1 &&
+            dom.children[0].type == 'text')
+        {
+            output(currentListSymbol() + 
+                   ' "' + decodeHtml(dom.children[0].data) + '"\n')
+        }
+        else
+        {
+            output(currentListSymbol() + '\n')
+            indent();
+            convertChildren(dom);
+            unindent();
+        }
+        if (dom.attribs && dom.attribs.style)
+            convertStyle(dom.attribs.style, true);
+    }
+
     function convert(dom)
     {
         if (dom === null)
@@ -323,14 +345,7 @@ var DomToSlideConverter = (function(nindent) {
                 endList();
                 break;
             case 'li':
-                if (dom.attribs && dom.attribs.style)
-                    convertStyle(dom.attribs.style);
-                output(currentListSymbol() + '\n')
-                indent();
-                convertChildren(dom);
-                unindent();
-                if (dom.attribs && dom.attribs.style)
-                    convertStyle(dom.attribs.style, true);
+                generateList(dom)
                 break;
             default:
                 console.log('Unrecognized tag: ' + dom.name);
