@@ -784,6 +784,7 @@ function writeTaoDocument(pages, lang, callback)
             getTmpl(page, function(err, tmpl) {
                 if (err)
                     return cb(err);
+                page.ctx = ctx;
                 ddd += tmpl.generate(page);
                 cb(null);
             })
