@@ -5,7 +5,7 @@ Ext.define('TE.themes.blueclaire.view.Theme', {
     statics: {
         ptclassname: 'TE.themes.blueclaire.view.PageTemplates'
     },
-    image: 'app/themes/blueclaire/resources/images/blue_claire.png',
+    image: 'app/themes/blueclaire/resources/images/blueclaire.png',
 
     initComponent: function() {
         var trans = TE.i18n.Translate;
