@@ -120,7 +120,7 @@ var DomToSlideConverter = (function(nindent) {
         var pt = re.exec(value);
         if (pt)
         {
-            scale = pt[1] / 14.0;
+            scale = pt[1];
         }
         else
         {
@@ -139,10 +139,10 @@ var DomToSlideConverter = (function(nindent) {
                     console.log('Unsupported font_size value: ' + value);
                     return;
             }
-            scale = 1 + 0.3 * sz;
+            scale = (1 + 0.3 * sz) * 14.0;
         }
-        if (scale != 1)
-            output('font_size ' + scale + ' * theme_size(theme, slide_master, "story")\n');
+        if (scale != 14)
+            output('theme_font_size theme, slide_master, "story", ' + scale + '/14.0\n');
     }
 
     function outputColor(value)
