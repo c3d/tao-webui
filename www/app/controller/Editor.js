@@ -46,9 +46,10 @@ Ext.define('TE.controller.Editor', {
             'theme': {
                 click: this.themeClicked
             },
-            'pagelist': {
-                select: this.pageClicked,
-                cellcontextmenu: this.showPageContextMenu
+            'pagelist dataview': {
+            	itemclick: this.pageClicked,
+                beforedrop: this.dragAndDropPages,
+                itemcontextmenu: this.showPageContextMenu
             },
             '#ctx-menu-delete-page': {
                 click: this.deletePage
@@ -154,7 +155,7 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('pagetemplate'), function(child) {
             child.toggleSelected(false);
         })
-        this.getPagelist().getSelectionModel().deselectAll();
+        this.pagesList().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
         this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
     },
@@ -164,7 +165,7 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
             child.toggleSelected(child === pt);
         });
-        this.getPagelist().getSelectionModel().deselectAll();
+        this.pagesList().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
     },
 
@@ -214,12 +215,14 @@ Ext.define('TE.controller.Editor', {
         this.getPageDeleteBtn().setDisabled(false);
     },
 
-    showPageContextMenu: function(table, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+    showPageContextMenu: function(page, record, item, index, e, eOpts) {
+    	model = page.getSelectionModel();
+    	model.select(record); // Force selection of item rightclicked
         e.stopEvent();
         var menu = this.getPageContextMenu();
-        var last = this.getPagesStore().count() - 1;
-        menu.getComponent('ctx-menu-move-page-before').setDisabled(rowIndex === 0);
-        menu.getComponent('ctx-menu-move-page-after').setDisabled(rowIndex === last);
+        var last = this.getPagesStore().count() - 1;        
+        menu.getComponent('ctx-menu-move-page-before').setDisabled(index === 0);
+        menu.getComponent('ctx-menu-move-page-after').setDisabled(index === last);
         menu.showAt(e.xy);
     },
 
@@ -272,7 +275,11 @@ Ext.define('TE.controller.Editor', {
     },
 
     selectedPage: function() {
-        return this.getPagelist().getSelectionModel().getSelection()[0];
+    	return this.pagesList().getSelectionModel().getSelection()[0];
+    },
+    
+    pagesList: function() {
+    	return Ext.ComponentQuery.query('dataview')[0];    	
     },
 
     // delta = +/- 1
@@ -307,6 +314,20 @@ Ext.define('TE.controller.Editor', {
 
     movePageAfter: function() {
         this.movePage(+1);
+    },
+
+    dragAndDropPages: function(node, data, dropRec, dropPosition) {
+    	
+        var record = this.selectedPage();
+        var id = record.get('id');
+        var store = this.getPagesStore();
+        var index = store.find('id', id);
+
+        var newId = dropRec.get('id');
+        var newIndex = store.find('id', newId);
+
+        var delta = newIndex - index;
+        this.movePage(delta);
     },
 
     showImageLibrary: function() {

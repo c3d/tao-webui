@@ -1,29 +1,93 @@
-Ext.define('TE.view.PageList', {
-    extend: 'Ext.grid.Panel',
-    requires: [ 'TE.view.PageListContextMenu' ],
+Ext.define('TE.tree.PageList', {
+    extend: 'Ext.panel.Panel',
+    requires: [ 'TE.view.PageListContextMenu',
+                'TE.util.DropZone',
+                'Ext.util.Point', 
+                "Ext.panel.Panel", 
+                "Ext.view.View" ],
     alias: 'widget.pagelist',
-
     title: tr('Pages'),
-    store: 'Pages',
-
-    columns: [{
-        xtype: 'rownumberer',
-        sortable: false
-    },{
-        header: '',
-        dataIndex: 'kind',
-        renderer: function(v, meta, rec, rowIndex) {
-            var img = Ext.create(rec.getPageTemplateViewClass()).image;
-            return '<img src="' + img + '" />';
-        },
-        sortable: false
-    },{
-        header: tr('Page name'),
-        flex: 1,
-        dataIndex: 'name',
-        sortable: false
-    }],
-
+    id: 'Pages',
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
+    },
+    autoScroll: true,
+    items:  [{
+                xtype: 'dataview',
+                alias: 'widget.page',
+                title: tr('Page'),
+			    store: 'Pages',
+			    id: 'page',
+			    autoScroll: false,
+				itemSelector: '.page-container',
+				prepareData : function(data, recordIndex, record ){
+					// Add image url to the diplayed data
+					var img = Ext.create(record.getPageTemplateViewClass()).image;
+					data['img'] = img;
+					return data;
+			    },
+				tpl: [
+					'<div class="page-wrap" style="width:{[this.totalWidth([values.length])]}">',
+						'<div class="page-row">',
+							'<tpl for=".">',
+								'<div class="page-container">',
+									'<div class="page">',
+									'<div class="page-name">{[xindex]} - {name}</div>',
+									'<div class="page-img"><img src="{img}"/></div>',
+									'</div>',
+								'</div>',
+							'</tpl>',				
+						'</div>',
+					'</div>',
+					{
+						// Simple function to get always to correct total width
+				        compiled: true,
+				        totalWidth: function(value) {
+							return value * 290; // NUmber of items multiply by width of page container
+				        }
+				    }
+				],
+                listeners: {
+					render: function(v) {
+						this.initDragZone(v);
+						this.initDropZone(v);
+					}
+				},
+				
+				// Initialize the drag zone in the current view
+				initDragZone: function(v) {
+					v.dragZone = Ext.create('Ext.view.DragZone', {
+				    	view: v,
+						ddGroup: "Drag",
+				        dragText: 'Drag'
+					});
+				},
+				
+				// Initialize the drop zone in the current view
+				initDropZone: function(v) {
+					v.dropZone = Ext.create('TE.util.DropZone', {
+						view: v,
+						ddGroup: 'Drag',
+						indicatorHtml: '<div class="grid-drop-indicator"></div>',
+						indicatorCls: 'grid-drop-indicator',
+						handleNodeDrop : function(data, record, position)
+						{
+							var view = this.view,
+								store = view.getStore(),
+								index, records, i, len;
+								data.view.store.remove(data.records, data.view === view);
+							index = store.indexOf(record);
+							if (position !== 'before') {
+								index++;
+							}
+							store.insert(index, data.records);
+							view.getSelectionModel().select(data.records);
+						}
+					});			
+				}
+            }],
+            
     initComponent: function() {
         Ext.apply(this, {
             tbar: [
@@ -58,5 +122,7 @@ Ext.define('TE.view.PageList', {
         });
 
         this.callParent(arguments);
-    }
+    },
 });
+
+
