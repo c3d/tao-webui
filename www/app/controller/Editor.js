@@ -136,7 +136,7 @@ Ext.define('TE.controller.Editor', {
                 console.log(e);
             }
         }
-        Ext.each(['blueclaire', 'keyboard', 'autumn_on_earth'], load, this);
+        Ext.each(['blueclaire', 'keyboard', 'autumn_on_earth', 'seyes'], load, this);
     },
 
     onLaunch: function() {
