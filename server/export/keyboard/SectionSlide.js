@@ -1,6 +1,6 @@
-var u = require(__dirname + '/../../util');
+var s = require(__dirname + '/../../slides');
 
 module.exports = {
-    header:   u.importHeader('KeyboardTheme'),
-    generate: u.generateSectionSlide('Keyboard')
+    header:   s.importHeader('KeyboardTheme'),
+    generate: s.generateSectionSlide('Keyboard')
 }

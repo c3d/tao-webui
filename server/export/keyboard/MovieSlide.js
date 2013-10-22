@@ -1,6 +1,6 @@
-var u = require(__dirname + '/../../util');
+var s = require(__dirname + '/../../slides');
 
 module.exports = {
-    header:   u.importHeaders(['KeyboardTheme', 'VLCAudioVideo']),
-    generate: u.generateMovieSlide("Keyboard")
+    header:   s.importHeaders(['KeyboardTheme', 'VLCAudioVideo']),
+    generate: s.generateMovieSlide("Keyboard")
 }

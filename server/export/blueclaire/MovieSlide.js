@@ -1,6 +1,6 @@
-var u = require(__dirname + '/../../util');
+var s = require(__dirname + '/../../slides');
 
 module.exports = {
-    header:   u.importHeaders(['BlueClaireTheme', 'VLCAudioVideo']),
-    generate: u.generateMovieSlide("BlueClaire")
+    header:   s.importHeaders(['BlueClaireTheme', 'VLCAudioVideo']),
+    generate: s.generateMovieSlide("BlueClaire")
 }

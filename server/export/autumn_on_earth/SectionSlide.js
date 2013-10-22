@@ -1,6 +1,6 @@
-var u = require(__dirname + '/../../util');
+var s = require(__dirname + '/../../slides');
 
 module.exports = {
-    header:   u.importHeader('AutumnOnEarthTheme'),
-    generate: u.generateSectionSlide('AutumnOnEarth')
+    header:   s.importHeader('AutumnOnEarthTheme'),
+    generate: s.generateSectionSlide('AutumnOnEarth')
 }

@@ -1,6 +1,6 @@
-var u = require(__dirname + '/../../util');
+var s = require(__dirname + '/../../slides');
 
 module.exports = {
-    header:   u.importHeader('BlueClaireTheme'),
-    generate: u.generateSectionSlide('BlueClaire')
+    header:   s.importHeader('BlueClaireTheme'),
+    generate: s.generateSectionSlide('BlueClaire')
 }
