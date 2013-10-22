@@ -379,6 +379,12 @@ app.post('/image-upload', function(req, res, next) {
 
 app.use('/imagelibrary', express.static(IMAGES_DIR));
 
+// Accessing the themes
+
+app.use('/app/themes', express.static(__dirname + '/../themes/'));
+app.use('/themes', express.static(__dirname + '/../themes/'));
+
+
 // Root document (index*.html) contains EJS markup for i18n
 
 app.get(/^\/+(index.*\.html|)$/, function(req, res) {
@@ -653,8 +659,8 @@ function writeTaoDocument(pages, lang, callback)
         // callback(err, obj)
         function loadExporter(kind, callback)
         {
-            // Example: 'vellum.TitleAndSubtitle' => './../www/app/themes/vellum/export/TitleAndSubtitle'
-            var modname = __dirname + '/../www/app/themes/' + kind.replace('.', '/export/');
+            // Example: 'vellum.TitleAndSubtitle' => './../themes/vellum/export/TitleAndSubtitle'
+            var modname = __dirname + '/../themes/' + kind.replace('.', '/export/');
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false) {
                 return loadExporterFromCache(kind, callback);

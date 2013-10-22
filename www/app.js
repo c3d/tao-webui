@@ -2,6 +2,7 @@
 var tr = function(txt) { throw 'tr() not set (should not happen)'; }
 
 Ext.Loader.setPath('Ext.ux.form.field', 'ext-tinymce/ux/form/field');
+Ext.Loader.setPath('TE.themes', '../themes');
 
 Ext.application({
     name: 'TE',  // 'Tao Editor'
