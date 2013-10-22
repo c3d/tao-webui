@@ -447,6 +447,7 @@ var THEME_BASE_URL = {
     // - (Server files) GET .ddd generation code from:
     //   http://localhost/~jerome/my_blue/server/<PageName>.js
     //'blueclaire': 'http://localhost/~jerome/my_blue'
+    'greenclaire': 'http://nano.local/ddd/greenclaire'
 };
 
 var proxy = new httpProxy.RoutingProxy();
@@ -454,15 +455,19 @@ Object.keys(THEME_BASE_URL).forEach(function(theme) {
 
     verbose('Remote theme \'' + theme + '\' at: ' + THEME_BASE_URL[theme]);
 
-    app.use('/app/themes/' + theme, function(req, res) {
+    var proxyFunction = function(req, res)
+    {
         var dest = url.parse(THEME_BASE_URL[theme]);
-        req.url = dest.pathname + '/client/' + req.url;
+        req.url = dest.pathname + req.url;
         req.headers.host = dest.host;
         proxy.proxyRequest(req, res, {
             host: dest.host,
             port: dest.port || 80
         })
-    });
+    }
+
+    app.use('/app/themes/' + theme, proxyFunction);
+    app.use('/themes/' + theme, proxyFunction);
 });
 
 // Start server
@@ -672,7 +677,7 @@ function writeTaoDocument(pages, lang, callback)
         // callback(err, obj)
         function loadExporterFromCache(kind, callback)
         {
-            var modname = __dirname + '/export_cache/' + kind.replace('.', '/');
+            var modname = __dirname + '/../themes/export_cache/' + kind.replace('.', '/');
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false || forceReload)
             {
@@ -689,7 +694,7 @@ function writeTaoDocument(pages, lang, callback)
                 if (THEME_BASE_URL.hasOwnProperty(theme))
                 {
                     var file = kind.substring(dot + 1) + '.js';
-                    var dst = THEME_BASE_URL[theme] + '/server/' + file;
+                    var dst = THEME_BASE_URL[theme] + '/export/' + file;
                     var dstu = url.parse(dst);
                     verbose('Fetching ' + dst);
 
@@ -702,7 +707,7 @@ function writeTaoDocument(pages, lang, callback)
                         }
                         return true;
                     }
-                    var cachedir = __dirname + '/export_cache';
+                    var cachedir = __dirname + '/../themes/export_cache';
                     if (!createDir(cachedir))
                         return cb('ERR_MKCACHEDIR');
                     var themedir = cachedir + '/' + theme;
@@ -711,6 +716,7 @@ function writeTaoDocument(pages, lang, callback)
                     var filepath = themedir + '/' + file;
 
                     (function (buffer, dstpath, modname, cb) {
+                        verbose('Fetching remote from ' + dstu.host + '/' + dstu.path);
                         http.get({ host: dstu.host, port: dstu.port || 80, path: dstu.path },
                             function(res) {
                                 res.on('data', function(chunk) {
@@ -792,6 +798,7 @@ function writeTaoDocument(pages, lang, callback)
                     return cb(err);
                 page.ctx = ctx;
                 ddd += tmpl.generate(page);
+                delete page.ctx;
                 cb(null);
             })
         }, function (err) {
