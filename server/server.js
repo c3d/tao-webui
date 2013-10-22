@@ -653,8 +653,8 @@ function writeTaoDocument(pages, lang, callback)
         // callback(err, obj)
         function loadExporter(kind, callback)
         {
-            // Example: 'vellum.TitleAndSubtitle' => './export/vellum/TitleAndSubtitle'
-            var modname = __dirname + '/export/' + kind.replace('.', '/');
+            // Example: 'vellum.TitleAndSubtitle' => './../www/app/themes/vellum/export/TitleAndSubtitle'
+            var modname = __dirname + '/../www/app/themes/' + kind.replace('.', '/export/');
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false) {
                 return loadExporterFromCache(kind, callback);
