@@ -30,6 +30,7 @@ Ext.define('TE.i18n.fr', {
         'New page': 'Nouvelle page',
         'New page from this template': 'Nouvelle page',
         'OK': null,
+        'Page': null,
         'Pages': null,
         'Page name': 'Nom de la page',
         'Properties': 'Propriétés',
