@@ -140,6 +140,7 @@ Ext.define('TE.controller.Editor', {
             'blueclaire',
             'keyboard',
             'autumn_on_earth',
+            'greenclaire',
             'seyes',
             'pastel_triangles'
             ], load, this);
