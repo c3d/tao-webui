@@ -55,7 +55,7 @@ function generateTitleSlide(Kind, Theme)
             empty = false;
         }
         if (empty)
-            ddd += '    nil\n';
+            ddd += '    title text page_label\n';
         return ddd;
     }
 }
