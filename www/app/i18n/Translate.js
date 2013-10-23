@@ -53,8 +53,7 @@ Ext.define('TE.i18n.Translate', {
     register: function(trans, modulename) {
         modulename = modulename || 'default';
         if (this.translations.hasOwnProperty(modulename))
-            console.log("Warning: translations already registered for module '" + modulename +
-                        "', overriding previous ones");
+            return false;
         this.translations[modulename] = trans;
     }
 });
