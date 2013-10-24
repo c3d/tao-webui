@@ -11,8 +11,10 @@ var path = require('path');
 var ejs = require('ejs');
 var crypto = require('crypto');
 var async = require('async');
+var querystring = require('querystring');
 
 var VERBOSE = false;
+var token = null;
 
 // Process command line
 var argv = process.argv;
@@ -21,9 +23,15 @@ for (var i = 2; i < argv.length; i++)
     var arg = argv[i];
     if (arg === '-h') {
         console.log('Usage: ' + argv[0] + ' ' + argv[1] +
-                    ' [-v] [/path/to/document/directory | /path/to/ddd/file]');
+                    ' [-v] [-t token] [/path/to/document/directory | /path/to/ddd/file]');
         console.log('\nOptions:');
         console.log('    -v    Verbose output');
+        console.log('    -t    Set security token. Client should connect to http://<host>/?token=<token>.');
+        console.log('          When this option is set, incoming requests must bear the specified token value');
+        console.log('          either in the query string (token=<token>) or in a cookie called \'token\'.');
+        console.log('          Requests void of the security token are rejected with HTTP status 401.');
+        console.log('          A request to the home page with the token in the query string is redirected');
+        console.log('          to the same URL with the \'token\' parameter removed (and the cookie set).');
         console.log('\nIf the path to an existing directory is given, the server will');
         console.log('create doc.ddd in there. Otherwise the path is interpreted as a');
         console.log('file name and the server will attempt to save the DDD code');
@@ -32,6 +40,12 @@ for (var i = 2; i < argv.length; i++)
         return;
     } else if (arg === '-v') {
         VERBOSE = true;
+    } else if (arg === '-t') {
+        token = argv[++i] || null;
+        if (!token) {
+            console.log('Missing security token value');
+            return 1;
+        }
     } else if (arg.indexOf('-') === 0) {
         console.log('Unknown option: ' + arg);
         return 1;
@@ -145,6 +159,18 @@ app.use(express.bodyParser());
 // Another option would be to modify the client side so that is always sends a ?lang=*
 // parameter in its REST requests.
 app.use(express.cookieParser());
+
+// Check security token
+app.use(function(req, res, next) {
+    if (token) {
+        var tok = req.query.token || req.cookies.token || null;
+        if (tok !== token) {
+            console.log('Unauthorized - missing/invalid security token', tok);
+            return res.send(401);
+        }
+    }
+    next();
+})
 
 // REST API
 //
@@ -388,6 +414,21 @@ app.use('/themes', express.static(__dirname + '/../themes/'));
 // Root document (index*.html) contains EJS markup for i18n
 
 app.get(/^\/+(index.*\.html|)$/, function(req, res) {
+    if (token && req.query.token) {
+        // Query to root document has a valid token in query params.
+        // Save token in a session cookie and redirect to same URL without the token
+        // in the query string (to hide it).
+        res.cookie('token', token);
+        delete req.query.token;
+        var url = req.protocol + '://' + req.headers.host + req.path;
+        var qs = querystring.stringify(req.query);
+        if (qs !== '')
+            url += '?' + qs;
+        verbose('Security token set - redirecting to ' + url);
+        res.redirect(url);
+        return;
+    }
+
     var path = req.params[0];
     if (path === '')
         path = 'index.html';
