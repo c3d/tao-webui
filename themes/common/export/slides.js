@@ -38,7 +38,6 @@ function generateTitleSlide(Kind, Theme)
 {
     return function (page)
     {
-        var empty = true;
         var ddd = '';
         ddd += util.theme(page.ctx, Theme)
         ddd += Kind + ' "' + util.escape(page.name) + '",\n';
@@ -46,16 +45,16 @@ function generateTitleSlide(Kind, Theme)
         {
             ddd += '    title\n';
             ddd += '        text "' + util.escape(page.title) + '"\n';
-            empty = false;
+        }
+        else
+        {
+            ddd += '    title text page_label\n';
         }
         if (page.subtitle != '')
         {
             ddd += '    subtitle\n';
             ddd += util.htmlToSlideContent(page.subtitle, 2);
-            empty = false;
         }
-        if (empty)
-            ddd += '    title text page_label\n';
         return ddd;
     }
 }
