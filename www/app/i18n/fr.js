@@ -37,6 +37,7 @@ Ext.define('TE.i18n.fr', {
         'Preview': 'Aperçu',
         'Retry': 'Réessayer',
         'Save': 'Enregistrer',
+        'Save changes (Ctrl+S)': 'Enregistrer les modifications (Ctrl+S)',
         'Saved': 'Enregistré',
         'Saving...': 'Enregistrement...',
         'Themes': 'Thèmes',

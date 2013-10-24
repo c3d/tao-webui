@@ -35,7 +35,8 @@ Ext.define('TE.view.Editor', {
                 }, {
                     xtype: 'button',
                     text: tr('Save'),
-                    action: 'savepage'
+                    action: 'savepage',
+                    tooltip: tr('Save changes (Ctrl+S)')
                 }
             ]
         }

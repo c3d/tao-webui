@@ -110,6 +110,11 @@ Ext.define('TE.controller.Editor', {
                 saved: function() {
                     this.setStatus(tr('Saved'));
                 }
+            },
+            'customhtmleditor': {
+                savecurrentpage: function() {
+                    this.savePage();
+                }
             }
         });
 
@@ -124,6 +129,17 @@ Ext.define('TE.controller.Editor', {
                 return (store.findExact('name', val) === -1);
             },
             pagenameText: tr('This name is already used')
+        });
+
+        // Install a global event handler for Ctrl-S.
+        // Note: the shortcut applies everywhere BUT in the HTML editor, which already catches
+        // Ctrl-S and thus has a special treatment (the view will fire 'savecurrentpage')
+        var me = this;
+        Ext.getDoc().on('keydown', function(event, target) {
+            if (event.ctrlKey && !event.shiftKey && event.getKey() == event.S) {
+                event.stopEvent();
+                me.savePage();
+            }
         });
     },
 

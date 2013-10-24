@@ -7,7 +7,7 @@ Ext.define('TE.util.CustomHtmlEditor', {
     },
 
     tinymceConfig: {
-        plugins: 'searchreplace',
+        plugins: 'save,searchreplace',
         theme_advanced_buttons1: 'undo,redo,|,' +
                                  'fontselect,fontsizeselect,|,' +
                                  'bold,italic,underline,strikethrough,|,' +
@@ -83,6 +83,13 @@ Ext.define('TE.util.CustomHtmlEditor', {
         Ext.each(fonts, function(font) {
             this.tinymceConfig.theme_advanced_fonts += font + '=' + font + ',sans-serif;';
         }, this);
+
+        var me = this;
+        this.tinymceConfig.save_onsavecallback = function() {
+            me.fireEvent('savecurrentpage');
+            return false;
+        }
+
         this.callParent(arguments);
     }
     // initEvents: function () {
