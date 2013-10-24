@@ -430,23 +430,10 @@ app.use(express.static( __dirname + '/../www'));
 
 // Proxy themes not available locally
 
-/*
-Testing
-cd ~/work/tao/webui/webui
-mv www/app/themes/blueclaire www/app/themes/blueclaire_
-mv server/export/blueclaire server/export/blueclaire_
-mkdir ~/Sites/my_blue
-cd ~/Sites/my_blue
-ln -s ~/work/tao/webui/webui/www/app/themes/blueclaire_ client
-ln -s ~/work/tao/webui/webui/server/export/blueclaire_ server
-*/
+// Testing:
+// Just place a theme directory in a location where it can be served by
+// a web server.
 var THEME_BASE_URL = {
-    // Example:
-    // - (Client files) Forward incoming HTTP requests for /app/themes/blueclaire/*
-    //   to http://localhost/~jerome/my_blue/client/*
-    // - (Server files) GET .ddd generation code from:
-    //   http://localhost/~jerome/my_blue/server/<PageName>.js
-    //'blueclaire': 'http://localhost/~jerome/my_blue'
     'greenclaire': 'http://nano.local/ddd/greenclaire'
 };
 

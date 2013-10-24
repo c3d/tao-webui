@@ -140,7 +140,7 @@ Ext.define('TE.controller.Editor', {
             'blueclaire',
             'keyboard',
             'autumn_on_earth',
-            'greenclaire',
+            //'greenclaire',  // Uncomment this one to check the 'remote theme' feature at Taodyne (=> nano.local)
             'seyes',
             'pastel_triangles'
             ], load, this);
