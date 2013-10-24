@@ -537,7 +537,7 @@ function save(pages, req, callback)
             return callback(err);
         savePagesJSON(pages, sum);
         callback(null);
-    });
+    }, req.query.overwrite || false);
 }
 
 // Save pages to JSON file
@@ -612,26 +612,29 @@ function deleteImageFile(name, callback)
 var exporter = [];
 var forceReload = true; // Do not reuse files from cache after restart
 // callback(err [, sum])
-function writeTaoDocument(pages, lang, callback)
+function writeTaoDocument(pages, lang, callback, overwrite)
 {
-    var prevmd5 = cached.pages.dddmd5;
-    var md5;
-    try {
-        var ddd = fs.readFileSync(docPath(), 'utf8');
-        if (ddd.trim().length === 0 || ddd.trim() === 'nil')
-            md5 = prevmd5; // allow overwrite
-        else if (prevmd5 === null && TEST_MODE)
-            md5 = null;    // allow overwrite
-        else
-            md5 = crypto.createHash('md5').update(ddd).digest('hex');
-    } catch (e) {
-        md5 = prevmd5;
-    }
-    if (md5 !== prevmd5) {
-        console.log('MD5 sum of ' + docPath() + ' differs from the value it had when ' +
-                    'last saved (file not modified by us).\n' +
-                    'Will NOT overwrite file. Delete .ddd and save again if you wish.');
-        return callback('ERR_FILECHANGED');
+    overwrite = overwrite || false;
+    if (!overwrite) {
+        var prevmd5 = cached.pages.dddmd5;
+        var md5;
+        try {
+            var ddd = fs.readFileSync(docPath(), 'utf8');
+            if (ddd.trim().length === 0 || ddd.trim() === 'nil')
+                md5 = prevmd5; // allow overwrite
+            else if (prevmd5 === null && TEST_MODE)
+                md5 = null;    // allow overwrite
+            else
+                md5 = crypto.createHash('md5').update(ddd).digest('hex');
+        } catch (e) {
+            md5 = prevmd5;
+        }
+        if (md5 !== prevmd5) {
+            console.log('MD5 sum of ' + docPath() + ' differs from the value it had when ' +
+                        'last saved (file not modified by us).\n' +
+                        'Will NOT overwrite file. Delete .ddd and save again if you wish.');
+            return callback('ERR_FILECHANGED');
+        }
     }
 
     var missing = [];

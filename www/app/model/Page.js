@@ -28,12 +28,16 @@ Ext.define('TE.model.Page', {
                     icon: Ext.MessageBox.ERROR,
                     buttons: Ext.MessageBox.OKCANCEL,
                     buttonText: {
-                        ok: tr('Retry'),
-                        cancel: tr('OK')
+                        ok: tr('Overwrite'),
+                        cancel: tr('Cancel')
                     },
+                    defaultFocus: 'cancel',
                     fn: function(id) {
-                        if (id === 'ok')
+                        if (id === 'ok') {
+                            op.params = op.params || {};
+                            op.params.overwrite = 1;
                             proxy.read(op); // Retry
+                        }
                     }
                 });
             }
