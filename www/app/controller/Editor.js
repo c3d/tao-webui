@@ -158,7 +158,8 @@ Ext.define('TE.controller.Editor', {
             'autumn_on_earth',
             //'greenclaire',  // Uncomment this one to check the 'remote theme' feature at Taodyne (=> nano.local)
             'seyes',
-            'pastel_triangles'
+            'pastel_triangles',
+            'bright_rectangles'
             ], load, this);
     },
 
