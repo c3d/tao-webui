@@ -35,8 +35,9 @@ Ext.define('TE.i18n.fr', {
         'Page name': 'Nom de la page',
         'Properties': 'Propriétés',
         'Preview': 'Aperçu',
-        'Retry': 'Réessayer',
+        'Overwrite': 'Remplacer',
         'Save': 'Enregistrer',
+        'Save changes (Ctrl+S)': 'Enregistrer les modifications (Ctrl+S)',
         'Saved': 'Enregistré',
         'Saving...': 'Enregistrement...',
         'Themes': 'Thèmes',
@@ -48,8 +49,8 @@ Ext.define('TE.i18n.fr', {
 
         // Error messages for all the error statuses that may be reported by the server
         // ERR_FILECHANGED
-        'The file %1 was not saved because it was modified outside this editor. To save it anyways, please delete or empty the file and try again.':
-            "Le fichier %1 n'a pa pu être sauvé car il a été modifié en dehors de cet éditeur. Pour le sauver quand même, veuillez le supprimer ou le vider et recommencer.",
+        "The file %1 was not saved because it was modified outside this editor. To save it anyways, click 'Overwrite'.":
+            "Le fichier %1 n'a pa pu être sauvé car il a été modifié en dehors de cet éditeur. Pour le sauver quand même, choisissez \"Remplacer\".",
         // ERR_FILEACCESS
         'Could not write file %1.': "Impossible d'écrire dans le fichier %1.",
         // Other (less frequent) ERR_* codes
