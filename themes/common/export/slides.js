@@ -87,13 +87,15 @@ function generatePictureSlide(Theme)
         }
         if (page.leftcolumn && page.leftcolumn !== '')
         {
-            ddd += '    left_column\n';
+            ddd += '    left_column\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.leftcolumn, 2);
             empty = false;
         }
         if (page.rightcolumn && page.rightcolumn !== '')
         {
-            ddd += '    right_column\n';
+            ddd += '    right_column\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.rightcolumn, 2);
             empty = false;
         }
@@ -122,13 +124,15 @@ function generateMovieSlide(Theme)
         }
         if (page.leftcolumn && page.leftcolumn !== '')
         {
-            ddd += '    left_column\n';
+            ddd += '    left_column\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.leftcolumn, 2);
             empty = false;
         }
         if (page.rightcolumn && page.rightcolumn !== '')
         {
-            ddd += '    right_column\n';
+            ddd += '    right_column\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.rightcolumn, 2);
             empty = false;
         }
@@ -184,19 +188,22 @@ function generateBaseSlide(Theme)
         }
         if (page.story && page.story !== '')
         {
-            ddd += '    story\n';
+            ddd += '    story\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.story, 2);
             empty = false;
         }
         if (page.left_column && page.left_column !== '')
         {
-            ddd += '    left_column\n';
+            ddd += '    left_column\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.left_column, 2);
             empty = false;
         }
         if (page.right_column && page.right_column !== '')
         {
-            ddd += '    right_column\n';
+            ddd += '    right_column\n' +
+                   '        vertical_align_top\n';
             ddd += util.htmlToSlideContent(page.right_column, 2);
             empty = false;
         }
