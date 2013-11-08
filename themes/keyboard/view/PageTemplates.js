@@ -11,7 +11,8 @@ Ext.define('TE.themes.keyboard.view.PageTemplates', {
             'SectionSlide',
             'Slide',
             'PictureSlide',
-            'MovieSlide'
+            'MovieSlide',
+            'BaseSlide'
         ];
 
         this.items = [];
