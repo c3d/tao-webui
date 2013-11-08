@@ -11,7 +11,8 @@ Ext.define('TE.themes.pastel_triangles.view.PageTemplates', {
             'SectionSlide',
             'Slide',
             'PictureSlide',
-            'MovieSlide'
+            'MovieSlide',
+            'BaseSlide'
         ];
 
         this.items = [];
