@@ -160,7 +160,8 @@ Ext.define('TE.controller.Editor', {
             'seyes',
             'pastel_triangles',
             'bright_rectangles',
-            'seasons_greetings'
+            'seasons_greetings',
+            'lucky_stars'
             ], load, this);
     },
 
