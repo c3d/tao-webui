@@ -162,7 +162,8 @@ Ext.define('TE.controller.Editor', {
             'bright_rectangles',
             'seasons_greetings',
             'lucky_stars',
-            'water'
+            'water',
+            'finance'
             ], load, this);
     },
 
