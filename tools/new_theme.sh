@@ -2,19 +2,21 @@
 #
 # new_theme.sh
 #
+# Helper script, to be used manually when adding a new theme similar to
+# the ones provided with Tao.
 # Create the required .js files for a new theme, based on 'Blue Claire'
 
 
 # www/app/themes/$NEWTHEME_DIRNAME ; server/export/$NEWTHEME_DIRNAME
-NEWTHEME_DIRNAME="bright_rectangles"
-NEWTHEME_NAME="Bright Rectangles"
-NEWTHEME_NAME_FR="Rectangles Lumineux"
+NEWTHEME_DIRNAME="finance"
+NEWTHEME_NAME="Finance"
+NEWTHEME_NAME_FR="Finance"
 
 # Used by server when generating Tao code
-#   import SeyesTheme
-NEWTHEME_IMPORT="BrightRectanglesTheme"
-#   theme "Seyes"
-NEWTHEME_USE="BrightRectangles"
+#   import $NEWTHEME_IMPORT
+NEWTHEME_IMPORT="FinanceTheme"
+#   theme "$NEWTHEME_USE"
+NEWTHEME_USE="Finance"
 
 ###
 
