@@ -164,7 +164,8 @@ Ext.define('TE.controller.Editor', {
             'lucky_stars',
             'water',
             'finance',
-            'landscapes'
+            'landscapes',
+            'black_white'
             ], load, this);
     },
 
