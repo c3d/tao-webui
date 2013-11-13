@@ -143,9 +143,8 @@ function generateMovieSlide(Theme)
         if (empty)
             ddd += '    nil\n';
         if (hasMovie)
-            ddd += '    on "pagechange",\n' +
-            '        if prev_page_label = "' + util.escape(page.name) + '" then\n' +
-            '            movie_drop "' + page.movie + '"\n';
+            ddd += '    on "pageexit",\n' +
+                   '        movie_drop "' + page.movie + '"\n';
         
         return ddd;
     }
