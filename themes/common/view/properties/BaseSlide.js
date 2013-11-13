@@ -2,8 +2,9 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
     requires: ['TE.util.CustomHtmlEditor'],
     extend: 'Ext.Container',
 
-    initComponent: function() {
+    initComponent: function(itemsBefore) {
 
+        itemsBefore = itemsBefore || [];
         this.items = [
             {
                 xtype: 'form',
@@ -16,7 +17,7 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                     labelPad: 10,
                     anchor: '100%'
 			    },
-                items: [
+                items: itemsBefore.concat([
                     {
                         xtype: 'textfield',
                         name: 'name',
@@ -110,7 +111,7 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                         name: 'rpicy',
                         fieldLabel: tr('Right picture vertical position', 'common')
                     }
-                ]
+                ])
             }
         ];
 

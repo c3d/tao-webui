@@ -1,8 +1,9 @@
 Ext.define('TE.themes.common.view.properties.MovieSlide', {
     extend: 'Ext.Container',
 
-    initComponent: function() {
+    initComponent: function(itemsBefore) {
 
+        itemsBefore = itemsBefore || [];
         this.items = [
             {
                 xtype: 'form',
@@ -15,7 +16,7 @@ Ext.define('TE.themes.common.view.properties.MovieSlide', {
                     labelPad: 10,
                     anchor: '100%'
 			    },
-                items: [
+                items: itemsBefore.concat([
                     {
                         xtype: 'textfield',
                         name: 'name',
@@ -54,7 +55,7 @@ Ext.define('TE.themes.common.view.properties.MovieSlide', {
                         name: 'rightcolumn',
                         fieldLabel: tr('Right column text', 'common')
                     }
-                ]
+                ])
             }
         ];
 

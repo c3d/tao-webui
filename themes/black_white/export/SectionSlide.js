@@ -2,5 +2,7 @@ var s = require(__dirname + '/../../common/export/slides');
 
 module.exports = {
     header:   s.importHeader('BlackAndWhiteThemes'),
-    generate: s.generateSectionSlide('BlackOnWhite')
+    generate: function(page) {
+        return s.generateSectionSlide(page.theme)(page);
+    }
 }
