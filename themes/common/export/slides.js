@@ -234,6 +234,37 @@ function generateBaseSlide(Theme)
             ddd += '        image ' + page.rpicx + ', ' + page.rpicy + ', ' + page.rpicscale + '%, ' + page.rpicscale + '%, "' + page.right_picture + '"\n';
             empty = false;
         }
+
+        if(page.chartdata != '')
+        {
+            // Use page name as id for our chart (as we have only one chart per page for the moment)
+            var chartid = util.escape(page.name);
+            ddd += '    picture\n';
+            ddd += '        once\n';
+            ddd += '            chart_current "' + chartid + '"\n';
+            ddd += '            chart_reset\n';
+
+            if(page.chartname != '')
+                ddd += '            chart_set_title "' + util.escape(page.chartname) + '"\n';
+
+            ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
+
+            var data = JSON.parse(page.chartdata);
+            for(var i = 0; i < data.length; i++)
+            {
+                if(data[i].a)
+                    ddd += '            chart_push_data 1, ' + data[i].a + '\n';
+                if(data[i].b)
+                    ddd += '            chart_push_data 2, ' + data[i].b + '\n';
+                if(data[i].c)
+                    ddd += '            chart_push_data 3, ' + data[i].c + '\n';
+                if(data[i].d)
+                    ddd += '            chart_push_data 4, ' + data[i].d + '\n';
+            }
+
+            ddd += '        chart "' + chartid + '", "' + page.charttype.toLowerCase() + '"\n';
+        }
+
         if (empty)
             ddd += '    nil\n';
         return ddd;
