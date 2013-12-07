@@ -1,8 +1,9 @@
 Ext.define('TE.themes.common.view.properties.MainTitleSlide', {
     extend: 'Ext.Container',
 
-    initComponent: function() {
+    initComponent: function(itemsBefore) {
 
+        itemsBefore = itemsBefore || [];
         this.items = [
             {
                 xtype: 'form',
@@ -15,7 +16,8 @@ Ext.define('TE.themes.common.view.properties.MainTitleSlide', {
                     labelPad: 10,
                     anchor: '100%'
 			    },
-                items: [
+                items: itemsBefore.concat(
+                [
                     {
                         xtype: 'textfield',
                         name: 'name',
@@ -34,7 +36,7 @@ Ext.define('TE.themes.common.view.properties.MainTitleSlide', {
                         name: 'subtitle',
                         fieldLabel: tr('Subtitle', 'common')
                     }
-                ]
+                ])
             }
         ];
 

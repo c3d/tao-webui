@@ -2,8 +2,9 @@ Ext.define('TE.themes.common.view.properties.Slide', {
     requires: ['TE.util.CustomHtmlEditor'],
     extend: 'Ext.Container',
 
-    initComponent: function() {
+    initComponent: function(itemsBefore) {
 
+        itemsBefore = itemsBefore || [];
         this.items = [
             {
                 xtype: 'form',
@@ -16,7 +17,7 @@ Ext.define('TE.themes.common.view.properties.Slide', {
                     labelPad: 10,
                     anchor: '100%'
                 },
-                items: [
+                items: itemsBefore.concat([
                     {
                         xtype: 'textfield',
                         name: 'name',
@@ -30,7 +31,7 @@ Ext.define('TE.themes.common.view.properties.Slide', {
                         name: 'text',
                         fieldLabel: tr('Text', 'common')
                     }
-                ]
+                ])
             }
         ];
 

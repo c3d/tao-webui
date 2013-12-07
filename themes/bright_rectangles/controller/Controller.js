@@ -7,11 +7,13 @@ Ext.define('TE.themes.bright_rectangles.controller.Controller', {
         'TE.themes.bright_rectangles.model.PictureSlide',
         'TE.themes.bright_rectangles.model.MovieSlide',
         'TE.themes.bright_rectangles.model.Slide',
+        'TE.themes.bright_rectangles.model.BaseSlide',
 
         'TE.themes.bright_rectangles.view.properties.MainTitleSlide',
         'TE.themes.bright_rectangles.view.properties.SectionSlide',
         'TE.themes.bright_rectangles.view.properties.PictureSlide',
         'TE.themes.bright_rectangles.view.properties.MovieSlide',
-        'TE.themes.bright_rectangles.view.properties.Slide'
+        'TE.themes.bright_rectangles.view.properties.Slide',
+        'TE.themes.bright_rectangles.view.properties.BaseSlide'
     ]
 });

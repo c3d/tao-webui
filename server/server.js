@@ -213,7 +213,6 @@ app.post('/pages', function (req, res) {
             idx = page.idx
         }
         pages.splice(idx, 0, page);
-        verbose('Page ' + page.id + ' created (index ' + idx + ')');
         if (page.idx)
             delete page.idx;
         save(pages, req, function(err) {
@@ -222,7 +221,10 @@ app.post('/pages', function (req, res) {
                 rsp.success = false;
                 rsp.status = err;
                 rsp.filename = DOC_FILENAME;
+                // Remove page that was just added
+                pages.splice(idx, 1);
             } else {
+                verbose('Page ' + page.id + ' created (index ' + idx + ')');
                 rsp.success = true;
                 rsp.pages = [ page ];
             }

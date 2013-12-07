@@ -2,8 +2,9 @@ Ext.define('TE.themes.common.view.properties.PictureSlide', {
     requires: ['TE.util.CustomHtmlEditor'],
     extend: 'Ext.Container',
 
-    initComponent: function() {
+    initComponent: function(itemsBefore) {
 
+        itemsBefore = itemsBefore || [];
         this.items = [
             {
                 xtype: 'form',
@@ -16,7 +17,7 @@ Ext.define('TE.themes.common.view.properties.PictureSlide', {
                     labelPad: 10,
                     anchor: '100%'
 			    },
-                items: [
+                items: itemsBefore.concat([
                     {
                         xtype: 'textfield',
                         name: 'name',
@@ -55,7 +56,7 @@ Ext.define('TE.themes.common.view.properties.PictureSlide', {
                         name: 'rightcolumn',
                         fieldLabel: tr('Right column text', 'common')
                     }
-                ]
+                ])
             }
         ];
 

@@ -11,7 +11,8 @@ Ext.define('TE.themes.autumn_on_earth.view.PageTemplates', {
             'SectionSlide',
             'Slide',
             'PictureSlide',
-            'MovieSlide'
+            'MovieSlide',
+            'BaseSlide'
         ];
 
         this.items = [];

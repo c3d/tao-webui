@@ -86,13 +86,17 @@ function generatePictureSlide(Theme)
         }
         if (page.leftcolumn && page.leftcolumn !== '')
         {
-            ddd += '    left_column\n';
+            ddd += '    left_column\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
             ddd += util.htmlToSlideContent(page.leftcolumn, 2);
             empty = false;
         }
-        if (page.leftcolumn && page.rightcolumn !== '')
+        if (page.rightcolumn && page.rightcolumn !== '')
         {
-            ddd += '    right_column\n';
+            ddd += '    right_column\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
             ddd += util.htmlToSlideContent(page.rightcolumn, 2);
             empty = false;
         }
@@ -121,22 +125,25 @@ function generateMovieSlide(Theme)
         }
         if (page.leftcolumn && page.leftcolumn !== '')
         {
-            ddd += '    left_column\n';
+            ddd += '    left_column\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
             ddd += util.htmlToSlideContent(page.leftcolumn, 2);
             empty = false;
         }
         if (page.rightcolumn && page.rightcolumn !== '')
         {
-            ddd += '    right_column\n';
+            ddd += '    right_column\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
             ddd += util.htmlToSlideContent(page.rightcolumn, 2);
             empty = false;
         }
         if (empty)
             ddd += '    nil\n';
         if (hasMovie)
-            ddd += '    on "pagechange",\n' +
-            '        if prev_page_label = "' + util.escape(page.name) + '" then\n' +
-            '            movie_drop "' + page.movie + '"\n';
+            ddd += '    on "pageexit",\n' +
+                   '        movie_drop "' + page.movie + '"\n';
         
         return ddd;
     }
@@ -161,6 +168,76 @@ function generateSlide(Theme)
     }
 }
 
+function generateBaseSlide(Theme)
+{
+    return function (page)
+    {
+        var empty = true;
+        var ddd = '';
+        ddd += util.theme(page.ctx, Theme)
+        ddd += 'base_slide "' + util.escape(page.name) + '",\n';
+        if (page.title && page.title !== '')
+        {
+            ddd += '    title\n';
+            ddd += util.htmlToSlideContent(page.title, 2);
+            empty = false;
+        }
+        if (page.subtitle && page.subtitle !== '')
+        {
+            ddd += '    subtitle\n';
+            ddd += util.htmlToSlideContent(page.subtitle, 2);
+            empty = false;
+        }
+        if (page.story && page.story !== '')
+        {
+            ddd += '    story\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
+            ddd += util.htmlToSlideContent(page.story, 2);
+            empty = false;
+        }
+        if (page.left_column && page.left_column !== '')
+        {
+            ddd += '    left_column\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
+            ddd += util.htmlToSlideContent(page.left_column, 2);
+            empty = false;
+        }
+        if (page.right_column && page.right_column !== '')
+        {
+            ddd += '    right_column\n' +
+                   '        vertical_align_top\n' +
+                   '        align_left\n';
+            ddd += util.htmlToSlideContent(page.right_column, 2);
+            empty = false;
+        }
+        if (page.picture != '')
+        {
+            ddd += '    picture\n';
+            ddd += '        color "white"\n';
+            ddd += '        image ' + page.picx + ', ' + page.picy + ', ' + page.picscale + '%, ' + page.picscale + '%, "' + page.picture + '"\n';
+            empty = false;
+        }
+        if (page.left_picture != '')
+        {
+            ddd += '    left_picture\n';
+            ddd += '        color "white"\n';
+            ddd += '        image ' + page.lpicx + ', ' + page.lpicy + ', ' + page.lpicscale + '%, ' + page.lpicscale + '%, "' + page.left_picture + '"\n';
+            empty = false;
+        }
+        if (page.right_picture != '')
+        {
+            ddd += '    right_picture\n';
+            ddd += '        color "white"\n';
+            ddd += '        image ' + page.rpicx + ', ' + page.rpicy + ', ' + page.rpicscale + '%, ' + page.rpicscale + '%, "' + page.right_picture + '"\n';
+            empty = false;
+        }
+        if (empty)
+            ddd += '    nil\n';
+        return ddd;
+    }
+}
 
 module.exports = {
     importHeader: importHeader,
@@ -170,4 +247,5 @@ module.exports = {
     generateSlide: generateSlide,
     generatePictureSlide: generatePictureSlide,
     generateMovieSlide: generateMovieSlide,
+    generateBaseSlide: generateBaseSlide
 }

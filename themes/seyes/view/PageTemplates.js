@@ -11,7 +11,8 @@ Ext.define('TE.themes.seyes.view.PageTemplates', {
             'SectionSlide',
             'Slide',
             'PictureSlide',
-            'MovieSlide'
+            'MovieSlide',
+            'BaseSlide'
         ];
 
         this.items = [];
