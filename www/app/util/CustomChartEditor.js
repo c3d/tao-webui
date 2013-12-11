@@ -94,7 +94,7 @@ Ext.define('TE.util.CustomChartEditor', {
                         }
                     }
                 }),
-                emptyText : 'Select chart style',
+                emptyText : tr('Select chart style', 'common'),
                 displayField : 'style'
             },
             {
@@ -137,7 +137,21 @@ Ext.define('TE.util.CustomChartEditor', {
                         }
                     }
                 }),
-            }
+	            updateData: function()
+			    {
+			        // Save current data
+			        var data = [];
+			        this.store.each(function(r){
+			            data.push(r.data);
+			        });
+			        var jsonData = Ext.encode(data);
+			        var chartdata  = Ext.getCmp('chartdata');
+			        chartdata.setValue(jsonData);
+
+            		// Force grid refresh to update row numbers
+            		this.getView().refresh(true);
+			    }
+            },
         ]
 
         this.callParent(this);
