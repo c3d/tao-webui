@@ -699,6 +699,10 @@ function writeTaoDocument(pages, lang, callback, overwrite)
         {
             // Example: 'vellum.TitleAndSubtitle' => './../themes/vellum/export/TitleAndSubtitle'
             var modname = __dirname + '/../themes/' + kind.replace('.', '/export/');
+            var template = modname + '.ddt';
+            if (fs.existsSync(template)) {
+                return loadExporterFromTemplate(template, callback);
+            } 
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false) {
                 return loadExporterFromCache(kind, callback);
@@ -706,6 +710,98 @@ function writeTaoDocument(pages, lang, callback, overwrite)
             verbose('Loading ' + modname);
             callback(null, require(modname));
         }
+
+        // callback(err, obj)
+        function loadExporterFromTemplate(template, callback)
+        {
+            var s = require(__dirname + '/../themes/common/export/slides');
+            var u = require(__dirname + '/../themes/common/export/util');
+
+            var importRe = /import\W+(\w+).*\n/gm;
+            var themeRe = /theme\W(".*")/gm;
+            var templateRe = /^(\W+)template_(\w+)/gm;
+            var data = fs.readFileSync(template, 'utf8');
+            var dataMtime = fs.statSync(template).mtime;
+
+            function updateDataIfNeeded() {
+                if (fs.statSync(template).mtime > dataMtime) {
+                    verbose ('Reloading ' + template);
+                    data = fs.readFileSync(template, 'utf8');
+                    dataMtime = fs.statSync(template).mtime;
+                }
+            } 
+
+            var obj = {
+                header: function(ctx) {
+
+                    // Reload data in case it changed
+                    updateDataIfNeeded();
+
+                    var imports = data.match(importRe);
+                    var result = '';
+                    if (imports) {
+                        imports.forEach(function(imp) {
+                            var impName = imp.replace(importRe, '$1');
+                            var callback = s.importHeader(impName);
+                            result += callback(ctx);
+                        });
+                    }
+                    return result;
+                },
+                generate: function(page) {
+                    updateDataIfNeeded();
+                    var options = {
+                        locals: {
+                            page: page,
+                            ctx: page.ctx,
+
+                            importHeader: s.importHeader,
+                            importHeaders: s.importHeaders,
+                            generateMainTitleSlide: s.generateMainTitleSlide,
+                            generateSectionSlide: s.generateSectionSlide,
+                            generateSlide: s.generateSlide,
+                            generatePictureSlide: s.generatePictureSlide,
+                            generateMovieSlide: s.generateMovieSlide,
+                            generateBaseSlide: s.generateBaseSlide,
+                            
+                            emit_title: s.emitTitle,
+                            emit_story: s.emitStory,
+                            emit_left_column: s.emitLeftColumn,
+                            emit_right_column: s.emitRightColumn,
+                            emit_columns: s.emitColumns,
+                            emit_picture: s.emitPictures,
+                            emit_pictures: s.emitPictures,
+                            emit_left:  s.emitLeft,
+                            emit_right: s.emitRight,
+                            emit_page: s.emitPage,
+
+                            escape: u.escape,
+                            html: u.htmlToSlideContent,
+                            theme: u.theme
+                        },
+                        filename: template,
+                        cached: false,
+                        scope: this,
+                        open: "[[",
+                        close: "]]"
+                    };
+
+                    verbose('Rendering from template: ' + template);
+                    var noImports = data
+                        .replace(importRe, '')
+                        .replace(themeRe, '[[- theme(ctx, $1) ]]')
+                        .replace(templateRe,
+                                 '[[- emit_$2(page, "$1") ]]');
+                    ;
+                    verbose ("No imports=" + noImports);
+                    var result = ejs.render(noImports, options);
+                    return result;
+                }
+            }
+            verbose("Exported from template: " + template);
+            callback(null, obj);
+        }
+
 
         // callback(err, obj)
         function loadExporterFromCache(kind, callback)

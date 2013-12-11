@@ -33,6 +33,141 @@ function importHeaders(Names)
     }
 }
 
+
+function indent(code, before)
+{
+    var array = code.split('\n');
+    var result = '';
+    array.forEach(function(line) {
+        result += before + line + '\n';
+    });
+    return result;
+}
+
+
+function htmlToSlide(text, indentText)
+{
+    var result = util.htmlToSlideContent(text, 1);
+    result = indent(result, indentText);
+    return result;
+}
+
+
+function emitTitle(page, indent)
+{
+    var ddd = '';
+    if (page.title != '')
+    {
+        ddd += indent + 'title\n' + htmlToSlide(page.title, indent);
+    }
+    else
+    {
+        ddd += indent + 'title text page_label\n';
+    }
+    if (page.subtitle != '')
+    {
+        ddd += indent + 'subtitle\n' + htmlToSlide(page.subtitle, indent);
+    }
+    return ddd;
+}
+
+
+function emitStory(page, indent)
+{
+    var ddd = '';
+    if (page.story)
+    {
+        ddd += indent + 'story\n' + htmlToSlide(page.story, indent);
+    }
+    return ddd;
+}
+
+
+function emitLeftColumn(page, indent)
+{
+    var ddd = '';
+    if (page.leftcolumn && page.leftcolumn !== '')
+    {
+        ddd += indent + 'left_column\n' + htmlToSlide(page.leftcolumn, indent);
+    }
+    return ddd;
+}
+
+
+function emitRightColumn(page, indent)
+{
+    var ddd = '';
+    if (page.rightcolumn && page.rightcolumn !== '')
+    {
+        ddd += indent + 'right_column\n' + htmlToSlide(page.rightcolumn,indent);
+    }
+    return ddd;
+}
+
+
+function emitColumns(page, indent)
+{
+    return emitLeftColumn(page, indent) + emitRightColumn(page, indent);
+}
+
+
+function emitPicture(kind, picture, indent)
+{
+    var ddd = '';
+    if (picture)
+    {
+        ddd = indent + kind
+            + indent + '    image ' + picture.x + ', ' + picture.y + ', '
+            + picture.scale_x + '%, ' + picture.scale_y + '%, "'
+            + util.escape(picture.name) + '"\n';
+    }
+    return ddd;
+}
+
+
+function emitPictures(page, indent)
+{
+    var ddd = '';
+    if (page.picture)
+        ddd += emitPicture('picture', page.picture, indent);
+    if (page.left_picture)
+        ddd += emitPicture('left_picture', page.left_picture, indent);
+    if (page.right_picture)
+        ddd += emitPicture('right_picture', page.left_picture, indent);
+    return ddd;
+}
+
+
+function emitLeft(page, indent)
+{
+    var ddd = emitLeftColumn(page, indent);
+    if (page.left_picture)
+        ddd += emitPicture('left_picture', page.left_picture, indent);
+    return ddd;
+}
+
+
+function emitRight(page, indent)
+{
+    var ddd = emitRightColumn(page, indent);
+    if (page.right_picture)
+        ddd += emitPicture('right_picture', page.right_picture, indent);
+    return ddd;
+}
+
+
+function emitPage(page, indent)
+{
+    var ddd = '';
+    ddd += emitTitle(page, indent);
+    ddd += emitStory(page, indent);
+    ddd += emitLeftColumn(page, indent);
+    ddd += emitRightColumn(page, indent);
+    ddd += emitPictures(page, indent);
+    return ddd;
+}
+
+
 // Emit a main title slide or section slide
 function generateTitleSlide(Kind, Theme)
 {
@@ -247,5 +382,15 @@ module.exports = {
     generateSlide: generateSlide,
     generatePictureSlide: generatePictureSlide,
     generateMovieSlide: generateMovieSlide,
-    generateBaseSlide: generateBaseSlide
+    generateBaseSlide: generateBaseSlide,
+
+    emitTitle: emitTitle,
+    emitStory: emitStory,
+    emitLeftColumn: emitLeftColumn,
+    emitRightColumn: emitRightColumn,
+    emitColumns: emitColumns,
+    emitPictures: emitPictures,
+    emitLeft:  emitLeft,
+    emitRight: emitRight,
+    emitPage: emitPage
 }
