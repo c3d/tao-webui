@@ -20,7 +20,7 @@ Ext.define('TE.view.Editor', {
         margins: '3 0 0 3'
     },{
         itemId: 'centerpane',
-        title: tr('Properties'),
+        title: tr('Layout'),
         region: 'center',
         autoScroll: true,
         margins: '3 3 0 0',
@@ -40,5 +40,13 @@ Ext.define('TE.view.Editor', {
                 }
             ]
         }
+    },{
+        xtype: 'properties',
+        itemId: 'properties',
+        region: 'east',
+        width: 350,
+        collapsible: true,
+        split: true, // enable resizing
+        margins: '3 0 0 3'
     }]
  });

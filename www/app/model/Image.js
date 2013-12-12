@@ -1,6 +1,6 @@
 Ext.define('TE.model.Image', {
-	extend: 'Ext.data.Model',
-	fields: [ 
+    extend: 'Ext.data.Model',
+    fields: [ 
         // Text. May contain either:
         //  - a full URL (containing ://), in which case the URL is used
         // as-is by the editor and also in the Tao document,

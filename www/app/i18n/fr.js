@@ -34,6 +34,7 @@ Ext.define('TE.i18n.fr', {
         'Pages': null,
         'Page name': 'Nom de la page',
         'Properties': 'Propriétés',
+        'Layout': 'Positionnement',
         'Preview': 'Aperçu',
         'Overwrite': 'Remplacer',
         'Save': 'Enregistrer',

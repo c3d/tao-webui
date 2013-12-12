@@ -12,12 +12,14 @@ Ext.define('TE.controller.Editor', {
         'PageList',
         'PageListContextMenu',
         'PageTemplateContextMenu',
+        'Properties',
         'ImageLibrary',
         'Tools'
     ],
     refs: [
         // Make components accessible through this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
+        { ref: 'properties', selector: '#properties' },
         { ref: 'tools', selector: '#tools' },
         { ref: 'pagelist', selector: 'pagelist' },
         { ref: 'themePanel', selector: '#themepanel' },
@@ -187,6 +189,7 @@ Ext.define('TE.controller.Editor', {
         })
         this.pagesList().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
+        this.getProperties().removeAll();
         this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
     },
 
@@ -197,11 +200,13 @@ Ext.define('TE.controller.Editor', {
         });
         this.pagesList().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
+        this.getProperties().removeAll();
     },
 
     pageClicked: function(grid, record) {
         this.savePage();
-        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
+        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
+                 function(child) {
             child.toggleSelected(false);
         });
 
