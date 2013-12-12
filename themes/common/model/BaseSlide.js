@@ -24,5 +24,8 @@ Ext.define('TE.themes.common.model.BaseSlide', {
         { name: 'charttype', type: 'combo'},
         { name: 'chartstyle', type: 'combo'},
         { name: 'chartdata', type: 'hiddenfield'},
+        { name: 'chartxlabel', type: 'textfield'},
+        { name: 'chartylabel', type: 'textfield'},
+        { name: 'chartlegend', type: 'textfield'},
     ]
 })

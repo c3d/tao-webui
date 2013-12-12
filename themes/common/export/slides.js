@@ -249,17 +249,48 @@ function generateBaseSlide(Theme)
 
             ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
 
+            // Parse our chart data
             var data = JSON.parse(page.chartdata);
             for(var i = 0; i < data.length; i++)
             {
-                if(data[i].a)
-                    ddd += '            chart_push_data 1, ' + data[i].a + '\n';
-                if(data[i].b)
-                    ddd += '            chart_push_data 2, ' + data[i].b + '\n';
-                if(data[i].c)
-                    ddd += '            chart_push_data 3, ' + data[i].c + '\n';
-                if(data[i].d)
-                    ddd += '            chart_push_data 4, ' + data[i].d + '\n';
+                var indexes = ['a', 'b', 'c', 'd'];
+                for(var j = 0; j < indexes.length; j++)
+                {
+                    var index = indexes[j];
+                    var value = data[i][index];
+                    if(value == parseFloat(value)) // Check that value is really a number
+                        ddd += '            chart_push_data ' + (j + 1) + ', ' + data[i][index] + '\n';
+                }
+            }
+
+            if(page.chartxlabel != '')
+                ddd += '            chart_set_xlabel "' + page.chartxlabel + '"\n';
+            if(page.chartylabel != '')
+                ddd += '            chart_set_ylabel "' + page.chartylabel + '"\n';
+
+            if(page.chartlegend != '')
+            {
+                // Parse chart legend indexes
+                var indexes = page.chartlegend.split('$');
+                for(var i = 1; i < indexes.length; i+=2)
+                {
+                    var col = indexes[i];
+                    var row = indexes[i+1];
+                    if(col && row)
+                    {
+                        // Remove semi-colons
+                        col = col.replace(';', '').toLowerCase();
+                        row = row.replace(';', '');
+
+                        // Check that properties exists
+                        if(data.hasOwnProperty(row - 1) && data[row-1].hasOwnProperty(col))
+                        {
+                            var item = data[row - 1][col];
+                            if(item)
+                                ddd += '            chart_set_legend ' + (i + 1)/2 + ', "' + item + '"\n';
+                        }
+                    }
+                }            
             }
 
             ddd += '        chart "' + chartid + '", "' + page.charttype.toLowerCase() + '"\n';

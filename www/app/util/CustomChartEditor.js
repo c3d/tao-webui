@@ -43,9 +43,8 @@ Ext.define('TE.util.CustomChartEditor', {
     },
 
     initComponent: function () {
-
-        this.layout = 'vbox';
         border: false,
+        this.lastFocus = null,
 
         this.items = [
             {
@@ -110,10 +109,10 @@ Ext.define('TE.util.CustomChartEditor', {
                 maxHeight: 500,
                 columns: [
                     {xtype: 'rownumberer'},
-                    {header: 'A', width: 100, dataIndex: 'a', field: 'numberfield'},
-                    {header: 'B', width: 100, dataIndex: 'b', field: 'numberfield'},
-                    {header: 'C', width: 250, dataIndex: 'c', field: 'numberfield'},
-                    {header: 'D', width: 250, dataIndex: 'd', field: 'numberfield'}
+                    {header: 'A', width: 100, dataIndex: 'a', field: 'textfield'},
+                    {header: 'B', width: 100, dataIndex: 'b', field: 'textfield'},
+                    {header: 'C', width: 250, dataIndex: 'c', field: 'textfield'},
+                    {header: 'D', width: 250, dataIndex: 'd', field: 'textfield'}
                 ],
                 store: new Ext.data.Store({
                     fields: [
@@ -150,9 +149,75 @@ Ext.define('TE.util.CustomChartEditor', {
 
             		// Force grid refresh to update row numbers
             		this.getView().refresh(true);
+			    },
+			    listeners: {
+			    	viewReady: function(grid)
+			    	{
+			    		// Need to redefine viewReady events as it is overrided by 
+			    		// listeners declaration
+			    		TE.util.CustomGridEditor.prototype.createKeysMap(grid);
+			    	},
+                	itemmousedown: function()
+                	{
+                		var grid = this.ownerCt;
+                		var lastFocus = grid.lastFocus;
+                		if(lastFocus)
+                		{	     
+                			this.ownerCt.lastFocus = this;           			
+	                		var recs = this.getSelectionModel().getSelection();
+	                		var legend = '';
+	                		for(var i = 0; i < recs.length; i++)
+	                		{
+	                			var dataIndex = recs[i].position.dataIndex.toUpperCase();
+	                			var row = recs[i].position.row + 1;
+	                			legend += '$' + dataIndex + '$' + row + ';';
+	                		}
+
+	                		var chartlegend  = Ext.getCmp('chartlegend');
+	                		chartlegend.setValue(legend);
+                		}
+                	}
 			    }
             },
+            {
+                fieldLabel: tr('Chart x-label', 'common'),
+                name: 'chartxlabel',
+                id: 'chartxlabel',
+                xtype: 'textfield',
+                labelAlign: 'top',
+                width:'100%',
+                emptyText: "x-axis",
+            },
+            {
+                fieldLabel: tr('Chart y-label', 'common'),
+                name: 'chartylabel',
+                xtype: 'textfield',
+                labelAlign: 'top',
+                width:'100%',
+                emptyText: "y-axis",
+            },
+            {
+                fieldLabel: tr('Chart legend', 'common'),
+                name: 'chartlegend',
+                id:'chartlegend',
+                xtype: 'textfield',
+                labelAlign: 'top',
+                width:'100%',
+                emptyText: "",
+                listeners: {
+                	focus: function() { 
+                	    this.ownerCt.lastFocus = this;
+                	},
+                },
+            }
         ]
+
+        Ext.getDoc().on("mousedown", function(e) {
+        	var chartgrid  = Ext.getCmp('chartgrid');
+        	var chart      = Ext.getCmp('chart');
+        	if(chart.lastFocus && !e.within(chartgrid.getEl()))        		
+        		chart.lastFocus = null;
+		});
 
         this.callParent(this);
     }

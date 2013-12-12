@@ -50,7 +50,12 @@ Ext.define('TE.util.CustomGridEditor', {
     }],
      listeners: {                
         viewready: function(grid) {            
-            var map = new Ext.KeyMap(grid.getEl(), 
+            this.createKeysMap(grid);
+        }
+    },
+
+    createKeysMap: function(grid) {
+        var map = new Ext.KeyMap(grid.getEl(), 
             [{
                 key: "c",
                 ctrl:true,
@@ -111,8 +116,8 @@ Ext.define('TE.util.CustomGridEditor', {
                     ta.select();
                 }
             }]);
-        }
     },
+
     getCsvDataFromRecs: function(records) {
         var clipText = '';
         var store = this.store;
@@ -137,6 +142,7 @@ Ext.define('TE.util.CustomGridEditor', {
         clipText = clipText.concat("\n");
         return clipText;
     },
+
     getRecsFromCsv: function(grid, ta) {
         document.body.removeChild(ta);
         var rows = ta.value.split("\n");
@@ -242,9 +248,12 @@ Ext.define('TE.util.CustomGridEditor', {
             }
         }
     },
+
     updateData: function()
     {
+        // Empty function
     },
+
     sortSelectedRecords: function(recs)
     {
         var sortedRecs = recs;
