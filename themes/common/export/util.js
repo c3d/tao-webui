@@ -398,7 +398,6 @@ function htmlToSlideContent(html, baseIndent)
 
 // Emit a theme change if we did not use the same theme before
 function theme(ctx, Theme) {
-    console.log('Theme: ' + Theme);
     if (Theme == ctx.currentTheme)
         return ''
     ctx.currentTheme = Theme;
