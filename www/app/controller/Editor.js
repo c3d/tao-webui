@@ -199,9 +199,6 @@ Ext.define('TE.controller.Editor', {
                  function(child) {
                      child.toggleSelected(child === pt);
                  });
-        this.pagesList().getSelectionModel().deselectAll();
-        this.getCenterpane().removeAll();
-        this.getProperties().removeAll();
     },
 
     pageClicked: function(grid, record) {
@@ -276,7 +273,7 @@ Ext.define('TE.controller.Editor', {
 
         var box = Ext.create(Ext.window.MessageBox);
         box.confirm(tr('Delete page'),
-                    tr('Are you sure you want to delete this page?') + '<br>[' + pageId + '] ' + page.get('name'),
+                    tr('Are you sure you want to delete this page?') + '[' + pageId + '] ' + page.get('name'),
                     function(button) {
                         if (button === 'yes') {
                             store.remove(page);
@@ -291,6 +288,8 @@ Ext.define('TE.controller.Editor', {
     },
 
     newPageFromTemplate: function(tmpl) {
+        var selectedPage = this.selectedPage();
+
         var model = tmpl.getModelClassName();
         var page = Ext.create(model);
         var store = this.getPagesStore();
@@ -308,6 +307,21 @@ Ext.define('TE.controller.Editor', {
         page.set('name', unusedPageName());
         store.add(page);
         store.sync();
+
+        if (selectedPage) {
+            var pageId = selectedPage.get('id');
+            page.set('idx', pageId);
+            page.save({
+                success: function() {
+                    store.reload({
+                        callback: function(records, operation, success) {
+                            if (success)
+                                me._updatePageButtons();
+                        }
+                    });
+                }
+            });
+        }
     },
 
     selectedPage: function() {
@@ -327,7 +341,7 @@ Ext.define('TE.controller.Editor', {
         var index = store.find('id', id);
         var ctrl = this.application.getController(record.getControllerName());
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
-        exactmodel.load(record.get('id'), {
+        exactmodel.load(id, {
             success: function(newrecord, operation) {
                 newrecord.set('idx', index + delta);
                 newrecord.save({
