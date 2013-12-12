@@ -8,10 +8,7 @@ Ext.define('TE.tree.PageList', {
     alias: 'widget.pagelist',
     title: tr('Pages'),
     id: 'Pages',
-    layout: {
-        type: 'hbox',
-        align: 'stretch'
-    },
+    layout: 'vbox',
     autoScroll: true,
     items:  [{
         xtype: 'dataview',
@@ -28,26 +25,16 @@ Ext.define('TE.tree.PageList', {
 	    return data;
 	},
 	tpl: [
-	    '<div class="page-wrap" style="width:{[this.totalWidth([values.length])]}">',
-	    '<div class="page-row">',
+	    '<div class="page-wrap">',
 	    '<tpl for=".">',
 	    '<div class="page-container">',
 	    '<div class="page">',
-	    '<div class="page-name">{[xindex]} - {name} {name}</div>',
 	    '<div class="page-img"><img src="{img}"/></div>',
+	    '<div class="page-name">{[xindex]} - {name}</div>',
 	    '</div>',
 	    '</div>',
 	    '</tpl>',
-	    '</div>',
-	    '</div>',
-	    {
-		// Simple function to get always to correct total width
-		compiled: true,
-		totalWidth: function(value) {
-                    // Number of items multiply by width of page container
-		    return value * 290;
-		}
-	    }
+	    '</div>'
 	],
         listeners: {
 	    render: function(v) {
@@ -67,7 +54,7 @@ Ext.define('TE.tree.PageList', {
 
 	// Initialize the drop zone in the current view
 	initDropZone: function(v) {
-	    v.dropZone = Ext.create('TE.util.DropZone', {
+	    v.dropZone = Ext.create('Ext.view.DropZone', {
 		view: v,
 		ddGroup: 'Drag',
 		indicatorHtml: '<div class="grid-drop-indicator"></div>',
@@ -92,33 +79,24 @@ Ext.define('TE.tree.PageList', {
     initComponent: function() {
         Ext.apply(this, {
             tbar: [
-                '->', // Right align buttons
+                ' ',
                 {
                     xtype: 'button',
-                    text: tr('Move page before'),
                     icon: 'app/resources/images/page-up.gif',
                     action: 'pageBefore',
                     disabled: true
                 },{
                     xtype: 'button',
-                    text: tr('Move page after'),
                     icon: 'app/resources/images/page-down.gif',
                     action: 'pageAfter',
                     disabled: true
                 },{
                     xtype: 'button',
-                    text: tr('Delete page'),
                     icon: 'app/resources/images/delete.png',
                     action: 'pageDelete',
                     disabled: true
                 },
-                ' ', // Spacer
-                {
-                    xtype: 'button',
-                    text: tr('Image library...'),
-                    icon: 'app/resources/images/image.png',
-                    action: 'showPicLibrary'
-                }
+                ' '
             ]
         });
 

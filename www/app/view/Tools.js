@@ -17,20 +17,28 @@ Ext.define('TE.view.Tools', {
         layout: {
             type: 'vbox',
             align: 'center',
-            defaultMargins: 5
+            defaultmargins: 5
         },
         items: []
     }, {
-        // Placeholder for the list of page templates
+        // Placeholder for the list of page templates in a theme
         xtype: 'panel',
         itemId: 'placeholder'
+    }, {
+        xtype: 'pagelist',
+        autoScroll: true,
+        layout: 'vbox'
     }],
 
     setPageTemplates: function(tmpl) {
         var comp = this.items.items[1];
+        var pageList = this.items.items[2];
+
         // Placeholder may be deleted, not objects passed to this function (they are cached)
         var del = typeof comp.itemId !== 'undefined' && comp.itemId === 'placeholder';
+        this.remove(2, false);
         this.remove(1, del);
         this.add(tmpl);
+        this.add(pageList);
     }
  });

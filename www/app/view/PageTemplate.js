@@ -3,7 +3,7 @@ Ext.define('TE.view.PageTemplate', {
     alias: 'widget.pagetemplate',
 
     getModelClassName: function() {
-        // Example : TE.view.vellum.TitleAndSubtitle => TE.model.vellum.TitleAndSubtitle
-        return this.self.getName().replace('view', 'model');
+        // Example : TE.themes.vellum.view.TitleAndSubtitle => TE.themes.vellum.model.TitleAndSubtitle
+        return this.self.getName().replace('.view.', '.model.');
     }
  });

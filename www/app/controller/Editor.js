@@ -32,7 +32,7 @@ Ext.define('TE.controller.Editor', {
         { ref: 'imageDeleteBtn', selector: 'teimagelibrary button[action=delete]' },
         { ref: 'imageEditBtn', selector: 'teimagelibrary button[action=edit]' },
         { ref: 'imageChooseBtn', selector: 'teimagelibrary button[action=choose]' },
-        { ref: 'statusText', selector: '#centerpane toolbar #statustext'}
+        { ref: 'statusText', selector: 'toolbar #statustext'}
     ],
 
     init: function() {
@@ -74,7 +74,7 @@ Ext.define('TE.controller.Editor', {
             'pagelist button[action=pageDelete]': {
                 click: this.deletePage
             },
-            'pagelist button[action=showPicLibrary]': {
+            'button[action=showPicLibrary]': {
                 click: this.showImageLibrary
             },
             'teimagelibrary gridpanel': {
@@ -195,9 +195,10 @@ Ext.define('TE.controller.Editor', {
 
     pageTemplateClicked: function(pt) {
         this.savePage();
-        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
-            child.toggleSelected(child === pt);
-        });
+        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
+                 function(child) {
+                     child.toggleSelected(child === pt);
+                 });
         this.pagesList().getSelectionModel().deselectAll();
         this.getCenterpane().removeAll();
         this.getProperties().removeAll();
