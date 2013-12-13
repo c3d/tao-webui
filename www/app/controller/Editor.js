@@ -325,23 +325,16 @@ Ext.define('TE.controller.Editor', {
             }
         }
         page.set('name', unusedPageName());
-        store.add(page);
-        store.sync();
 
         if (selectedPage) {
             var pageId = selectedPage.get('id');
             var rowIndex = this.getPagesStore().find('id', pageId);
             page.set('idx', rowIndex + 1);
-            page.save({
-                success: function() {
-                    store.reload({
-                        callback: function(records, operation, success) {
-                            if (success)
-                                me._updatePageButtons();
-                        }
-                    });
-                }
-            });
+        }
+        store.add(page);
+        store.sync();
+        if (selectedPage) {
+            store.reload();
         }
     },
 
