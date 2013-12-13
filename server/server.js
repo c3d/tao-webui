@@ -85,6 +85,7 @@ if (TEST_MODE) {
 }
 
 var IMAGES_DIR = DOC_DIR + '/images';
+var VIDEOS_DIR = DOC_DIR + '/videos';
 var preserve_files = [];
 if (TEST_MODE) {
     // DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
@@ -103,8 +104,8 @@ function jsonFilePath(name, saving)
         case 'pages' :
             return docPath().replace(/\.ddd$/, '') + '.json' + (TEST_MODE && saving ? '.saved' : '');
 
-        case 'images':
-            return docPath().replace(/\.ddd$/, '') + '_images.json' + (TEST_MODE && saving ? '.saved' : '');
+        case 'resources':
+            return docPath().replace(/\.ddd$/, '') + '_resources.json' + (TEST_MODE && saving ? '.saved' : '');
 
         default:
             throw('Unexpected file name');
@@ -181,8 +182,8 @@ app.use(function(req, res, next) {
 // /pages            Create one    List all   Not used    Not used 
 // /pages/:id        Error         Get one    Update one  Delete one
 //
-// /images           [like pages]
-// /images/:id       [like pages]
+// /resources        [like pages]
+// /resources/:id    [like pages]
 
 app.get('/pages', function(req, res) {
     getData('pages', function(err, pages) {
@@ -299,41 +300,44 @@ app.delete('/pages/:id', function(req, res) {
 });
 
 
-app.get('/images', function(req, res) {
-    getData('images', function(err, pages) {
-        res.send(err ? 500 : pages);
+app.get('/resources', function(req, res) {
+    getData('resources', function(err, resources) {
+        res.send(err ? 500 : resources);
     });
 });
 
-app.post('/images', function (req, res) {
-    getData('images', function(err, images) {
-        var image = req.body;
-        image.id = allocateId(images);
-        images.push(image);
-        verbose('Image ' + image.id + ' created');
-        saveImages(images);
-        var rsp = { success: true, images: [] };
-        rsp.images[0] = image;
+app.post('/resources', function (req, res) {
+    getData('resources', function(err, resources) {
+        var resource = req.body;
+        resource.id = allocateId(resources);
+        resources.push(resource);
+        verbose('Resource ' + resource.id + ' created ' +
+                '(type ' + resource.type + ')');
+        saveResources(resources);
+        var rsp = { success: true, resources: [] };
+        rsp.resources[0] = resource;
         res.send(rsp);
     });
 });
 
-app.put('/images/:id', function(req, res) {
-    getData('images', function(err, images) {
-        var prevfile, found = null;
+app.put('/resources/:id', function(req, res) {
+    getData('resources', function(err, resources) {
+        var prevfile, prevtype, found = null;
         var i = 0;
-        for (i = 0; i < images.length; i++) {
-            if (images[i].id == req.params.id) {
-                prevfile = images[i].file;
-                found = images[i] = req.body;
-                verbose('Image ' + found.id + ' updated');
+        for (i = 0; i < resources.length; i++) {
+            if (resources[i].id == req.params.id) {
+                prevfile = resources[i].file;
+                prevtype = resources[i].type || 'image';
+                found = resources[i] = req.body;
+                verbose('Resource ' + found.id + ' updated ' +
+                        ' (type ' + prevtype +')');
                 break;
             }
         }
         if (found) {
-            saveImages(images);
+            saveResources(resources);
             if (prevfile.indexOf('://') === -1 && prevfile !== found.file) {
-                deleteImageFile(prevfile, function (err) {
+                deleteResourceFile(prevtype, prevfile, function (err) {
                     res.send(err ? 500 : found);
                 });
             } else {
@@ -345,19 +349,20 @@ app.put('/images/:id', function(req, res) {
     });
 });
 
-app.delete('/images/:id', function(req, res) {
-    getData('images', function(err, images) {
+app.delete('/resources/:id', function(req, res) {
+    getData('resources', function(err, resources) {
         var found = undefined;
-        for (var i = 0; i < images.length; i++) {
-            if (images[i].id == req.params.id) {
-                verbose('Image ' + req.params.id + ' deleted');
-                found = images[i];
-                images.splice(i, 1);
-                saveImages(images);
+        for (var i = 0; i < resources.length; i++) {
+            if (resources[i].id == req.params.id) {
+                found = resources[i];
+                verbose('Resource ' + found.id + ' deleted ' +
+                        ' (type ' + found.type +')');
+                resources.splice(i, 1);
+                saveResources(resources);
             }
         }
         if (found) {
-            deleteImageFile(found.file, function(err) {
+            deleteResourceFile(found.type, found.file, function(err) {
                 res.send(err ? 500 : { success: true })
             })
         } else {
@@ -366,46 +371,51 @@ app.delete('/images/:id', function(req, res) {
     });
 });
 
-app.post('/image-upload', function(req, res, next) {
-    // req.files.<name of form field>
-    if (typeof req.files.file === undefined)
-    {
-        res.send(400);
-        return;
-    }
+app.post('/image-upload', fileUpload(IMAGES_DIR));
+app.post('/video-upload', fileUpload(VIDEOS_DIR));
 
-    findUnusedImageFileName(req.files.file.name, function(err, name) {
-        if (err)
-            throw err;
-
-        var rename = function() {
-            // Do not use fs.rename() due to possible EXDEV
-            var is = fs.createReadStream(req.files.file.path);
-            var os = fs.createWriteStream(IMAGES_DIR + '/' + name);
-            is.pipe(os);
-            is.on('end',function() {
-                fs.unlink(req.files.file.path);
-                res.send(JSON.stringify({ success: true, file: name }));
-            });
+function fileUpload(dir) {
+    return function (req, res, next) {
+        // req.files.<name of form field>
+        if (typeof req.files.file === undefined)
+        {
+            res.send(400);
+            return;
         }
-        fs.exists(IMAGES_DIR, function(exists) {
-            if (exists) {
-                rename();
-            } else {
-                verbose('Creating ' + IMAGES_DIR);
-                fs.mkdir(IMAGES_DIR, function(err) {
-                    if (err)
-                        throw err;
-                    rename();
+
+        findUnusedFileName(dir, req.files.file.name, function(err, name) {
+            if (err)
+                throw err;
+
+            var rename = function() {
+                // Do not use fs.rename() due to possible EXDEV
+                var is = fs.createReadStream(req.files.file.path);
+                var os = fs.createWriteStream(dir + '/' + name);
+                is.pipe(os);
+                is.on('end',function() {
+                    fs.unlink(req.files.file.path);
+                    res.send(JSON.stringify({ success: true, file: name }));
                 });
             }
-        })
-    });
-});
+            fs.exists(dir, function(exists) {
+                if (exists) {
+                    rename();
+                } else {
+                    verbose('Creating ' + dir);
+                    fs.mkdir(dir, function(err) {
+                        if (err)
+                            throw err;
+                        rename();
+                    });
+                }
+            })
+        });
+    }
+};
 
 // Accessing the image library
 
-app.use('/imagelibrary', express.static(IMAGES_DIR));
+app.use('/library/images', express.static(IMAGES_DIR));
 
 // Accessing the themes
 
@@ -532,15 +542,25 @@ var cached = {
         pages: null,
         dddmd5: null // overwrite empty or 'nil' file only (except TEST_MODE)
     },
-    images: {
-        images: null
+    resources: {
+        resources: null
     }
 };
 
-// Read and cache JSON file (name = 'pages' or 'images')
+// Read and cache JSON file (name = 'pages' or 'resources')
 // Example: getData('pages', function(error, pages) { ... } )
 function getData(name, callback)
 {
+    name = name || '';
+    switch (name) {
+        case 'pages':
+        case 'resources':
+            break;
+        default:
+            var msg = 'Unexpected dataset name: ' + name;
+            callback(msg);
+            return;
+    }
     if (cached[name][name] !== null) {
         callback(null, cached[name][name]);
     } else {
@@ -596,13 +616,13 @@ function savePagesJSON(pages, dddmd5sum)
     verbose(path + ' saved');
 }
 
-function saveImages(images)
+function saveResources(resources)
 {
-    var path = jsonFilePath('images', true);
+    var path = jsonFilePath('resources', true);
     verbose('Saving ' + path);
-    cached.images.images = images;
+    cached.resources.resources = resources;
     var sav = {
-        images: images
+        resources: resources
     }
     fs.writeFileSync(path, JSON.stringify(sav));
 }
@@ -619,32 +639,45 @@ function allocateId(arr)
     return id;
 }
 
-// If file name exists in image directory, generate modified name. Otherwise keep name.
+// If file name exists in dir, generate modified name. Otherwise keep name.
 // Call callback(err, unused_name)
-function findUnusedImageFileName(name, callback)
+function findUnusedFileName(dir, name, callback)
 {
-    fs.exists(IMAGES_DIR + '/' + name, function(exists) {
+    fs.exists(dir + '/' + name, function(exists) {
         if (exists) {
             var dot = name.indexOf('.');
             var left = name.substring(0, dot);
             var right = name.substring(dot + 1);
-            findUnusedImageFileName(left + '@.' + right, callback);
+            findUnusedFileName(dir, left + '@.' + right, callback);
         } else {
             callback(undefined, name);
         }
     });
 }
 
-// If name is a file in IMAGES_DIR and is not in the 'preserve' list, delete it
-function deleteImageFile(name, callback)
+// If name is a file in IMAGES_DIR or VIDEOS_DIR (depending on type)
+// and is not in the 'preserve' list, delete it
+function deleteResourceFile(type, name, callback)
 {
+    var dir;
+    type = type || 'image';
+    switch (type) {
+        case 'image': dir = IMAGES_DIR; break;
+        case 'video': dir = VIDEOS_DIR; break;
+        default:
+            var msg = 'Error: unknown resource type ' + type;
+            console.log(msg);
+            callback(msg)
+            return;
+    }
     if (name.indexOf('://') === -1) {
         if (preserve_files.indexOf(name) !== -1) {
             verbose('Debug: file ' + name + ' not deleted (in preserve_files)');
             callback();
         } else {
-            verbose('Delete image file: ' + name);
-            fs.unlink(IMAGES_DIR + '/' + name, callback);
+            var path = dir + '/' + name;
+            verbose('Delete resource file: ' + path);
+            fs.unlink(path, callback);
         }
     } else {
         // name is a URL, nothing to do

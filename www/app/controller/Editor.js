@@ -3,7 +3,7 @@ Ext.define('TE.controller.Editor', {
     requires: [ 'Ext.window.MessageBox' ],
 
     stores: [ 'Pages', 'Images' ],
-    models: [ 'Page', 'Image' ],
+    models: [ 'Page', 'ResourceFile' ],
     views: [
         'Editor',
         'EditImageFile',
@@ -394,14 +394,14 @@ Ext.define('TE.controller.Editor', {
     },
 
     addImageUrl: function() {
-        var record = Ext.create(this.getImageModel(), { file: '', description: '' });
+        var record = Ext.create(this.getResourceFileModel(), { file: '', description: '' });
         var view = Ext.widget('teeditimageurl');
         view.setTitle(tr('Add image from URL'));
         view.down('form').loadRecord(record);
     },
 
     addImageFile: function() {
-        var record = Ext.create(this.getImageModel(), { file: '', description: '' });
+        var record = Ext.create(this.getResourceFileModel(), { file: '', description: '' });
         var view = Ext.widget('teeditimagefile');
         view.setTitle(tr('Add image file'));
         view.down('filefield').allowBlank = false;

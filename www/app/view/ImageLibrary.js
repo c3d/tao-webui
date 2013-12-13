@@ -21,10 +21,18 @@ Ext.define('TE.view.ImageLibrary', {
                 dataIndex: 'file',
                 width: 100,
                 renderer: function(v, meta, rec, rowIndex) {
-                    var imgsrc = file = rec.get('file');
-                    if (file.indexOf('://') === -1)
-                        imgsrc = '/imagelibrary/' + file;
-                    return '<img src="' + imgsrc + '" width=\"80\" title=\"' + file + '\" />';
+                    var type = rec.get('type') || '';
+                    if (type === 'image')
+                    {
+                        var imgsrc = file = rec.get('file');
+                        if (file.indexOf('://') === -1)
+                            imgsrc = '/library/images/' + file;
+                        return '<img src="' + imgsrc + '" width=\"80\" title=\"' + file + '\" />';
+                    }
+                    else
+                    {
+                        return '<div/>';
+                    }
                 },
                 sortable: false
             },{
