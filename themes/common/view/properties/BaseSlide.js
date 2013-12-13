@@ -1,5 +1,5 @@
 Ext.define('TE.themes.common.view.properties.BaseSlide', {
-    requires: ['TE.util.CustomHtmlEditor'],
+    requires: ['TE.util.CustomHtmlEditor', 'TE.util.CustomDisplayField' ],
     extend: 'Ext.Container',
 
     initComponent: function(itemsBefore) {
@@ -9,14 +9,14 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
             {
                 xtype: 'form',
                 border: 0,
-			    padding: 10,
+		padding: 10,
                 trackResetOnLoad: true,
-
-			    defaults: {
+                
+		defaults: {
                     labelAlign: 'top',
                     labelPad: 10,
                     anchor: '100%'
-			    },
+		},
                 items: itemsBefore.concat([
                     {
                         xtype: 'textfield',
@@ -37,17 +37,17 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                         fieldLabel: tr('Subtitle', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'story',
                         fieldLabel: tr('Main text', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'left_column',
                         fieldLabel: tr('Left column text', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'right_column',
                         fieldLabel: tr('Right column text', 'common')
                     },

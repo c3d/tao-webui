@@ -12,15 +12,18 @@ Ext.define('TE.view.Editor', {
         split: true, // enable resizing
         margins: '3 0 0 3'
     },{
+        xtype: 'panel',
         itemId: 'centerpane',
-        title: tr('Layout'),
+        layout: 'fit',
+        title: tr('Editor'),
         region: 'center',
         autoScroll: true,
-        margins: '3 3 0 0',
+        margins: '3 3 0 0'
     },{
         xtype: 'properties',
         itemId: 'properties',
         region: 'east',
+        autoScroll: true,
         width: 350,
         collapsible: true,
         split: true, // enable resizing

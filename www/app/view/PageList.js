@@ -14,66 +14,67 @@ Ext.define('TE.tree.PageList', {
         xtype: 'dataview',
         alias: 'widget.page',
         title: tr('Page'),
-	store: 'Pages',
-	id: 'page',
-	autoScroll: false,
-	itemSelector: '.page-container',
-	prepareData : function(data, recordIndex, record ){
-	    // Add image url to the diplayed data
-	    var img = Ext.create(record.getPageTemplateViewClass()).image;
-	    data['img'] = img;
-	    return data;
-	},
-	tpl: [
-	    '<div class="page-wrap">',
-	    '<tpl for=".">',
-	    '<div class="page-container">',
-	    '<div class="page">',
-	    '<div class="page-img"><img src="{img}"/></div>',
-	    '<div class="page-name">{[xindex]} - {name}</div>',
-	    '</div>',
-	    '</div>',
-	    '</tpl>',
-	    '</div>'
-	],
+        store: 'Pages',
+        id: 'page',
+        autoScroll: false,
+        itemSelector: '.page-container',
+        prepareData : function(data, recordIndex, record ){
+            // Add image url to the diplayed data
+            var img = Ext.create(record.getPageTemplateViewClass()).image;
+            data['img'] = img;
+            return data;
+        },
+        tpl: [
+            '<div class="page-wrap">',
+            '<tpl for=".">',
+            '<div class="page-container">',
+            '<div class="page">',
+            '<div class="page-img"><img src="{img}"/></div>',
+            '<div class="page-name">{[xindex]} - {name}</div>',
+            '</div>',
+            '</div>',
+            '</tpl>',
+            '</div>'
+        ],
         listeners: {
-	    render: function(v) {
-		this.initDragZone(v);
-		this.initDropZone(v);
-	    }
-	},
+            render: function(v) {
+                this.initDragZone(v);
+                this.initDropZone(v);
+            }
+        },
 
-	// Initialize the drag zone in the current view
-	initDragZone: function(v) {
-	    v.dragZone = Ext.create('Ext.view.DragZone', {
-		view: v,
-		ddGroup: "Drag",
-		dragText: 'Drag'
-	    });
-	},
+        // Initialize the drag zone in the current view
+        initDragZone: function(v) {
+            v.dragZone = Ext.create('Ext.view.DragZone', {
+                view: v,
+                scroll: false,
+                ddGroup: 'PageListDrag',
+                dragText: 'Move page'
+            });
+        },
 
-	// Initialize the drop zone in the current view
-	initDropZone: function(v) {
-	    v.dropZone = Ext.create('Ext.view.DropZone', {
-		view: v,
-		ddGroup: 'Drag',
-		indicatorHtml: '<div class="grid-drop-indicator"></div>',
-		indicatorCls: 'grid-drop-indicator',
-		handleNodeDrop : function(data, record, position)
-		{
-		    var view = this.view,
-		    store = view.getStore(),
-		    index, records, i, len;
-		    data.view.store.remove(data.records, data.view === view);
-		    index = store.indexOf(record);
-		    if (position !== 'before') {
-			index++;
-		    }
-		    store.insert(index, data.records);
-		    view.getSelectionModel().select(data.records);
-		}
-	    });
-	}
+        // Initialize the drop zone in the current view
+        initDropZone: function(v) {
+            v.dropZone = Ext.create('Ext.view.DropZone', {
+                view: v,
+                ddGroup: 'PageListDrag',
+                indicatorHtml: '<div class="grid-drop-indicator"></div>',
+                indicatorCls: 'grid-drop-indicator',
+                handleNodeDrop : function(data, record, position)
+                {
+                    var view = this.view,
+                    store = view.getStore(),
+                    index, records, i, len;
+                    data.view.store.remove(data.records, data.view === view);
+                    index = store.indexOf(record);
+                    if (position !== 'before') {
+                        index++;
+                    }
+                    store.insert(index, data.records);
+                    view.getSelectionModel().select(data.records);
+                }
+            });
+        }
     }],
 
     initComponent: function() {

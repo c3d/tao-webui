@@ -53,6 +53,9 @@ Ext.define('TE.controller.Editor', {
                 beforedrop: this.dragAndDropPages,
                 itemcontextmenu: this.showPageContextMenu
             },
+            'te_displayfield': {
+                click: this.displayFieldClicked
+            },
             '#ctx-menu-delete-page': {
                 click: this.deletePage
             },
@@ -225,6 +228,26 @@ Ext.define('TE.controller.Editor', {
         });
 
         this._updatePageButtons();
+    },
+
+    displayFieldClicked: function(displayField) {
+        var cp = this.getCenterpane();
+        cp.removeAll();
+        var view = Ext.create('TE.util.CustomHtmlEditor', {
+            value: displayField.value,
+            layout: 'fit',
+            sourceField: displayField
+        });
+        cp.add(view);
+        view.withEd(function() {
+            var editor = view.getEditor();
+            editor.onChange.add(function (ed, change) {
+                displayField.setValue(change.content);
+            });
+            editor.onEvent.add(function(ed, event) {
+                displayField.setValue(editor.getContent());
+            });
+        });
     },
 
     _updatePageButtons: function() {
