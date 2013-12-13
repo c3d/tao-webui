@@ -187,9 +187,6 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('pagetemplate'), function(child) {
             child.toggleSelected(false);
         })
-        this.pagesList().getSelectionModel().deselectAll();
-        this.getCenterpane().removeAll();
-        this.getProperties().removeAll();
         this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
     },
 
@@ -310,7 +307,8 @@ Ext.define('TE.controller.Editor', {
 
         if (selectedPage) {
             var pageId = selectedPage.get('id');
-            page.set('idx', pageId);
+            var rowIndex = this.getPagesStore().find('id', pageId);
+            page.set('idx', rowIndex + 1);
             page.save({
                 success: function() {
                     store.reload({
