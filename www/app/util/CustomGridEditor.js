@@ -48,14 +48,14 @@ Ext.define('TE.util.CustomGridEditor', {
             grid.updateData();
         },
     }],
-     listeners: {                
-        viewready: function(grid) {            
+     listeners: {
+        viewready: function(grid) {
             this.createKeysMap(grid);
         }
     },
 
     createKeysMap: function(grid) {
-        var map = new Ext.KeyMap(grid.getEl(), 
+        var map = new Ext.KeyMap(grid.getEl(),
             [{
                 key: "c",
                 ctrl:true,
@@ -127,7 +127,7 @@ Ext.define('TE.util.CustomGridEditor', {
             var index = rec.position.row + 1;
             var r = index;
             var val = rec.position.record.data[rec.position.dataIndex];
-            
+
             // Check that new value is not null. If it is, then use empty string
             if((val == null) ||  (val == 'null'))
                 val = "";
@@ -159,7 +159,7 @@ Ext.define('TE.util.CustomGridEditor', {
 
         // If only one cell in clipboard data, block fill process (i.e. copy a cell, then select a group of cells to paste)
         if( rows[0].split("\t").length==1 && ( (rows.length==1) || (rows.length==2  && rows[1].trim()== "")))
-        {            
+        {
             for(var i = 0; i < recs.length; i++)
             {
                 var rec = recs[i].position.record;
@@ -239,7 +239,7 @@ Ext.define('TE.util.CustomGridEditor', {
 
                     // Remove previous record, then add new one
                     grid.store.removeAt(currentRow);
-                    grid.store.insert(currentRow, currentRec);                   
+                    grid.store.insert(currentRow, currentRec);
 
                     currentCol = currentCol + 1;
                 }

@@ -34,18 +34,16 @@ Ext.define('TE.util.CustomChartEditor', {
     {
         var types  = Ext.getCmp('charttype');
         var styles = Ext.getCmp('chartstyle');
-        var input  = types.getValue();    
+        var input  = types.getValue();
         var data   = this.getChartStyle(input);
         styles.store.loadData(this.getChartStyle(input));
         if(clear)
             styles.setValue(data[0]);
-
     },
 
     initComponent: function () {
         border: false,
         this.lastFocus = null,
-
         this.items = [
             {
                 fieldLabel: tr('Chart name', 'common'),
@@ -97,6 +95,23 @@ Ext.define('TE.util.CustomChartEditor', {
                 displayField : 'style'
             },
             {
+                fieldLabel: tr('Chart x-label', 'common'),
+                name: 'chartxlabel',
+                id: 'chartxlabel',
+                xtype: 'textfield',
+                labelAlign: 'top',
+                width:'100%',
+                emptyText: "x-axis",
+            },
+            {
+                fieldLabel: tr('Chart y-label', 'common'),
+                name: 'chartylabel',
+                xtype: 'textfield',
+                labelAlign: 'top',
+                width:'100%',
+                emptyText: "y-axis",
+            },
+            {
                 xtype: 'hiddenfield',
                 name: 'chartdata',
                 id:'chartdata'
@@ -136,65 +151,71 @@ Ext.define('TE.util.CustomChartEditor', {
                         }
                     }
                 }),
-	            updateData: function()
-			    {
-			        // Save current data
-			        var data = [];
-			        this.store.each(function(r){
-			            data.push(r.data);
-			        });
-			        var jsonData = Ext.encode(data);
-			        var chartdata  = Ext.getCmp('chartdata');
-			        chartdata.setValue(jsonData);
+                updateData: function()
+                {
+                    // Save current data
+                    var data = [];
+                    this.store.each(function(r){
+                        data.push(r.data);
+                    });
+                    var jsonData = Ext.encode(data);
+                    var chartdata  = Ext.getCmp('chartdata');
+                    chartdata.setValue(jsonData);
 
-            		// Force grid refresh to update row numbers
-            		this.getView().refresh(true);
-			    },
-			    listeners: {
-			    	viewReady: function(grid)
-			    	{
-			    		// Need to redefine viewReady events as it is overrided by 
-			    		// listeners declaration
-			    		TE.util.CustomGridEditor.prototype.createKeysMap(grid);
-			    	},
-                	itemmousedown: function()
-                	{
-                		var grid = this.ownerCt;
-                		var lastFocus = grid.lastFocus;
-                		if(lastFocus)
-                		{	     
-                			this.ownerCt.lastFocus = this;           			
-	                		var recs = this.getSelectionModel().getSelection();
-	                		var legend = '';
-	                		for(var i = 0; i < recs.length; i++)
-	                		{
-	                			var dataIndex = recs[i].position.dataIndex.toUpperCase();
-	                			var row = recs[i].position.row + 1;
-	                			legend += '$' + dataIndex + '$' + row + ';';
-	                		}
+                    // Force grid refresh to update row numbers
+                    this.getView().refresh(true);
+                },
+                listeners: {
+                    viewReady: function(grid)
+                    {
+                        // Need to redefine viewReady events as it is overrided by
+                        // listeners declaration
+                        TE.util.CustomGridEditor.prototype.createKeysMap(grid);
+                    },
+                    itemmousedown: function()
+                    {
+                        var grid = this.ownerCt;
+                        var lastFocus = grid.lastFocus;
 
-	                		var chartlegend  = Ext.getCmp('chartlegend');
-	                		chartlegend.setValue(legend);
-                		}
-                	}
-			    }
-            },
-            {
-                fieldLabel: tr('Chart x-label', 'common'),
-                name: 'chartxlabel',
-                id: 'chartxlabel',
-                xtype: 'textfield',
-                labelAlign: 'top',
-                width:'100%',
-                emptyText: "x-axis",
-            },
-            {
-                fieldLabel: tr('Chart y-label', 'common'),
-                name: 'chartylabel',
-                xtype: 'textfield',
-                labelAlign: 'top',
-                width:'100%',
-                emptyText: "y-axis",
+                        if(lastFocus)
+                        {
+                            var recs = this.getSelectionModel().getSelection();
+
+                            if(lastFocus.name == 'chartlegend') // Update legend if coresponding field is the last focus
+                            {
+                                // Parse selected cells and save it to an excell form ($A$1;$A2;etc.)
+                                var legend = '';
+                                for(var i = 0; i < recs.length; i++)
+                                {
+                                    var dataIndex = recs[i].position.dataIndex.toUpperCase();
+                                    var row = recs[i].position.row + 1;
+                                    legend += '$' + dataIndex + '$' + row + ';';
+                                }
+
+                                // Update legend field
+                                Ext.getCmp('chartlegend').setValue(legend);
+                            }
+                            else if(lastFocus.name == 'chartdatasets') // Update legend if coresponding field is the last focus
+                            {
+                                // Parse all selected columns
+                                var datasetsIndexes = [];
+                                var datasets = '';
+                                for(var i = 0; i < recs.length; i++)
+                                    datasetsIndexes[i] = recs[i].position.dataIndex.toUpperCase();
+
+                                // Remove duplicate
+                                datasetsIndexes = Ext.Array.unique(datasetsIndexes);
+
+                                // Save it to an excell form (A;B;etc.)
+                                for(var i = 0; i < datasetsIndexes.length; i++)
+                                    datasets += datasetsIndexes[i] + ';';
+
+                                // Update field
+                                Ext.getCmp('chartdatasets').setValue(datasets);
+                            }
+                        }
+                    }
+                }
             },
             {
                 fieldLabel: tr('Chart legend', 'common'),
@@ -205,19 +226,37 @@ Ext.define('TE.util.CustomChartEditor', {
                 width:'100%',
                 emptyText: "",
                 listeners: {
-                	focus: function() { 
-                	    this.ownerCt.lastFocus = this;
-                	},
+                    focus: function() {
+                        // Update last focused item
+                        this.ownerCt.lastFocus = this;
+                    },
+                },
+            },
+            {
+                fieldLabel: tr('Chart drawing datasets', 'common'),
+                name: 'chartdatasets',
+                id:'chartdatasets',
+                xtype: 'textfield',
+                labelAlign: 'top',
+                width:'100%',
+                emptyText: "",
+                listeners: {
+                    focus: function() {
+                        // Update last focused item
+                        this.ownerCt.lastFocus = this;
+                    },
                 },
             }
         ]
 
+        // As there is no blur event for grid, check when
+        // mousedown event is outside the grid.
         Ext.getDoc().on("mousedown", function(e) {
-        	var chartgrid  = Ext.getCmp('chartgrid');
-        	var chart      = Ext.getCmp('chart');
-        	if(chart.lastFocus && !e.within(chartgrid.getEl()))        		
-        		chart.lastFocus = null;
-		});
+            var chartgrid  = Ext.getCmp('chartgrid');
+            var chart      = Ext.getCmp('chart');
+            if(chart.lastFocus && !e.within(chartgrid.getEl()))
+                chart.lastFocus = null;
+        });
 
         this.callParent(this);
     }
