@@ -9,14 +9,14 @@ Ext.define('TE.themes.common.view.properties.PictureSlide', {
             {
                 xtype: 'form',
                 border: 0,
-			    padding: 10,
+		padding: 10,
                 trackResetOnLoad: true,
 
-			    defaults: {
+		defaults: {
                     labelAlign: 'top',
                     labelPad: 10,
                     anchor: '100%'
-			    },
+		},
                 items: itemsBefore.concat([
                     {
                         xtype: 'textfield',
