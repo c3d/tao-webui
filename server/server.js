@@ -193,10 +193,18 @@ app.get('/pages', function(req, res) {
 app.get('/pages/:id', function(req, res) {
     getData('pages', function(err, pages) {
         var found = [];
+        var pageIndex = -1;
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
                 found.push(pages[i]);
+                pageIndex = i+1;
             }
+        }
+        if (pageIndex >= 0) {
+            fs.writeFileSync(docPath() + '.tao-instrs',
+                             'page ' + pageIndex);
+            var now = new Date();
+            fs.utimesSync(docPath(), now, now);
         }
         res.send(found.length === 1 ? found : 404);
     });
@@ -237,22 +245,26 @@ app.put('/pages/:id', function(req, res) {
     getData('pages', function(err, pages) {
         var ret, found = null;
         var i = 0;
+        var pageIndex = 0;
         for (i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
                 found = pages[i] = req.body;
+                pageIndex = i + 1;
                 verbose('Page ' + found.id + ' updated');
                 break;
             }
         }
-        if (found && found.idx !== -1) {
-            // Move page:
-            // - delete from previous position
-            pages.splice(i, 1);
-            // - insert at new position
-            pages.splice(found.idx, 0, found);
-            verbose('Page ' + found.id + ' moved from index ' + i + ' to index ' + found.idx);
-        }
         if (found) {
+            if (found.idx !== -1) {
+                // Move page:
+                // - delete from previous position
+                pages.splice(i, 1);
+                // - insert at new position
+                pages.splice(found.idx, 0, found);
+                verbose('Page ' + found.id +
+                        ' moved from index ' + i +
+                        ' to index ' + found.idx);
+            }
             if (found.idx)
                 delete found.idx;
             save(pages, req, function(err) {
@@ -263,6 +275,10 @@ app.put('/pages/:id', function(req, res) {
                     rsp.filename = DOC_FILENAME;
                 } else {
                     rsp = found;
+                    if (pageIndex >= 0) {
+                        fs.writeFileSync(docPath() + '.tao-instrs',
+                                         'page ' + pageIndex);
+                    }
                 }
                 res.send(rsp);
             });
@@ -792,8 +808,6 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                         .replace(themeRe, '[[- theme(ctx, $1) ]]')
                         .replace(templateRe,
                                  '[[- emit_$2(page, "$1") ]]');
-                    ;
-                    verbose ("No imports=" + noImports);
                     var result = ejs.render(noImports, options);
                     return result;
                 }
