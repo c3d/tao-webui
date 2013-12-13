@@ -46,12 +46,12 @@ Ext.define('TE.themes.common.view.properties.MovieSlide', {
                         fieldLabel: tr('Movie vertical position', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'leftcolumn',
                         fieldLabel: tr('Left column text', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'rightcolumn',
                         fieldLabel: tr('Right column text', 'common')
                     }

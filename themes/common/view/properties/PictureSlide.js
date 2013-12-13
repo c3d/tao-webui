@@ -47,12 +47,12 @@ Ext.define('TE.themes.common.view.properties.PictureSlide', {
                         fieldLabel: tr('Picture vertical position', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'leftcolumn',
                         fieldLabel: tr('Left column text', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'rightcolumn',
                         fieldLabel: tr('Right column text', 'common')
                     }
