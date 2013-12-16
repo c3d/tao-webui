@@ -21,6 +21,7 @@ Ext.define('TE.i18n.fr', {
         'Edit': 'Modifier',
         'Edit image': 'Modifier l\'image',
         'Edit video': 'Modifier la vidéo',
+        'Editor': 'Éditeur',
         'Error': 'Erreur',
         'File': 'Fichier',
         'HTTP error: ': 'Erreur HTTP : ',

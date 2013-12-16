@@ -34,13 +34,13 @@ Ext.define('TE.view.Editor', {
         items: [
             {
                 xtype: 'button',
-                text: tr('Image library...'),
+                text: tr('Image library') + '...',
                 icon: 'app/resources/images/image.png',
                 action: 'showPicLibrary'
             },
             {
                 xtype: 'button',
-                text: tr('Video library...'),
+                text: tr('Video library') + '...',
                 icon: 'app/resources/images/video.png',
                 action: 'showVidLibrary'
             },
