@@ -1,8 +1,10 @@
-Ext.define('TE.view.EditImageURL', {
+Ext.define('TE.view.EditResourceURL', {
     extend: 'Ext.window.Window',
-    alias: 'widget.teeditimageurl',
+    alias: 'widget.teeditresourceurl',
 
-    title: tr('Edit image'),
+    type: '',   // 'image', 'video'
+
+    title: '',
 
     width: 400,
     autoShow: true,

@@ -2,17 +2,18 @@ Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
     requires: [ 'Ext.window.MessageBox' ],
 
-    stores: [ 'Pages', 'Images' ],
+    stores: [ 'Pages', 'Images', 'Videos' ],
     models: [ 'Page', 'ResourceFile' ],
     views: [
         'Editor',
-        'EditImageFile',
-        'EditImageURL',
+        'EditResourceFile',
+        'EditResourceURL',
         'ImagePickerField',
+        'VideoPickerField',
         'PageList',
         'PageListContextMenu',
         'PageTemplateContextMenu',
-        'ImageLibrary',
+        'ResourceLibrary',
         'Tools'
     ],
     refs: [
@@ -26,10 +27,11 @@ Ext.define('TE.controller.Editor', {
         { ref: 'pageMoveBeforeBtn', selector: 'pagelist button[action=pageBefore]' },
         { ref: 'pageMoveAfterBtn', selector: 'pagelist button[action=pageAfter]' },
         { ref: 'pageDeleteBtn', selector: 'pagelist button[action=pageDelete]' },
-        { ref: 'imageLibraryGrid', selector: 'teimagelibrary gridpanel' },
-        { ref: 'imageDeleteBtn', selector: 'teimagelibrary button[action=delete]' },
-        { ref: 'imageEditBtn', selector: 'teimagelibrary button[action=edit]' },
-        { ref: 'imageChooseBtn', selector: 'teimagelibrary button[action=choose]' },
+        { ref: 'resourceLibrary', selector: 'teresourcelibrary' },
+        { ref: 'resourceLibraryGrid', selector: 'teresourcelibrary gridpanel' },
+        { ref: 'resourceDeleteBtn', selector: 'teresourcelibrary button[action=delete]' },
+        { ref: 'resourceEditBtn', selector: 'teresourcelibrary button[action=edit]' },
+        { ref: 'resourceChooseBtn', selector: 'teresourcelibrary button[action=choose]' },
         { ref: 'statusText', selector: '#centerpane toolbar #statustext'}
     ],
 
@@ -75,30 +77,33 @@ Ext.define('TE.controller.Editor', {
             'pagelist button[action=showPicLibrary]': {
                 click: this.showImageLibrary
             },
-            'teimagelibrary gridpanel': {
-                select: this._updateImageLibraryButtons,
-                itemdblclick: this.editImage
+            'pagelist button[action=showVidLibrary]': {
+                click: this.showVideoLibrary
             },
-            'teimagelibrary button[action=delete]': {
-                click: this.deleteImage
+            'teresourcelibrary gridpanel': {
+                select: this._updateresourcelibraryButtons,
+                itemdblclick: this.editResource
             },
-            'teimagelibrary button[action=addUrl]': {
-                click: this.addImageUrl
+            'teresourcelibrary button[action=delete]': {
+                click: this.deleteResource
             },
-            'teimagelibrary button[action=addFile]': {
-                click: this.addImageFile
+            'teresourcelibrary button[action=addUrl]': {
+                click: this.addResourceUrl
             },
-            'teimagelibrary button[action=choose]': {
-                click: this.chooseImage
+            'teresourcelibrary button[action=addFile]': {
+                click: this.addResourceFile
             },
-            'teimagelibrary button[action=edit]': {
-                click: this.editImage
+            'teresourcelibrary button[action=choose]': {
+                click: this.chooseResource
             },
-            'teeditimageurl button[action=save]': {
-                click: this.saveImageUrl
+            'teresourcelibrary button[action=edit]': {
+                click: this.editResource
             },
-            'teeditimagefile button[action=upload]': {
-                click: this.uploadImage
+            'teeditresourceurl button[action=save]': {
+                click: this.saveResourceUrl
+            },
+            'teeditresourcefile button[action=upload]': {
+                click: this.uploadResource
             },
             '#centerpane button[action=savepage]': {
                 click: this.savePage
@@ -361,61 +366,80 @@ Ext.define('TE.controller.Editor', {
     },
 
     showImageLibrary: function() {
-        Ext.widget('teimagelibrary');
+        Ext.widget('teresourcelibrary', {
+            title: tr('Image library'),
+            store: 'Images',
+            type: 'image'
+        });
     },
 
-    selectedImage: function() {
-        return this.getImageLibraryGrid().getSelectionModel().getSelection()[0];
+    showVideoLibrary: function() {
+        Ext.widget('teresourcelibrary', {
+            title: tr('Video library'),
+            store: 'Videos',
+            type: 'video'
+        });
     },
 
-    deleteImage: function() {
+    selectedResource: function() {
+        return this.getResourceLibraryGrid().getSelectionModel().getSelection()[0];
+    },
+
+    deleteResource: function() {
         var me = this;
-        var image = this.selectedImage();
+        var resource = this.selectedResource();
 
         var box = Ext.create(Ext.window.MessageBox);
-        box.confirm(tr('Delete image'),
-                    tr('Are you sure you want to delete this image?') +
-                    '<br><br>' + image.get('description'),
+        var thing = resource.get('type');
+        var title = tr('Delete ' + thing);
+        var msg = tr('Are you sure you want to delete this ' + thing  + '?')
+        box.confirm(title,
+                    msg + '<br><br>' + resource.get('description'),
                     function(button) {
                         if (button === 'yes') {
                             var store = me.getImagesStore();
-                            store.remove(image);
+                            store.remove(resource);
                             store.sync();
-                            me._updateImageLibraryButtons();
+                            me._updateresourcelibraryButtons();
                         }
                     });
     },
 
-    _updateImageLibraryButtons: function() {
-        var disable = this.selectedImage() === undefined;
-        this.getImageDeleteBtn().setDisabled(disable);
-        this.getImageEditBtn().setDisabled(disable);
-        this.getImageChooseBtn().setDisabled(disable);
+    _updateresourcelibraryButtons: function() {
+        var disable = this.selectedResource() === undefined;
+        this.getResourceDeleteBtn().setDisabled(disable);
+        this.getResourceEditBtn().setDisabled(disable);
+        this.getResourceChooseBtn().setDisabled(disable);
     },
 
-    addImageUrl: function() {
-        var record = Ext.create(this.getResourceFileModel(), { file: '', description: '' });
-        var view = Ext.widget('teeditimageurl');
-        view.setTitle(tr('Add image from URL'));
+    addResourceUrl: function() {
+        var type = this.getResourceLibrary().type;
+        var record = Ext.create(this.getResourceFileModel(),
+                                { file: '', description: '', type: type });
+        var view = Ext.widget('teeditresourceurl', { type: type });
+        view.setTitle(tr('Add ' + type + ' from URL'));
         view.down('form').loadRecord(record);
     },
 
-    addImageFile: function() {
-        var record = Ext.create(this.getResourceFileModel(), { file: '', description: '' });
-        var view = Ext.widget('teeditimagefile');
-        view.setTitle(tr('Add image file'));
+    addResourceFile: function() {
+        var type = this.getResourceLibrary().type;
+        var record = Ext.create(this.getResourceFileModel(),
+                                { file: '', description: '', type: type });
+        var view = Ext.widget('teeditresourcefile', { type: type });
+        view.setTitle(tr('Add ' + type + ' file'));
         view.down('filefield').allowBlank = false;
         view.down('form').loadRecord(record);
     },
 
-    editImage: function() {
-        var record = this.selectedImage();
+    editResource: function() {
+        var record = this.selectedResource();
         var isFile = (record.get('file').indexOf('://') === -1);
-        var view = Ext.widget(isFile ? 'teeditimagefile' : 'teeditimageurl');
+        var view = Ext.widget(isFile ? 'teeditresourcefile' : 'teeditresourceurl',
+                              { type: record.get('type') });
         view.down('form').loadRecord(record);
     },
 
-    saveImageUrl: function(button) {
+    saveResourceUrl: function(button) {
         var win = button.up('window'),
             form = win.down('form'),
             record = form.getRecord(),
@@ -432,20 +456,31 @@ Ext.define('TE.controller.Editor', {
         store.sync();
     },
 
-    uploadImage: function(button) {
+    getStoreForResource: function(type) {
+        switch (type) {
+            case 'image':
+                return this.getImagesStore();
+            case 'video':
+                return this.getVideosStore();
+        }
+        return null;
+    },
+
+    uploadResource: function(button) {
         var win = button.up('window'),
             formp = win.down('form'),
             record = formp.getRecord(),
             values = formp.getValues(),
             form = formp.getForm(),
-            store = this.getImagesStore();
+            type = record.get('type'),
+            store = this.getStoreForResource(type);
 
         if (!form.isValid())
             return;
 
         if (formp.down('filefield').getValue().length !== 0) {
             form.submit({
-                url: '/image-upload',
+                url: '/' + type + '-upload',
                 success: function(form, action) {
                     win.close();
                     record.set(values);
@@ -465,10 +500,10 @@ Ext.define('TE.controller.Editor', {
         }
     },
 
-    chooseImage: function(button) {
-        var win = button.findParentByType('teimagelibrary'),
+    chooseResource: function(button) {
+        var win = button.findParentByType('teresourcelibrary'),
             field = win.targetField,
-            image = this.selectedImage();
+            image = this.selectedResource();
         field.setValue(image.get('file'));
         win.close();
         this.application.getController('PageControllerBase').updatePage();

@@ -26,7 +26,7 @@ Ext.define('TE.themes.common.view.properties.MovieSlide', {
                         fieldLabel: tr('Page name', 'common')
                     },
                     {
-                        xtype: 'textfield',
+                        xtype: 'tevideopickerfield',
                         name: 'movie',
                         fieldLabel: tr('Filename, path or URL of video', 'common')
                     },

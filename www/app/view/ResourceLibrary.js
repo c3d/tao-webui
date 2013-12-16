@@ -1,20 +1,22 @@
-Ext.define('TE.view.ImageLibrary', {
+Ext.define('TE.view.ResourceLibrary', {
     extend: 'Ext.window.Window',
-    alias: 'widget.teimagelibrary',
+    alias: 'widget.teresourcelibrary',
 
-    title: tr('Image library'),
+    title: '', // Set by derived classes
     layout: 'fit',
     autoShow: true,
     modal: true,
     showChooseButton: false,
     targetField: null,
+    store: '',  // E.g., 'Images' or 'Videos'
+    type: '',   // E.g., 'image' or 'video'
 
     initComponent: function() {
         this.items = [{
             xtype: 'gridpanel',
             width: 600,
             height: 600,
-            store: 'Images',
+            store: this.store,
 
             columns: [{
                 header: tr('Preview'),
@@ -31,7 +33,7 @@ Ext.define('TE.view.ImageLibrary', {
                     }
                     else
                     {
-                        return '<div/>';
+                        return '&mdash;';
                     }
                 },
                 sortable: false
@@ -41,8 +43,17 @@ Ext.define('TE.view.ImageLibrary', {
                 width: 60,
                 sortable: false,
                 renderer: function(v, meta, rec, rowIndex) {
+                    var file = rec.get('file');
                     return (file.indexOf('://') === -1) ? tr('File') : tr('URL');
                 }
+            },{
+                header: tr('Path/URL'),
+                dataIndex: 'file',
+                renderer: function(value, metaData, record, rowIdx, colIdx, store) {
+                    metaData.tdAttr = 'data-qtip="' + value + '"';
+                    return value;
+                },
+                sortable: false
             },{
                 header: tr('Description'),
                 flex: 1,

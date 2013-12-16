@@ -114,9 +114,15 @@ Ext.define('TE.tree.PageList', {
                 ' ', // Spacer
                 {
                     xtype: 'button',
-                    text: tr('Image library...'),
+                    text: tr('Images...'),
                     icon: 'app/resources/images/image.png',
                     action: 'showPicLibrary'
+                },
+                {
+                    xtype: 'button',
+                    text: tr('Videos...'),
+                    icon: 'app/resources/images/video.png',
+                    action: 'showVidLibrary'
                 }
             ]
         });

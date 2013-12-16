@@ -1,15 +1,15 @@
 // Custom form field thats uses ImageLibrary to enable the user to select an image
-Ext.define('TE.view.ImagePickerField', {
+Ext.define('TE.view.VideoPickerField', {
     extend: 'Ext.form.field.Trigger',
-    alias: 'widget.teimagepickerfield',
+    alias: 'widget.tevideopickerfield',
 
     onTriggerClick: function() {
         Ext.widget('teresourcelibrary', {
-            title: tr('Select image'),
+            title: tr('Select video'),
             showChooseButton: true,
             targetField: this,
-            type: 'image',
-            store: 'Images'
+            type: 'video',
+            store: 'Videos'
         });
     }
 });
