@@ -1,7 +1,8 @@
 Ext.define('TE.controller.PageControllerBase', {
     extend: 'Ext.app.Controller',
     refs: [
-        { ref: 'centerpane', selector: '#centerpane' }
+        { ref: 'centerpane', selector: '#centerpane' },
+        { ref: 'properties', selector: '#properties' }
     ],
 
     timer: 0, // !== 0 if timer is running
@@ -9,10 +10,12 @@ Ext.define('TE.controller.PageControllerBase', {
     display: function(record) {
         var cp = this.getCenterpane();
         cp.removeAll();
+        var pp = this.getProperties();
+        pp.removeAll();
         var vname = record.getPropertiesViewClass();
         var view = Ext.create(vname);
-        cp.add(view);
-        cp.down('form').loadRecord(record);
+        pp.add(view);
+        pp.down('form').loadRecord(record);
         if (this.timer === 0)
             this.startSaveTimer();
         else
@@ -30,7 +33,7 @@ Ext.define('TE.controller.PageControllerBase', {
     updatePage: function() {
         var me = this;
         // Copy form values into record
-        var form = me.getCenterpane().down('form');
+        var form = me.getProperties().down('form');
         if (!form || !form.isValid())
             return;
 

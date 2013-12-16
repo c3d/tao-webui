@@ -3,7 +3,7 @@ Ext.define('TE.util.CustomHtmlEditor', {
     alias: 'widget.customhtmleditor',
 
     config: {
-        height: 300
+        layout: 'fit'
     },
 
     tinymceConfig: {
@@ -11,10 +11,9 @@ Ext.define('TE.util.CustomHtmlEditor', {
         theme_advanced_buttons1: 'undo,redo,|,' +
                                  'fontselect,fontsizeselect,|,' +
                                  'bold,italic,underline,strikethrough,|,' +
-                                 'bullist,numlist,|,outdent,indent,|,' +
-                                 'justifyleft,justifycenter,justifyright,justifyfull,|,' +
                                  'forecolor,|,charmap,|,removeformat,|,code',
-        theme_advanced_buttons2: '',
+        theme_advanced_buttons2: 'bullist,numlist,|,outdent,indent,|,' +
+                                 'justifyleft,justifycenter,justifyright,justifyfull',
         theme_advanced_buttons3: '',
         theme_advanced_buttons4: '',
         theme_advanced_font_sizes: '10pt,12pt,14pt,18pt,24pt,36pt,48pt',

@@ -13,12 +13,14 @@ Ext.define('TE.controller.Editor', {
         'PageList',
         'PageListContextMenu',
         'PageTemplateContextMenu',
+        'Properties',
         'ResourceLibrary',
         'Tools'
     ],
     refs: [
         // Make components accessible through this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
+        { ref: 'properties', selector: '#properties' },
         { ref: 'tools', selector: '#tools' },
         { ref: 'pagelist', selector: 'pagelist' },
         { ref: 'themePanel', selector: '#themepanel' },
@@ -32,7 +34,7 @@ Ext.define('TE.controller.Editor', {
         { ref: 'resourceDeleteBtn', selector: 'teresourcelibrary button[action=delete]' },
         { ref: 'resourceEditBtn', selector: 'teresourcelibrary button[action=edit]' },
         { ref: 'resourceChooseBtn', selector: 'teresourcelibrary button[action=choose]' },
-        { ref: 'statusText', selector: '#centerpane toolbar #statustext'}
+        { ref: 'statusText', selector: 'toolbar #statustext'}
     ],
 
     init: function() {
@@ -52,6 +54,9 @@ Ext.define('TE.controller.Editor', {
             	itemclick: this.pageClicked,
                 beforedrop: this.dragAndDropPages,
                 itemcontextmenu: this.showPageContextMenu
+            },
+            'te_displayfield': {
+                click: this.displayFieldClicked
             },
             '#ctx-menu-delete-page': {
                 click: this.deletePage
@@ -74,10 +79,10 @@ Ext.define('TE.controller.Editor', {
             'pagelist button[action=pageDelete]': {
                 click: this.deletePage
             },
-            'pagelist button[action=showPicLibrary]': {
+            'button[action=showPicLibrary]': {
                 click: this.showImageLibrary
             },
-            'pagelist button[action=showVidLibrary]': {
+            'button[action=showVidLibrary]': {
                 click: this.showVideoLibrary
             },
             'teresourcelibrary gridpanel': {
@@ -190,23 +195,21 @@ Ext.define('TE.controller.Editor', {
         Ext.each(Ext.ComponentQuery.query('pagetemplate'), function(child) {
             child.toggleSelected(false);
         })
-        this.pagesList().getSelectionModel().deselectAll();
-        this.getCenterpane().removeAll();
         this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
     },
 
     pageTemplateClicked: function(pt) {
         this.savePage();
-        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
-            child.toggleSelected(child === pt);
-        });
-        this.pagesList().getSelectionModel().deselectAll();
-        this.getCenterpane().removeAll();
+        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
+                 function(child) {
+                     child.toggleSelected(child === pt);
+                 });
     },
 
     pageClicked: function(grid, record) {
         this.savePage();
-        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'), function(child) {
+        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
+                 function(child) {
             child.toggleSelected(false);
         });
 
@@ -230,6 +233,26 @@ Ext.define('TE.controller.Editor', {
         });
 
         this._updatePageButtons();
+    },
+
+    displayFieldClicked: function(displayField) {
+        var cp = this.getCenterpane();
+        cp.removeAll();
+        var view = Ext.create('TE.util.CustomHtmlEditor', {
+            value: displayField.value,
+            layout: 'fit',
+            sourceField: displayField
+        });
+        cp.add(view);
+        view.withEd(function() {
+            var editor = view.getEditor();
+            editor.onChange.add(function (ed, change) {
+                displayField.setValue(change.content);
+            });
+            editor.onEvent.add(function(ed, event) {
+                displayField.setValue(editor.getContent());
+            });
+        });
     },
 
     _updatePageButtons: function() {
@@ -275,7 +298,7 @@ Ext.define('TE.controller.Editor', {
 
         var box = Ext.create(Ext.window.MessageBox);
         box.confirm(tr('Delete page'),
-                    tr('Are you sure you want to delete this page?') + '<br>[' + pageId + '] ' + page.get('name'),
+                    tr('Are you sure you want to delete this page?') + '[' + pageId + '] ' + page.get('name'),
                     function(button) {
                         if (button === 'yes') {
                             store.remove(page);
@@ -290,6 +313,8 @@ Ext.define('TE.controller.Editor', {
     },
 
     newPageFromTemplate: function(tmpl) {
+        var selectedPage = this.selectedPage();
+
         var model = tmpl.getModelClassName();
         var page = Ext.create(model);
         var store = this.getPagesStore();
@@ -305,8 +330,17 @@ Ext.define('TE.controller.Editor', {
             }
         }
         page.set('name', unusedPageName());
+
+        if (selectedPage) {
+            var pageId = selectedPage.get('id');
+            var rowIndex = this.getPagesStore().find('id', pageId);
+            page.set('idx', rowIndex + 1);
+        }
         store.add(page);
         store.sync();
+        if (selectedPage) {
+            store.reload();
+        }
     },
 
     selectedPage: function() {
@@ -326,7 +360,7 @@ Ext.define('TE.controller.Editor', {
         var index = store.find('id', id);
         var ctrl = this.application.getController(record.getControllerName());
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
-        exactmodel.load(record.get('id'), {
+        exactmodel.load(id, {
             success: function(newrecord, operation) {
                 newrecord.set('idx', index + delta);
                 newrecord.save({

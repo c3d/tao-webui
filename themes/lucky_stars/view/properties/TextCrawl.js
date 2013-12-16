@@ -31,7 +31,7 @@ Ext.define('TE.themes.lucky_stars.view.properties.TextCrawl', {
                         fieldLabel: tr('Text crawl duration (s)', 'lucky_stars')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'text',
                         fieldLabel: tr('Text', 'common')
                     }

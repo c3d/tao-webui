@@ -27,7 +27,7 @@ Ext.define('TE.themes.common.view.properties.Slide', {
                         fieldLabel: tr('Page name', 'common')
                     },
                     {
-                        xtype: 'customhtmleditor',
+                        xtype: 'te_displayfield',
                         name: 'text',
                         fieldLabel: tr('Text', 'common')
                     }
