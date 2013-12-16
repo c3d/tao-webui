@@ -56,7 +56,24 @@ Ext.define('TE.util.CustomGridEditor', {
 
     createKeysMap: function(grid) {
         var map = new Ext.KeyMap(grid.getEl(),
-            [{
+            [
+            {
+                key: [Ext.EventObject.ESC],
+                fn: function(keyCode, e) {
+                    grid.getSelectionModel().allCellDeselect();
+                }
+            },
+            {
+                key: [Ext.EventObject.DELETE],
+                fn: function(keyCode, e) {
+                    var recs = grid.getSelectionModel().getSelection();
+                    for(var i = 0; i < recs.length; i++)
+                        grid.store.remove(recs[i].position.record);
+
+                    grid.updateData();
+                }
+            },
+            {
                 key: "c",
                 ctrl:true,
                 fn: function(keyCode, e) {

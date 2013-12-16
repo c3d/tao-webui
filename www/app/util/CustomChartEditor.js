@@ -255,7 +255,10 @@ Ext.define('TE.util.CustomChartEditor', {
             var chartgrid  = Ext.getCmp('chartgrid');
             var chart      = Ext.getCmp('chart');
             if(chart.lastFocus && !e.within(chartgrid.getEl()))
+            {
                 chart.lastFocus = null;
+                chartgrid.getSelectionModel().allCellDeselect();
+            }
         });
 
         this.callParent(this);
