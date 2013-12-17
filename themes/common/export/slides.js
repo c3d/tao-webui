@@ -246,15 +246,18 @@ function generateMovieSlide(Theme)
     return function (page)
     {
         var empty = true;
+        var movie = page.movie;
         var hasMovie = false;
         var ddd = '';
         ddd += util.theme(page.ctx, Theme)
         ddd += 'picture_slide "' + util.escape(page.name) + '",\n';
         if (page.movie != '')
         {
+            if (page.movie.indexOf('://') === -1)
+                movie = 'videos/' + movie;
             ddd += '    locally\n';
             ddd += '        color "white"\n';
-            ddd += '        movie ' + page.moviex + ', ' + page.moviey + ', ' + page.moviescalepercent + '%, ' + page.moviescalepercent + '%, "' + page.movie + '"\n';
+            ddd += '        movie ' + page.moviex + ', ' + page.moviey + ', ' + page.moviescalepercent + '%, ' + page.moviescalepercent + '%, "' + movie + '"\n';
             empty = false;
             hasMovie = true;
         }
@@ -278,7 +281,7 @@ function generateMovieSlide(Theme)
             ddd += '    nil\n';
         if (hasMovie)
             ddd += '    on "pageexit",\n' +
-                   '        movie_drop "' + page.movie + '"\n';
+                   '        movie_drop "' + movie + '"\n';
         
         return ddd;
     }
