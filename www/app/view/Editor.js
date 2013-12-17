@@ -7,7 +7,7 @@ Ext.define('TE.view.Editor', {
         xtype: 'tools',
         itemId: 'tools',
         region: 'west',
-        width: 170,
+        width: 185,
         collapsible: true,
         split: true, // enable resizing
         margins: '3 0 0 3'
