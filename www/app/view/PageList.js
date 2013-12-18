@@ -85,16 +85,19 @@ Ext.define('TE.tree.PageList', {
                     xtype: 'button',
                     icon: 'app/resources/images/page-up.gif',
                     action: 'pageBefore',
+                    tooltip: tr('Move selected page before previous page'),
                     disabled: true
                 },{
                     xtype: 'button',
                     icon: 'app/resources/images/page-down.gif',
                     action: 'pageAfter',
+                    tooltip: tr('Move selected page after next page'),
                     disabled: true
                 },{
                     xtype: 'button',
                     icon: 'app/resources/images/delete.png',
                     action: 'pageDelete',
+                    tooltip: tr('Delete selected page'),
                     disabled: true
                 },
                 ' '
