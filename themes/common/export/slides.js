@@ -246,8 +246,8 @@ function generateBaseSlide(Theme)
             ddd += '        once\n';
             ddd += '            chart_reset\n';
 
-            if(page.chartname != '')
-                ddd += '            chart_set_title "' + util.escape(page.chartname) + '"\n';
+            if(page.charttitle != '')
+                ddd += '            chart_set_title "' + util.escape(page.charttitle) + '"\n';
 
             ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
 

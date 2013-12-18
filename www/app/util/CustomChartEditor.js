@@ -6,93 +6,108 @@ Ext.define('TE.util.CustomChartEditor', {
     id:"chart",
     name:"chart",
 
-    getChartStyle: function(chart)
+    getChartTypes: function()
+    {
+        return [{abbr:"Area",   name:tr('Area', 'common'),},
+                {abbr:"Bar",   name:tr('Bar', 'common')},
+                {abbr:"Line",    name:tr('Line', 'common')},
+                {abbr:"Pie",    name:tr('Pie', 'common')}]
+    },
+
+    getChartStyles: function(chart)
     {
         var data=[];
         switch(chart){
             case 'Area':
-                data=[["Default"],["Stacked"]];
+                data=[{abbr:"Default",   name:tr('Default', 'common')},
+                      {abbr:"Stacked",   name:tr('Stacked', 'common')}];
                 break;
 
             case 'Bar':
-                data=[["Default"],["Horizontal"],["Horizontal_stacked"],["Vertical"],["Vertical_stacked"]];
+                data=[{abbr:"Horizontal",   name:tr('Horizontal', 'common')},
+                      {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked', 'common')},
+                      {abbr:"Vertical",   name:tr('Vertical', 'common')},
+                      {abbr:"Vertical_stacked",   name:tr('Vertical stacked', 'common')}];
                 break;
 
             case 'Line':
-                data=[["Default"],["Line"],["Point"]];
+                data=[{abbr:"Line",   name:tr('Line', 'common')},
+                      {abbr:"Line&Point",   name:tr('Line & Point', 'common')},
+                      {abbr:"Point",   name:tr('Point', 'common')}];
                 break;
 
             case 'Pie':
-                data=[["Default"]];
+                data=[{abbr:"Default",   name:tr('Default', 'common')}];
                 break;
         }
 
         return data;
     },
 
-    updateChartStyle: function(clear)
+
+    updateChartStyles: function()
     {
         var types  = Ext.getCmp('charttype');
         var styles = Ext.getCmp('chartstyle');
         var input  = types.getValue();
-        var data   = this.getChartStyle(input);
-        styles.store.loadData(this.getChartStyle(input));
-        if(clear)
-            styles.setValue(data[0]);
+        var data   = this.getChartStyles(input);
+        styles.store.loadData(this.getChartStyles(input));
+        styles.setValue(data[0].abbr);
     },
 
     initComponent: function () {
         border: false,
         this.lastFocus = null,
+
         this.items = [
             {
-                fieldLabel: tr('Chart name', 'common'),
-                name: 'chartname',
+                fieldLabel: tr('Chart title', 'common'),
+                name: 'charttitle',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 width:'100%',
                 value:'chart'
             },
             {
-                fieldLabel: tr('Chart type', 'common'),
-                name: 'charttype',
-                id: 'charttype',
-                xtype: 'combo',
-                labelAlign: 'top',
-                queryMode: 'local',
-                width:'100%',
-                store: new Ext.data.SimpleStore({
-                    fields: ['name'],
-                    data: [["Area"],["Bar"],["Line"],["Pie"]]
+                xtype: 'combobox',
+                store: Ext.create('Ext.data.Store', {
+                    fields: ['abbr', 'name'],
+                    data : this.getChartTypes(),
+                    sorters: [{
+                        property: 'name',
+                        direction: 'ASC'
+                    }],
                 }),
-                displayField : 'name',
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'abbr',
+                editable: false,
+                autoSelect: true,
+                name: 'charttype',
+                id:'charttype',
+                fieldLabel: tr('Chart type', 'common'),
+                labelAlign: 'top',
                 listeners: {
                     select: function(combo, record, index) {
-                        var chart = Ext.getCmp('chart');
-                        chart.updateChartStyle(true);
-                    }
-                }
+                        Ext.getCmp('chart').updateChartStyles();
+                    },
+                },
             },
             {
-                fieldLabel: tr('Chart style', 'common'),
-                name: 'chartstyle',
-                id: 'chartstyle',
-                xtype: 'combo',
-                labelAlign: 'top',
-                width:'100%',
-                queryMode: 'local',
-                triggerAction : 'all',
-                store : new Ext.data.SimpleStore( {
-                    fields: ['style'],
-                    autoLoad: {
-                        scope: this,
-                        callback: function() {
-                            this.updateChartStyle(false);
-                        }
-                    }
+                xtype: 'combobox',
+                store: Ext.create('Ext.data.Store', {
+                    fields: ['abbr', 'name'],
+                    data: this.getChartStyles("Bar"),
                 }),
-                emptyText : tr('Select chart style', 'common'),
-                displayField : 'style'
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'abbr',
+                editable: false,
+                autoSelect: true,
+                name: 'chartstyle',
+                id:'chartstyle',
+                fieldLabel: tr('Chart style', 'common'),
+                labelAlign: 'top',
             },
             {
                 fieldLabel: tr('Chart x-label', 'common'),
@@ -117,17 +132,23 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'chartdata'
             },
             {
+                xtype: 'label',
+                text: tr('Chart data:', 'common'),
+            },
+            {
                 xtype: 'customgrideditor',
                 name:'chartgrid',
                 id:'chartgrid',
-                width: '100%',
-                maxHeight: 500,
+                resizable: true,
+                width: 500,
+                maxHeight: 450,
+                minHeight: 450,
                 columns: [
                     {xtype: 'rownumberer'},
-                    {header: 'A', width: 100, dataIndex: 'a', field: 'textfield'},
-                    {header: 'B', width: 100, dataIndex: 'b', field: 'textfield'},
-                    {header: 'C', width: 250, dataIndex: 'c', field: 'textfield'},
-                    {header: 'D', width: 250, dataIndex: 'd', field: 'textfield'}
+                    {header: 'A', width: 100, dataIndex: 'a', field: 'textfield', flex:1},
+                    {header: 'B', width: 100, dataIndex: 'b', field: 'textfield', flex:1},
+                    {header: 'C', width: 250, dataIndex: 'c', field: 'textfield', flex:1},
+                    {header: 'D', width: 250, dataIndex: 'd', field: 'textfield', flex:1}
                 ],
                 store: new Ext.data.Store({
                     fields: [
@@ -136,7 +157,7 @@ Ext.define('TE.util.CustomChartEditor', {
                         {name: 'c'},
                         {name: 'd'}
                     ],
-                    pageSize: 10,
+                    pageSize: 15,
                     autoLoad: true,
                     listeners: {
                         load: function() {
@@ -148,6 +169,10 @@ Ext.define('TE.util.CustomChartEditor', {
                                 var data = Ext.decode(jsonData);
                                 grid.getStore().loadData(data);
                             }
+
+                            // Complete grid with empty rows
+                            for(var i = this.getCount(); i < this.pageSize; i++)
+                                grid.store.add({"a":"", "b":"", 'c':'', 'd':''});
                         }
                     }
                 }),
@@ -224,28 +249,32 @@ Ext.define('TE.util.CustomChartEditor', {
                 xtype: 'textfield',
                 labelAlign: 'top',
                 width:'100%',
-                emptyText: "",
+                emptyText: tr("Please select cells in the grid above..."),
                 listeners: {
                     focus: function() {
                         // Update last focused item
                         this.ownerCt.lastFocus = this;
                     },
                 },
+                regex: /^(\$[A-Za-z]\$([1-9]+)\;)*$/,
+                regexText:tr("Please select cells in the grid above..."),
             },
             {
-                fieldLabel: tr('Chart drawing datasets', 'common'),
+                fieldLabel: tr('Chart series', 'common'),
                 name: 'chartdatasets',
                 id:'chartdatasets',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 width:'100%',
-                emptyText: "",
+                emptyText: tr("Please select cells in the grid above..."),
                 listeners: {
                     focus: function() {
                         // Update last focused item
                         this.ownerCt.lastFocus = this;
                     },
                 },
+                regex: /^([A-Za-z]\;)*$/,
+                regexText:tr("Please select cells in the grid above..."),
             }
         ]
 
@@ -254,7 +283,7 @@ Ext.define('TE.util.CustomChartEditor', {
         Ext.getDoc().on("mousedown", function(e) {
             var chartgrid  = Ext.getCmp('chartgrid');
             var chart      = Ext.getCmp('chart');
-            if(chart.lastFocus && !e.within(chartgrid.getEl()))
+            if(chart && chart.lastFocus && !e.within(chartgrid.getEl()))
             {
                 chart.lastFocus = null;
                 chartgrid.getSelectionModel().allCellDeselect();

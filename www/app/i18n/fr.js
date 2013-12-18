@@ -2,6 +2,7 @@ Ext.define('TE.i18n.fr', {
 
     translations: {
         'Theme default': 'Police du thème',
+        'Add':'Ajouter',
         'Add URL...': 'Ajouter une URL...',
         'Add image from URL': 'Ajouter une image (URL)',
         'Add file...': 'Ajouter un fichier...',
@@ -33,9 +34,11 @@ Ext.define('TE.i18n.fr', {
         'Page': null,
         'Pages': null,
         'Page name': 'Nom de la page',
+        'Please select cells in the grid above...':'Veuillez sélectionner des cellules dans la tableau ci-dessus...',
         'Properties': 'Propriétés',
         'Preview': 'Aperçu',
         'Overwrite': 'Remplacer',
+        'Remove':'Supprimer',
         'Save': 'Enregistrer',
         'Save changes (Ctrl+S)': 'Enregistrer les modifications (Ctrl+S)',
         'Saved': 'Enregistré',

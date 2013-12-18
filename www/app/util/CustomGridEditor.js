@@ -22,7 +22,7 @@ Ext.define('TE.util.CustomGridEditor', {
     tbar: [{
         scope: this.grid,
         itemId: 'addRow',
-        text: 'Add',
+        text: tr('Add'),
         handler : function() {
             var grid  = this.ownerCt.ownerCt;
             var cellEditing = grid.getPlugin('cellEditing');
@@ -34,7 +34,7 @@ Ext.define('TE.util.CustomGridEditor', {
         }
     }, {
         itemId: 'removeRow',
-        text: 'Remove',
+        text: tr('Remove'),
         handler: function() {
             var grid  = this.ownerCt.ownerCt;
             var cellEditing = grid.getPlugin('cellEditing');
