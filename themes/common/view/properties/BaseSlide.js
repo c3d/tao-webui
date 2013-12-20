@@ -1,5 +1,5 @@
 Ext.define('TE.themes.common.view.properties.BaseSlide', {
-    requires: ['TE.util.CustomHtmlEditor', 'TE.util.CustomDisplayField' ],
+    requires: ['TE.util.CustomHtmlEditor', 'TE.util.CustomDisplayField', 'TE.util.CustomChartEditor' ],
     extend: 'Ext.Container',
 
     initComponent: function(itemsBefore) {
@@ -110,6 +110,10 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                         xtype: 'numberfield',
                         name: 'rpicy',
                         fieldLabel: tr('Right picture vertical position', 'common')
+                    },
+                    {
+                        xtype: 'customcharteditor',
+                        name: 'chart'
                     }
                 ])
             }
