@@ -430,6 +430,9 @@ function generateBaseSlide(Theme)
                 }
             }
 
+            if(page.charttype)
+                ddd += '            chart_set_type "' + page.charttype.toLowerCase() + '"\n';
+
             // If user has given datasets, then draw it
             // Otherwise draw all datasets
             if(page.chartdatasets != '')
@@ -443,20 +446,19 @@ function generateBaseSlide(Theme)
                     if(datasetNumber > 0)
                     {
                         if(datasets == '')
-                            datasets += '{' + datasetNumber;
+                            datasets += datasetNumber;
                         else
                             datasets += ',' + datasetNumber;
                     }
                 }
-                datasets += '}';
 
                 // Use primitive which draw only given datasets
-                ddd += '        chart ' + datasets + ', "' + page.charttype.toLowerCase()  + '"\n';
+                ddd += '        chart ' + datasets + '\n';
             }
             else
             {
                 // Use primitive which draw all datasets
-                ddd += '        chart "' + page.charttype.toLowerCase() + '"\n';
+                ddd += '        chart \n';
             }
         }
 
