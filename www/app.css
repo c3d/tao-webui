@@ -2,24 +2,24 @@
 .te-currenttheme { font-weight: bold }
 
 
-.page-container {
+.taopage-container {
     width: 158px;
     height:120px;
 }
 
-.page-wrap {
+.taopage-wrap {
     width: 158px;
 }
 
-.page-wrap .x-item-selected {
+.taopage-wrap .x-item-selected {
     background-color: #B7CDE4;
 }
 
-.page-container:hover {
+.taopage-container:hover {
     background-color: #93DBFF;
 }
 
-.page {
+.taopage {
     margin-top: 5px;
     margin-left: 20px;
     border: 1px solid #333333;
@@ -31,12 +31,12 @@
     filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=135, Strength=3);
 }
 
-.page-img img {
-    width:120px; 
+.taopage-img img {
+    width:120px;
     height: 80px;
 }
 
-.page-name {
+.taopage-name {
     background-color: #EEE;
     height: 30px;
     color: #000;
@@ -51,4 +51,10 @@
     line-height: 0;
     overflow: visible;
     pointer-events: none;
+}
+
+/* Force mask to be not displayed because it bugs on
+Chrome/Safari (it gives a empty zone below the page) */
+.x-mask {
+    display: none !important;
 }
