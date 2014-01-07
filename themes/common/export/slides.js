@@ -371,12 +371,13 @@ function generateBaseSlide(Theme)
             empty = false;
         }
 
-        if(page.chartdata != '')
+        if(page.chartdata && page.chartdata != '')
         {
             var dataIndexes = ['a', 'b', 'c', 'd'];
 
             // Use page name as id for our chart (as we have only one chart per page for the moment)
             var chartid = util.escape(page.name);
+
             ddd += '    picture\n';
             ddd += '        chart_current "' + chartid + '"\n';
             ddd += '        once\n';
@@ -385,7 +386,8 @@ function generateBaseSlide(Theme)
             if(page.charttitle != '')
                 ddd += '            chart_set_title "' + util.escape(page.charttitle) + '"\n';
 
-            ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
+            if(page.chartstyle != '')
+                ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
 
             // Parse our chart data
             var data = JSON.parse(page.chartdata);
