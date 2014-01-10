@@ -3,8 +3,8 @@ Ext.define('TE.util.CustomChartEditor', {
     extend:'Ext.form.FieldContainer',
     alias: 'widget.customcharteditor',
     requires:['TE.util.CustomGridEditor'],
-    id:"chart",
-    name:"chart",
+    id:"chart_container",
+    name:"chart_container",
 
     getChartTypes: function()
     {
@@ -89,7 +89,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 labelAlign: 'top',
                 listeners: {
                     select: function(combo, record, index) {
-                        Ext.getCmp('chart').updateChartStyles();
+                        Ext.getCmp('chart_container').updateChartStyles();
                     },
                 },
             },
@@ -282,7 +282,7 @@ Ext.define('TE.util.CustomChartEditor', {
         // mousedown event is outside the grid.
         Ext.getDoc().on("mousedown", function(e) {
             var chartgrid  = Ext.getCmp('chartgrid');
-            var chart      = Ext.getCmp('chart');
+            var chart      = Ext.getCmp('chart_container');
             if(chart && chart.lastFocus && !e.within(chartgrid.getEl()))
             {
                 chart.lastFocus = null;
