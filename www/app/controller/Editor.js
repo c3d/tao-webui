@@ -52,7 +52,6 @@ Ext.define('TE.controller.Editor', {
             },
             'pagelist dataview': {
             	itemclick: this.pageClicked,
-                beforedrop: this.dragAndDropPages,
                 itemcontextmenu: this.showPageContextMenu
             },
             'te_displayfield': {
@@ -79,6 +78,9 @@ Ext.define('TE.controller.Editor', {
             'pagelist button[action=pageDelete]': {
                 click: this.deletePage
             },
+            'editor [action=addField]': {
+                 click: this.addField
+             },
             'button[action=showPicLibrary]': {
                 click: this.showImageLibrary
             },
@@ -278,7 +280,7 @@ Ext.define('TE.controller.Editor', {
     	model.select(record); // Force selection of item rightclicked
         e.stopEvent();
         var menu = this.getPageContextMenu();
-        var last = this.getPagesStore().count() - 1;        
+        var last = this.getPagesStore().count() - 1;
         menu.getComponent('ctx-menu-move-page-before').setDisabled(index === 0);
         menu.getComponent('ctx-menu-move-page-after').setDisabled(index === last);
         menu.showAt(e.xy);
@@ -346,9 +348,9 @@ Ext.define('TE.controller.Editor', {
     selectedPage: function() {
     	return this.pagesList().getSelectionModel().getSelection()[0];
     },
-    
+
     pagesList: function() {
-    	return Ext.ComponentQuery.query('dataview')[0];    	
+    	return Ext.ComponentQuery.query('dataview')[0];
     },
 
     // delta = +/- 1
@@ -385,19 +387,13 @@ Ext.define('TE.controller.Editor', {
         this.movePage(+1);
     },
 
-    dragAndDropPages: function(node, data, dropRec, dropPosition) {
-    	
-        var record = this.selectedPage();
-        var id = record.get('id');
-        var store = this.getPagesStore();
-        var index = store.find('id', id);
 
-        var newId = dropRec.get('id');
-        var newIndex = store.find('id', newId);
-
-        var delta = newIndex - index;
-        this.movePage(delta);
+    addField: function(e) {
+        var dynamic = Ext.getCmp('dynamic');
+        if(dynamic)
+            dynamic.addField(e.id, e.text);
     },
+
 
     showImageLibrary: function() {
         Ext.widget('teresourcelibrary', {

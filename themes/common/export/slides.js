@@ -56,15 +56,16 @@ function htmlToSlide(text, indentText)
 function emitTitle(page, indent)
 {
     var ddd = '';
-    if (page.title != '')
+    if (page.title && page.title != '')
     {
+        console.log(page.title);
         ddd += indent + 'title\n' + htmlToSlide(page.title, indent);
     }
     else
     {
         ddd += indent + 'title text page_label\n';
     }
-    if (page.subtitle != '')
+    if (page.subtitle && page.subtitle != '')
     {
         ddd += indent + 'subtitle\n' + htmlToSlide(page.subtitle, indent);
     }
@@ -82,6 +83,36 @@ function emitStory(page, indent)
     return ddd;
 }
 
+
+function emitDynamicFields(page, indent)
+{
+    var ddd = '';
+    var dynamic = page.dynamicfields;
+    if(dynamic && dynamic != '')
+    {
+        // REVISIT: Not sure why two parsing is required
+        var items = JSON.parse(dynamic);
+        items = JSON.parse(items);
+        ddd += emitTitle(items, indent);
+        ddd += emitStory(items, indent);
+        ddd += emitLeftColumn(items, indent);
+        ddd += emitRightColumn(items, indent);
+    }
+    return ddd;
+}
+
+
+function emitTextBoxes(page, indent)
+{
+    var ddd = '';
+    var texts = util.filterJSON(items, 'text_');
+    for(var i = 0; i < texts.length; i++)
+    {
+        ddd += indent + 'text_box 0, 0, 600, 600,\n';
+        ddd += util.htmlToSlideContent(texts[i],  2);
+    }
+    return ddd;
+}
 
 function emitLeftColumn(page, indent)
 {
@@ -190,6 +221,7 @@ function generateTitleSlide(Kind, Theme)
             ddd += '    subtitle\n';
             ddd += util.htmlToSlideContent(page.subtitle, 2);
         }
+
         return ddd;
     }
 }
@@ -462,7 +494,10 @@ function generateBaseSlide(Theme)
                 // Use primitive which draw all datasets
                 ddd += '        chart \n';
             }
+            empty = false;
         }
+
+        ddd += emitDynamicFields(page, '    ');
 
         if (empty)
             ddd += '    nil\n';

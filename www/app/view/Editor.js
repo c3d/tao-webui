@@ -31,7 +31,57 @@ Ext.define('TE.view.Editor', {
     },{
         xtype: 'toolbar',
         region: 'south',
-        items: [
+        items: [{
+                text : 'Add...',
+                menu : {
+                    xtype: 'menu',
+                    items : [{
+                        text: 'Slide components',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'title',
+                                    text: 'Title',
+                                    action: 'addField'
+                                }, {
+                                    id:'subtitle',
+                                    text: 'Subtitle',
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    },{
+                        text: 'Text',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'story',
+                                    text: tr('Main text', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'leftcolumn',
+                                    text: tr('Left column text', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'rightcolumn',
+                                    text: tr('Right column text', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'text',
+                                    text: tr('Other text', 'common'),
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    }]
+                }
+             },
+             {
+                xtype: 'button',
+                text: tr('Add text') + '...',
+                icon: 'app/resources/images/image.png',
+                action: 'addText'
+            },
             {
                 xtype: 'button',
                 text: tr('Image library') + '...',

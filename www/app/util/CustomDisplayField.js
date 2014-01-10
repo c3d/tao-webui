@@ -8,7 +8,7 @@ Ext.define('TE.util.CustomDisplayField', {
         borderWidth: '1px',
         height: '100px',
         overflow: 'scroll'
-       
+
     },
 
     initComponent: function() {

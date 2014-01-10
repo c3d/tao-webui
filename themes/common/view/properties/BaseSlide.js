@@ -1,5 +1,5 @@
 Ext.define('TE.themes.common.view.properties.BaseSlide', {
-    requires: ['TE.util.CustomHtmlEditor', 'TE.util.CustomDisplayField', 'TE.util.CustomChartEditor' ],
+    requires: ['TE.util.CustomHtmlEditor', 'TE.util.CustomDisplayField', 'TE.util.CustomChartEditor', 'TE.util.CustomDynamicFields' ],
     extend: 'Ext.Container',
 
     initComponent: function(itemsBefore) {
@@ -11,7 +11,7 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                 border: 0,
 		padding: 10,
                 trackResetOnLoad: true,
-                
+
 		defaults: {
                     labelAlign: 'top',
                     labelPad: 10,
@@ -25,31 +25,6 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                         vtype: 'pagename',
                         msgTarget: 'under',
                         fieldLabel: tr('Page name', 'common')
-                    },
-                    {
-                        xtype: 'textfield',
-                        name: 'title',
-                        fieldLabel: tr('Title', 'common')
-                    },
-                    {
-                        xtype: 'textfield',
-                        name: 'subtitle',
-                        fieldLabel: tr('Subtitle', 'common')
-                    },
-                    {
-                        xtype: 'te_displayfield',
-                        name: 'story',
-                        fieldLabel: tr('Main text', 'common')
-                    },
-                    {
-                        xtype: 'te_displayfield',
-                        name: 'left_column',
-                        fieldLabel: tr('Left column text', 'common')
-                    },
-                    {
-                        xtype: 'te_displayfield',
-                        name: 'right_column',
-                        fieldLabel: tr('Right column text', 'common')
                     },
                     {
                         xtype: 'teimagepickerfield',
@@ -114,6 +89,10 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                     {
                         xtype: 'customcharteditor',
                         name: 'chart'
+                    },
+                    {
+                        xtype: 'te_customdynamicfields',
+                        name: 'dynamicfields'
                     }
                 ])
             }
