@@ -73,15 +73,14 @@ Ext.define('TE.view.Editor', {
                                 }
                             ]
                         }
+                    },
+                    {
+                        id:'chart',
+                        text: tr('Chart', 'common'),
+                        action: 'addField'
                     }]
                 }
              },
-             {
-                xtype: 'button',
-                text: tr('Add text') + '...',
-                icon: 'app/resources/images/image.png',
-                action: 'addText'
-            },
             {
                 xtype: 'button',
                 text: tr('Image library') + '...',

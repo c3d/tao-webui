@@ -58,7 +58,6 @@ function emitTitle(page, indent)
     var ddd = '';
     if (page.title && page.title != '')
     {
-        console.log(page.title);
         ddd += indent + 'title\n' + htmlToSlide(page.title, indent);
     }
     else
@@ -97,6 +96,7 @@ function emitDynamicFields(page, indent)
         ddd += emitStory(items, indent);
         ddd += emitLeftColumn(items, indent);
         ddd += emitRightColumn(items, indent);
+        ddd += emitChart(items, indent, page.name);
     }
     return ddd;
 }
@@ -148,9 +148,9 @@ function emitPicture(kind, picture, indent)
     if (picture)
     {
         ddd = indent + kind
-            + indent + '    image ' + picture.x + ', ' + picture.y + ', '
-            + picture.scale_x + '%, ' + picture.scale_y + '%, "'
-            + util.escape(picture.name) + '"\n';
+            + indent + '    image ' + picture.picx + ', ' + picture.picy + ', '
+            + picture.picscale + '%, ' + picture.picscale + '%, "'
+            + util.escape(picture.picture) + '"\n';
     }
     return ddd;
 }
@@ -161,10 +161,114 @@ function emitPictures(page, indent)
     var ddd = '';
     if (page.picture)
         ddd += emitPicture('picture', page.picture, indent);
-    if (page.left_picture)
-        ddd += emitPicture('left_picture', page.left_picture, indent);
-    if (page.right_picture)
-        ddd += emitPicture('right_picture', page.left_picture, indent);
+    if (page.leftpicture)
+        ddd += emitPicture('left_picture', page.leftpicture, indent);
+    if (page.rightpicture)
+        ddd += emitPicture('right_picture', page.rightpicture, indent);
+    return ddd;
+}
+
+
+function emitChart(page, index, name)
+{
+    var ddd = '';
+    if(page.chart && page.chart != '')
+    {
+        var chart = JSON.parse(page.chart);
+
+        if(chart.chartdata && chart.chartdata != '')
+        {
+            var dataIndexes = ['a', 'b', 'c', 'd'];
+
+            // Use page name as id for our chart (as we have only one chart per page for the moment)
+            var chartid = util.escape(name);
+
+            ddd += '    picture\n';
+            ddd += '        chart_current "' + chartid + '"\n';
+            ddd += '        once\n';
+            ddd += '            chart_reset\n';
+
+            if(chart.charttitle && chart.charttitle != '')
+                ddd += '            chart_set_title "' + util.escape(chart.charttitle) + '"\n';
+
+            if(chart.chartstyle && chart.chartstyle != '')
+                ddd += '            chart_set_style "' + chart.chartstyle.toLowerCase() + '"\n';
+
+            // // Parse our chart data
+            var data = JSON.parse(chart.chartdata);
+            for(var i = 0; i < data.length; i++)
+            {
+                for(var j = 0; j < dataIndexes.length; j++)
+                {
+                    var index = dataIndexes[j];
+                    var value = data[i][index];
+                    if(value == parseFloat(value)) // Check that value is really a number
+                        ddd += '            chart_push_data ' + (j + 1) + ', ' + data[i][index] + '\n';
+                }
+            }
+
+            if(chart.chartxlabel && chart.chartxlabel != '')
+                ddd += '            chart_set_xlabel "' + util.escape(chart.chartxlabel) + '"\n';
+            if(chart.chartylabel && chart.chartylabel != '')
+                ddd += '            chart_set_ylabel "' + util.escape(chart.chartylabel) + '"\n';
+
+            if(chart.chartlegend && chart.chartlegend != '')
+            {
+                // Parse chart legend indexes
+                var indexes = chart.chartlegend.split('$');
+                for(var i = 1; i < indexes.length; i+=2)
+                {
+                    var col = indexes[i];
+                    var row = indexes[i+1];
+                    if(col && row)
+                    {
+                        // Remove semi-colons
+                        col = col.replace(';', '').toLowerCase();
+                        row = row.replace(';', '');
+
+                        // Check that properties exist
+                        if(data.hasOwnProperty(row - 1) && data[row-1].hasOwnProperty(col))
+                        {
+                            var item = data[row - 1][col];
+                            if(item)
+                                ddd += '            chart_set_legend ' + (i + 1)/2 + ', "' + util.escape(item) + '"\n';
+                        }
+                    }
+                }
+            }
+
+            if(chart.charttype && chart.charttype)
+                ddd += '            chart_set_type "' + chart.charttype.toLowerCase() + '"\n';
+
+            // If user has given datasets, then draw it
+            // Otherwise draw all datasets
+            if(chart.chartdatasets && chart.chartdatasets != '')
+            {
+                // Parse datasets given by user and save it as a XL array ({1,2,etc.})
+                var datasets = '';
+                var datasetsIndexes = chart.chartdatasets.split(';');
+                for(var i = 0; i < datasetsIndexes.length; i++)
+                {
+                    var datasetNumber = dataIndexes.indexOf(datasetsIndexes[i].toLowerCase()) + 1;
+                    if(datasetNumber > 0)
+                    {
+                        if(datasets == '')
+                            datasets += datasetNumber;
+                        else
+                            datasets += ',' + datasetNumber;
+                    }
+                }
+
+                // Use primitive which draw only given datasets
+                ddd += '        chart ' + datasets + '\n';
+            }
+            else
+            {
+                // Use primitive which draw all datasets
+                ddd += '        chart \n';
+            }
+        }
+    }
     return ddd;
 }
 
@@ -172,8 +276,8 @@ function emitPictures(page, indent)
 function emitLeft(page, indent)
 {
     var ddd = emitLeftColumn(page, indent);
-    if (page.left_picture)
-        ddd += emitPicture('left_picture', page.left_picture, indent);
+    if (page.leftpicture)
+        ddd += emitPicture('left_picture', page.leftpicture, indent);
     return ddd;
 }
 
@@ -181,8 +285,8 @@ function emitLeft(page, indent)
 function emitRight(page, indent)
 {
     var ddd = emitRightColumn(page, indent);
-    if (page.right_picture)
-        ddd += emitPicture('right_picture', page.right_picture, indent);
+    if (page.rightpicture)
+        ddd += emitPicture('right_picture', page.rightpicture, indent);
     return ddd;
 }
 
@@ -388,116 +492,27 @@ function generateBaseSlide(Theme)
             ddd += '        image ' + page.picx + ', ' + page.picy + ', ' + page.picscale + '%, ' + page.picscale + '%, "' + page.picture + '"\n';
             empty = false;
         }
-        if (page.left_picture != '')
+        if (page.leftpicture != '')
         {
             ddd += '    left_picture\n';
+            ddd += '    left_picture\n';
             ddd += '        color "white"\n';
-            ddd += '        image ' + page.lpicx + ', ' + page.lpicy + ', ' + page.lpicscale + '%, ' + page.lpicscale + '%, "' + page.left_picture + '"\n';
+            ddd += '        image ' + page.lpicx + ', ' + page.lpicy + ', ' + page.lpicscale + '%, ' + page.lpicscale + '%, "' + page.leftpicture + '"\n';
             empty = false;
         }
-        if (page.right_picture != '')
+        if (page.rightpicture != '')
         {
             ddd += '    right_picture\n';
             ddd += '        color "white"\n';
-            ddd += '        image ' + page.rpicx + ', ' + page.rpicy + ', ' + page.rpicscale + '%, ' + page.rpicscale + '%, "' + page.right_picture + '"\n';
+            ddd += '        image ' + page.rpicx + ', ' + page.rpicy + ', ' + page.rpicscale + '%, ' + page.rpicscale + '%, "' + page.rightpicture + '"\n';
             empty = false;
         }
 
-        if(page.chartdata && page.chartdata != '')
+        if(page.dynamicfields != '')
         {
-            var dataIndexes = ['a', 'b', 'c', 'd'];
-
-            // Use page name as id for our chart (as we have only one chart per page for the moment)
-            var chartid = util.escape(page.name);
-
-            ddd += '    picture\n';
-            ddd += '        chart_current "' + chartid + '"\n';
-            ddd += '        once\n';
-            ddd += '            chart_reset\n';
-
-            if(page.charttitle != '')
-                ddd += '            chart_set_title "' + util.escape(page.charttitle) + '"\n';
-
-            if(page.chartstyle != '')
-                ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
-
-            // Parse our chart data
-            var data = JSON.parse(page.chartdata);
-            for(var i = 0; i < data.length; i++)
-            {
-                for(var j = 0; j < dataIndexes.length; j++)
-                {
-                    var index = dataIndexes[j];
-                    var value = data[i][index];
-                    if(value == parseFloat(value)) // Check that value is really a number
-                        ddd += '            chart_push_data ' + (j + 1) + ', ' + data[i][index] + '\n';
-                }
-            }
-
-            if(page.chartxlabel != '')
-                ddd += '            chart_set_xlabel "' + util.escape(page.chartxlabel) + '"\n';
-            if(page.chartylabel != '')
-                ddd += '            chart_set_ylabel "' + util.escape(page.chartylabel) + '"\n';
-
-            if(page.chartlegend != '')
-            {
-                // Parse chart legend indexes
-                var indexes = page.chartlegend.split('$');
-                for(var i = 1; i < indexes.length; i+=2)
-                {
-                    var col = indexes[i];
-                    var row = indexes[i+1];
-                    if(col && row)
-                    {
-                        // Remove semi-colons
-                        col = col.replace(';', '').toLowerCase();
-                        row = row.replace(';', '');
-
-                        // Check that properties exist
-                        if(data.hasOwnProperty(row - 1) && data[row-1].hasOwnProperty(col))
-                        {
-                            var item = data[row - 1][col];
-                            if(item)
-                                ddd += '            chart_set_legend ' + (i + 1)/2 + ', "' + util.escape(item) + '"\n';
-                        }
-                    }
-                }
-            }
-
-            if(page.charttype)
-                ddd += '            chart_set_type "' + page.charttype.toLowerCase() + '"\n';
-
-            // If user has given datasets, then draw it
-            // Otherwise draw all datasets
-            if(page.chartdatasets != '')
-            {
-                // Parse datasets given by user and save it as a XL array ({1,2,etc.})
-                var datasets = '';
-                var datasetsIndexes = page.chartdatasets.split(';');
-                for(var i = 0; i < datasetsIndexes.length; i++)
-                {
-                    var datasetNumber = dataIndexes.indexOf(datasetsIndexes[i].toLowerCase()) + 1;
-                    if(datasetNumber > 0)
-                    {
-                        if(datasets == '')
-                            datasets += datasetNumber;
-                        else
-                            datasets += ',' + datasetNumber;
-                    }
-                }
-
-                // Use primitive which draw only given datasets
-                ddd += '        chart ' + datasets + '\n';
-            }
-            else
-            {
-                // Use primitive which draw all datasets
-                ddd += '        chart \n';
-            }
+            ddd += emitDynamicFields(page, '    ');
             empty = false;
         }
-
-        ddd += emitDynamicFields(page, '    ');
 
         if (empty)
             ddd += '    nil\n';

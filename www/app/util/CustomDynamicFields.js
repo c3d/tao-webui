@@ -1,6 +1,7 @@
 Ext.define('TE.util.CustomDynamicFields', {
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_customdynamicfields',
+    requires: ["TE.util.MultiCellSelectionModel"],
     id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
@@ -12,10 +13,9 @@ Ext.define('TE.util.CustomDynamicFields', {
             flex: 1,
             listeners: {
                 change: function() {
+                    // Parse only when container is loaded (i.e no other fields)
                     if(this.ownerCt.items.length == 1)
-                    {
                         this.ownerCt.parseJSON(this.getValue());
-                    }
                 }
             }
     }],
@@ -36,13 +36,12 @@ Ext.define('TE.util.CustomDynamicFields', {
             case 'rightcolumn':
                 field = this.createCustomDisplayField(type, label, value);
                 break;
-            // case 'chart':
-            //     field = this.createCustomChartEditor(type, label, value);
-            //    break;
+            case 'chart':
+                field = this.createCustomChartEditor(type, label, value);
+               break;
             default: break;
         }
 
-        this.add(field);
     },
 
     saveDynamicFields: function() {
@@ -63,10 +62,11 @@ Ext.define('TE.util.CustomDynamicFields', {
                 var value = item.getValue();
                 if(value && value != '')
                 {
-                    json += '"' + item.name + '":' + Ext.encode(value) + '';
-                    // Add a coma except for last item
-                    if(index < (items.length - 1))
+                    // Add coma if needed
+                    if(json != '{')
                         json += ',';
+
+                    json += '"' + item.name + '":' + Ext.encode(value) + '';
                 }
             }
         });
@@ -118,12 +118,13 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
         });
 
-        return field;
+        this.add(field);
     },
 
     createCustomDisplayField: function(type, label, value) {
         var fieldLabel = '';
         var fieldName  = '';
+
         // Check if type corresponds to a simple text box
         // or a slide one (story, left_column, etc.).
         if(!type || type == 'text')
@@ -162,7 +163,8 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
         });
 
-        return field;
+
+        this.add(field);
     },
 
     createCustomChartEditor: function(type, label, value) {
@@ -182,17 +184,40 @@ Ext.define('TE.util.CustomDynamicFields', {
             defaults: {
                 listeners: {
                     change: function(field, newVal, oldVal) {
-                        // Save when field change
+                        // Save when all fields change
+                        // (except legend and datasets fields)
                         Ext.getCmp("dynamic").saveDynamicFields();
-                    }
+                    },
                 },
             },
+            listeners: {
+                change: function()
+                {
+                    // Need to handle change event this way for
+                    // legend and datasets fields as we have
+                    // redefined listeners (for focus event).
+                    Ext.getCmp("dynamic").saveDynamicFields();
+                }
+            }
         });
+
+        this.add(field);
+
+        // Don't know why but need to redefine plugin
+        // of chart grid otherwise edit event is not fired
+        var grid = Ext.getCmp("chartgrid");
+        grid.plugins = [Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 2,
+            pluginId: 'cellEditing',
+            listeners: {
+                edit: function() {
+                    this.grid.updateData();
+                }
+            }
+        })];
 
         // Use setValue method of chart
         field.setValue(value);
-
-        return field;
     },
 
     isAlreadyExist: function(type)

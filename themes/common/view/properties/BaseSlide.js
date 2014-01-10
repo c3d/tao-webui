@@ -87,10 +87,6 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
                         fieldLabel: tr('Right picture vertical position', 'common')
                     },
                     {
-                        xtype: 'customcharteditor',
-                        name: 'chart'
-                    },
-                    {
                         xtype: 'te_customdynamicfields',
                         name: 'dynamicfields'
                     }
