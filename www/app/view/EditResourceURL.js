@@ -28,7 +28,7 @@ Ext.define('TE.view.EditResourceURL', {
                 fieldLabel: tr('Description')
             },{
                 name: 'file',
-                fieldLabel: tr('Image URL')
+                fieldLabel: (this.type === 'video') ? tr('Video URL') : tr('Image URL')
             }]
         }];
 

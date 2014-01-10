@@ -57,6 +57,7 @@ Ext.define('TE.i18n.fr', {
         'Upload failed': 'Erreur de transfert',
         'URL': null,
         'Video library': 'Bibliothèque de vidéos',
+        'Video URL': 'URL de la vidéo',
         'Videos...': 'Vidéos...',
 
         // Error messages for all the error statuses that may be reported by the server
