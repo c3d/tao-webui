@@ -57,7 +57,7 @@ Ext.define('TE.util.CustomChartEditor', {
         styles.setValue(data[0].abbr);
     },
 
-    // Return all values of chart in a json form
+    // Return all values of chart in a json object
     getValue: function()
     {
         var result = '{';
@@ -77,22 +77,29 @@ Ext.define('TE.util.CustomChartEditor', {
         return result;
     },
 
-    setValue: function(value)
+    // Set all values of chart according to a json object
+    setValue: function(json)
     {
-        if(!value || value == '')
+        if(!json || json == '')
             return;
 
-        var items = Ext.decode(value);
-        for(var name in items)
+        var fields = this.items.items;
+        for(var idx in fields)
         {
-            var field = Ext.getCmp(name);
-            var value = items[name];
-            if(value && value != '')
+            var field = fields[idx];
+            if(json.hasOwnProperty(field.name))
             {
-                var field = Ext.getCmp(name);
-                field.setValue(value);
+                var value = json[field.name];
+                if(value && value != '')
+                    field.setValue(value);
             }
         }
+    },
+
+    // Override toJSON method
+    toJSON: function()
+    {
+        return this.getValue();
     },
 
     initComponent: function () {

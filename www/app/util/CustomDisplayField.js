@@ -8,7 +8,6 @@ Ext.define('TE.util.CustomDisplayField', {
         borderWidth: '1px',
         height: '100px',
         overflow: 'scroll'
-
     },
 
     initComponent: function() {
@@ -21,5 +20,10 @@ Ext.define('TE.util.CustomDisplayField', {
             f.getEl().on('click',
                          function() { this.fireEvent('click', f); }, f);
         }
-    }
+    },
+
+    toJSON: function()
+    {
+        return Ext.encode(this.getValue());
+    },
 });

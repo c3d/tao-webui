@@ -89,14 +89,14 @@ function emitDynamicFields(page, indent)
     var dynamic = page.dynamicfields;
     if(dynamic && dynamic != '')
     {
-        // REVISIT: Not sure why two parsing is required
         var items = JSON.parse(dynamic);
-        items = JSON.parse(items);
+
         ddd += emitTitle(items, indent);
         ddd += emitStory(items, indent);
         ddd += emitLeftColumn(items, indent);
         ddd += emitRightColumn(items, indent);
         ddd += emitChart(items, indent, page.name);
+        ddd += emitPictures(items, indent);
     }
     return ddd;
 }
@@ -145,12 +145,33 @@ function emitColumns(page, indent)
 function emitPicture(kind, picture, indent)
 {
     var ddd = '';
-    if (picture)
+    // Get correct picture url (ignore id)
+    var pic = util.filterJSON(picture, 'picture')[0];
+    if (pic)
     {
-        ddd = indent + kind
-            + indent + '    image ' + picture.picx + ', ' + picture.picy + ', '
-            + picture.picscale + '%, ' + picture.picscale + '%, "'
-            + util.escape(picture.picture) + '"\n';
+        // Parse and get picture settings by ignoring id behind
+        // property name (for instance, {picx_1:30} returns 30).
+        var picx = util.filterJSON(picture, 'picx')[0];
+        var picy = util.filterJSON(picture, 'picy')[0];
+        var picscale = util.filterJSON(picture, 'picscale')[0];
+        ddd = indent + kind + '\n'
+            + indent + '    image ' + picx + ', ' + picy + ', '
+            + picscale + '%, ' + picscale + '%, "'
+            + util.escape(pic) + '"\n';
+    }
+    return ddd;
+}
+
+
+function emitPicturesWithType(page, indent, type, filter)
+{
+    var ddd = '';
+    var pictures = util.filterJSON(page, filter);
+    for(var i = 0; i < pictures.length; i++)
+    {
+        var picture = pictures[i];
+        if(picture)
+            ddd += emitPicture(type, picture, indent);
     }
     return ddd;
 }
@@ -159,12 +180,12 @@ function emitPicture(kind, picture, indent)
 function emitPictures(page, indent)
 {
     var ddd = '';
-    if (page.picture)
-        ddd += emitPicture('picture', page.picture, indent);
-    if (page.leftpicture)
-        ddd += emitPicture('left_picture', page.leftpicture, indent);
-    if (page.rightpicture)
-        ddd += emitPicture('right_picture', page.rightpicture, indent);
+
+    // Emit all pictures according to their types (normal, left, right);
+    ddd += emitPicturesWithType(page, indent, 'picture', '^picture');
+    ddd += emitPicturesWithType(page, indent, 'left_picture', '^leftpicture');
+    ddd += emitPicturesWithType(page, indent, 'right_picture', '^rightpicture');
+
     return ddd;
 }
 
@@ -174,7 +195,7 @@ function emitChart(page, index, name)
     var ddd = '';
     if(page.chart && page.chart != '')
     {
-        var chart = JSON.parse(page.chart);
+        var chart = page.chart;
 
         if(chart.chartdata && chart.chartdata != '')
         {
@@ -485,29 +506,8 @@ function generateBaseSlide(Theme)
             ddd += util.htmlToSlideContent(page.right_column, 2);
             empty = false;
         }
-        if (page.picture != '')
-        {
-            ddd += '    picture\n';
-            ddd += '        color "white"\n';
-            ddd += '        image ' + page.picx + ', ' + page.picy + ', ' + page.picscale + '%, ' + page.picscale + '%, "' + page.picture + '"\n';
-            empty = false;
-        }
-        if (page.leftpicture != '')
-        {
-            ddd += '    left_picture\n';
-            ddd += '    left_picture\n';
-            ddd += '        color "white"\n';
-            ddd += '        image ' + page.lpicx + ', ' + page.lpicy + ', ' + page.lpicscale + '%, ' + page.lpicscale + '%, "' + page.leftpicture + '"\n';
-            empty = false;
-        }
-        if (page.rightpicture != '')
-        {
-            ddd += '    right_picture\n';
-            ddd += '        color "white"\n';
-            ddd += '        image ' + page.rpicx + ', ' + page.rpicy + ', ' + page.rpicscale + '%, ' + page.rpicscale + '%, "' + page.rightpicture + '"\n';
-            empty = false;
-        }
 
+        // Emit dynamic fields (texts, pictures, etc)
         if(page.dynamicfields != '')
         {
             ddd += emitDynamicFields(page, '    ');
