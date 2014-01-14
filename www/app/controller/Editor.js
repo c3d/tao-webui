@@ -52,7 +52,8 @@ Ext.define('TE.controller.Editor', {
             },
             'pagelist dataview': {
             	itemclick: this.pageClicked,
-                itemcontextmenu: this.showPageContextMenu
+                itemcontextmenu: this.showPageContextMenu,
+                beforedrop: this.dragAndDropPages
             },
             'te_displayfield': {
                 click: this.displayFieldClicked
@@ -387,6 +388,18 @@ Ext.define('TE.controller.Editor', {
         this.movePage(+1);
     },
 
+    dragAndDropPages: function(node, data, dropRec, dropPosition) {
+        var record = this.selectedPage();
+        var id = record.get('id');
+        var store = this.getPagesStore();
+        var index = store.find('id', id);
+
+        var newId = dropRec.get('id');
+        var newIndex = store.find('id', newId);
+
+        var delta = newIndex - index;
+        this.movePage(delta);
+    },
 
     addField: function(e) {
         var dynamic = Ext.getCmp('dynamic');
