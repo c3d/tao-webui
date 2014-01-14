@@ -113,8 +113,8 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'charttitle',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
-                value:'chart'
+                value:'chart',
+                anchor:'100%'
             },
             {
                 xtype: 'combobox',
@@ -133,6 +133,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 autoSelect: true,
                 name: 'charttype',
                 id:'charttype',
+                anchor:'100%',
                 fieldLabel: tr('Chart type', 'common'),
                 labelAlign: 'top',
                 listeners: {
@@ -154,6 +155,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 autoSelect: true,
                 name: 'chartstyle',
                 id:'chartstyle',
+                anchor:'100%',
                 fieldLabel: tr('Chart style', 'common'),
                 labelAlign: 'top',
             },
@@ -163,7 +165,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 id: 'chartxlabel',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: "x-axis",
             },
             {
@@ -172,7 +174,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'chartylabel',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: "y-axis",
             },
             {
@@ -188,6 +190,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 xtype: 'customgrideditor',
                 name:'chartgrid',
                 id:'chartgrid',
+                anchor:'100%',
                 resizable: true,
                 width: 500,
                 maxHeight: 450,
@@ -297,7 +300,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'chartlegend',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: tr("Please select cells in the grid above..."),
                 listeners: {
                     focus: function() {
@@ -319,7 +322,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'chartdatasets',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: tr("Please select cells in the grid above..."),
                 listeners: {
                     focus: function() {

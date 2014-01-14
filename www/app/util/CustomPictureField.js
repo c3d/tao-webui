@@ -16,27 +16,31 @@ Ext.define('TE.util.CustomPictureField', {
                 name: 'picture' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Picture', 'common'),
+                anchor:'100%'
             },
             {
                 xtype: 'numberfield',
                 name: 'picscale' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Picture scale (%)', 'common'),
-                allowBlank: false
+                allowBlank: false,
+                anchor:'100%'
             },
             {
                 xtype: 'numberfield',
                 name: 'picx' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Picture horizontal position', 'common'),
-                allowBlank: false
+                allowBlank: false,
+                anchor:'100%'
             },
             {
                 xtype: 'numberfield',
                 name: 'picy' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Picture vertical position', 'common'),
-                allowBlank: false
+                allowBlank: false,
+                anchor:'100%'
             }],
         });
         me.callParent( arguments );

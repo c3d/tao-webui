@@ -15,28 +15,32 @@ Ext.define('TE.util.CustomMovieField', {
                 xtype: 'tevideopickerfield',
                 name: 'movie' + this.separator + this.index,
                 labelAlign:'top',
-                fieldLabel: tr('Filename, path or URL of video', 'common')
+                fieldLabel: tr('Filename, path or URL of video', 'common'),
+                anchor:'100%'
             },
             {
                 xtype: 'numberfield',
                 name: 'moviescalepercent' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Movie scale (%)', 'common'),
-                allowBlank: false
+                allowBlank: false,
+                anchor:'100%'
             },
             {
                 xtype: 'numberfield',
                 name: 'moviex' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Movie horizontal position', 'common'),
-                allowBlank: false
+                allowBlank: false,
+                anchor:'100%'
             },
             {
                 xtype: 'numberfield',
                 name: 'moviey' + this.separator + this.index,
                 labelAlign:'top',
                 fieldLabel: tr('Movie vertical position', 'common'),
-                allowBlank: false
+                allowBlank: false,
+                anchor:'100%'
             }],
         });
         me.callParent( arguments );
