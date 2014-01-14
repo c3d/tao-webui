@@ -1,7 +1,8 @@
 Ext.define('TE.util.CustomDynamicFields', {
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_customdynamicfields',
-    requires: ["TE.util.MultiCellSelectionModel", "TE.util.CustomPictureField"],
+    requires: ["TE.util.CustomPictureField",
+               "TE.util.CustomMovieField"],
     id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
@@ -38,10 +39,15 @@ Ext.define('TE.util.CustomDynamicFields', {
             case 'rightcolumn':
                 this.createCustomDisplayField(type, label, value);
                 break;
-            case'picture':
-            case'leftpicture':
-            case'rightpicture':
+            case 'picture':
+            case 'leftpicture':
+            case 'rightpicture':
                 this.createCustomPictureField(type, label, value);
+                break;
+            case 'movie':
+            case 'leftmovie':
+            case 'rightmovie':
+                this.createCustomMovieField(type, label, value);
                 break;
             case 'chart':
                 this.createCustomChartEditor(type, label, value);
@@ -154,6 +160,42 @@ Ext.define('TE.util.CustomDynamicFields', {
             name: fieldName,
             width: '100%',
             index:this.img_idx,
+            separator:'_',
+            type:type,
+            defaults: {
+                listeners: {
+                    change: function(field, newVal, oldVal) {
+                        // Save when all fields change
+                        // (except legend and datasets fields)
+                        Ext.getCmp("dynamic").saveDynamicFields();
+                    },
+                },
+            },
+        });
+
+        this.add(field);
+
+        // Use setValue method
+        // to update all fields
+        field.setValue(value);
+    },
+
+
+    // Create a movie field
+    createCustomMovieField: function(type, label, value)
+    {
+        var newIndex = this.computeNewIndex(type);
+        var fieldLabel = label + ' ' + newIndex; // Add id to label
+        var fieldName  = type + '_' + newIndex;  // Add id to name
+
+        // Increase index to have unique attributes
+        this.movie_idx++;
+
+        var field = new TE.util.CustomMovieField({
+            title: fieldLabel,
+            name: fieldName,
+            width: '100%',
+            index:this.movie_idx,
             separator:'_',
             type:type,
             defaults: {

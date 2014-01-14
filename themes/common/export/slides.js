@@ -89,6 +89,7 @@ function emitDynamicFields(page, indent)
     var dynamic = page.dynamicfields;
     if(dynamic && dynamic != '')
     {
+        // Decode JSON string
         var items = JSON.parse(dynamic);
 
         ddd += emitTitle(items, indent);
@@ -97,6 +98,7 @@ function emitDynamicFields(page, indent)
         ddd += emitRightColumn(items, indent);
         ddd += emitChart(items, indent, page.name);
         ddd += emitPictures(items, indent);
+        ddd += emitMovies(items, indent);
     }
     return ddd;
 }
@@ -185,6 +187,62 @@ function emitPictures(page, indent)
     ddd += emitPicturesWithType(page, indent, 'picture', '^picture');
     ddd += emitPicturesWithType(page, indent, 'left_picture', '^leftpicture');
     ddd += emitPicturesWithType(page, indent, 'right_picture', '^rightpicture');
+
+    return ddd;
+}
+
+
+function emitMovie(kind, movie, indent)
+{
+    var ddd = '';
+
+        // Get correct picture url (ignore id)
+    var movieurl = util.filterJSON(movie, 'movie')[0];
+    if(movieurl)
+    {
+        // Parse and get picture settings by ignoring id behind
+        // property name (for instance, {moviex:30} returns 30).
+        var moviex = util.filterJSON(movie, 'moviex')[0];
+        var moviey = util.filterJSON(movie, 'moviey')[0];
+        var moviescalepercent = util.filterJSON(movie, 'moviescalepercent')[0];
+
+        if (movieurl.indexOf('://') === -1)
+            movieurl = 'videos/' + movieurl;
+        ddd = indent + kind + '\n'
+        ddd += indent + '    color "white"\n';
+        ddd += indent + '    movie ' + moviex + ', ' + moviey + ', ' + moviescalepercent + '%, ' + moviescalepercent + '%, "' + movieurl + '"\n';
+
+        // Add drop command
+        ddd +=  indent + '    on "pageexit",\n';
+        ddd +=  indent + '        movie_drop "' + movieurl + '"\n';
+    }
+
+    return ddd;
+}
+
+
+function emitMoviesWithType(page, indent, type, filter)
+{
+    var ddd = '';
+    var movies = util.filterJSON(page, filter);
+    for(var i = 0; i < movies.length; i++)
+    {
+        var movie = movies[i];
+        if(movie)
+            ddd += emitMovie(type, movie, indent);
+    }
+    return ddd;
+}
+
+
+function emitMovies(page, indent)
+{
+    var ddd = '';
+
+    // Emit all movies according to their types (normal, left, right);
+    ddd += emitMoviesWithType(page, indent, 'picture', '^movie');
+    ddd += emitMoviesWithType(page, indent, 'left_picture', '^leftmovie');
+    ddd += emitMoviesWithType(page, indent, 'right_picture', '^rightmovie');
 
     return ddd;
 }

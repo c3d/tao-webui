@@ -95,6 +95,26 @@ Ext.define('TE.view.Editor', {
                         }
                     },
                     {
+                        text: 'Movie',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'movie',
+                                    text: tr('Movie', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'leftmovie',
+                                    text: tr('Left movie', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'rightmovie',
+                                    text: tr('Right movie', 'common'),
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    },
+                    {
                         id:'chart',
                         text: tr('Chart', 'common'),
                         action: 'addField'

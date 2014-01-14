@@ -1,6 +1,6 @@
 var s = require(__dirname + '/../../common/export/slides');
 
 module.exports = {
-    header:   s.importHeader('SeasonsGreetingsTheme'),
+    header:   s.importHeaders(['SeasonsGreetingsTheme', 'Charts', 'VLCAudioVideo']),
     generate: s.generateBaseSlide("SeasonsGreetings")
 }
