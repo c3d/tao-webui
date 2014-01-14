@@ -29,7 +29,7 @@ Ext.define('TE.themes.common.view.properties.Slide', {
                     {
                         xtype: 'te_displayfield',
                         name: 'text',
-                        fieldLabel: tr('Text', 'common')
+                        title: tr('Text', 'common')
                     }
                 ])
             }

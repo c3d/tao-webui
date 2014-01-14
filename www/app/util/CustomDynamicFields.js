@@ -242,11 +242,10 @@ Ext.define('TE.util.CustomDynamicFields', {
 
         // Create CustomDisplayField
         var field = new TE.util.CustomDisplayField({
-            fieldLabel: fieldLabel,
-            labelAlign: 'top',
+            title: fieldLabel,
             name: fieldName,
             width: '100%',
-            value: value,
+            value:value,
             listeners: {
                 change: function() {
                     // Save when field change
@@ -259,8 +258,9 @@ Ext.define('TE.util.CustomDynamicFields', {
                 }
             }
         });
-
         this.add(field);
+
+        field.setValue(value);
     },
 
     // Create chart editor

@@ -242,7 +242,7 @@ Ext.define('TE.controller.Editor', {
         var cp = this.getCenterpane();
         cp.removeAll();
         var view = Ext.create('TE.util.CustomHtmlEditor', {
-            value: displayField.value,
+            value: displayField.getValue(),
             layout: 'fit',
             sourceField: displayField
         });

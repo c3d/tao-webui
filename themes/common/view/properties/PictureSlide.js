@@ -49,12 +49,12 @@ Ext.define('TE.themes.common.view.properties.PictureSlide', {
                     {
                         xtype: 'te_displayfield',
                         name: 'left_column',
-                        fieldLabel: tr('Left column text', 'common')
+                        title: tr('Left column text', 'common')
                     },
                     {
                         xtype: 'te_displayfield',
                         name: 'right_column',
-                        fieldLabel: tr('Right column text', 'common')
+                        title: tr('Right column text', 'common')
                     }
                 ])
             }
