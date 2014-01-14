@@ -59,11 +59,11 @@ Ext.define('TE.view.Editor', {
                                     text: tr('Main text', 'common'),
                                     action: 'addField'
                                 }, {
-                                    id:'leftcolumn',
+                                    id:'left_column',
                                     text: tr('Left column text', 'common'),
                                     action: 'addField'
                                 }, {
-                                    id:'rightcolumn',
+                                    id:'right_column',
                                     text: tr('Right column text', 'common'),
                                     action: 'addField'
                                 }, {
@@ -83,11 +83,11 @@ Ext.define('TE.view.Editor', {
                                     text: tr('Picture', 'common'),
                                     action: 'addField'
                                 }, {
-                                    id:'leftpicture',
+                                    id:'left_picture',
                                     text: tr('Left picture', 'common'),
                                     action: 'addField'
                                 }, {
-                                    id:'rightpicture',
+                                    id:'right_picture',
                                     text: tr('Right picture', 'common'),
                                     action: 'addField'
                                 }
@@ -103,11 +103,11 @@ Ext.define('TE.view.Editor', {
                                     text: tr('Movie', 'common'),
                                     action: 'addField'
                                 }, {
-                                    id:'leftmovie',
+                                    id:'left_movie',
                                     text: tr('Left movie', 'common'),
                                     action: 'addField'
                                 }, {
-                                    id:'rightmovie',
+                                    id:'right_movie',
                                     text: tr('Right movie', 'common'),
                                     action: 'addField'
                                 }

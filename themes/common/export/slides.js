@@ -119,9 +119,9 @@ function emitTextBoxes(page, indent)
 function emitLeftColumn(page, indent)
 {
     var ddd = '';
-    if (page.leftcolumn && page.leftcolumn !== '')
+    if (page.left_column && page.left_column !== '')
     {
-        ddd += indent + 'left_column\n' + htmlToSlide(page.leftcolumn, indent);
+        ddd += indent + 'left_column\n' + htmlToSlide(page.left_column, indent);
     }
     return ddd;
 }
@@ -130,9 +130,9 @@ function emitLeftColumn(page, indent)
 function emitRightColumn(page, indent)
 {
     var ddd = '';
-    if (page.rightcolumn && page.rightcolumn !== '')
+    if (page.right_column && page.right_column !== '')
     {
-        ddd += indent + 'right_column\n' + htmlToSlide(page.rightcolumn,indent);
+        ddd += indent + 'right_column\n' + htmlToSlide(page.right_column,indent);
     }
     return ddd;
 }
@@ -185,8 +185,8 @@ function emitPictures(page, indent)
 
     // Emit all pictures according to their types (normal, left, right);
     ddd += emitPicturesWithType(page, indent, 'picture', '^picture');
-    ddd += emitPicturesWithType(page, indent, 'left_picture', '^leftpicture');
-    ddd += emitPicturesWithType(page, indent, 'right_picture', '^rightpicture');
+    ddd += emitPicturesWithType(page, indent, 'left_picture', '^left_picture');
+    ddd += emitPicturesWithType(page, indent, 'right_picture', '^right_picture');
 
     return ddd;
 }
@@ -241,8 +241,8 @@ function emitMovies(page, indent)
 
     // Emit all movies according to their types (normal, left, right);
     ddd += emitMoviesWithType(page, indent, 'picture', '^movie');
-    ddd += emitMoviesWithType(page, indent, 'left_picture', '^leftmovie');
-    ddd += emitMoviesWithType(page, indent, 'right_picture', '^rightmovie');
+    ddd += emitMoviesWithType(page, indent, 'left_picture', '^left_movie');
+    ddd += emitMoviesWithType(page, indent, 'right_picture', '^right_movie');
 
     return ddd;
 }
@@ -355,8 +355,8 @@ function emitChart(page, index, name)
 function emitLeft(page, indent)
 {
     var ddd = emitLeftColumn(page, indent);
-    if (page.leftpicture)
-        ddd += emitPicture('left_picture', page.leftpicture, indent);
+    if (page.left_picture)
+        ddd += emitPicture('left_picture', page.left_picture, indent);
     return ddd;
 }
 
@@ -364,8 +364,8 @@ function emitLeft(page, indent)
 function emitRight(page, indent)
 {
     var ddd = emitRightColumn(page, indent);
-    if (page.rightpicture)
-        ddd += emitPicture('right_picture', page.rightpicture, indent);
+    if (page.right_picture)
+        ddd += emitPicture('right_picture', page.right_picture, indent);
     return ddd;
 }
 
@@ -434,20 +434,20 @@ function generatePictureSlide(Theme)
             ddd += '        image ' + page.picturex + ', ' + page.picturey + ', ' + page.picturescalepercent + '%, ' + page.picturescalepercent + '%, "' + page.picture + '"\n';
             empty = false;
         }
-        if (page.leftcolumn && page.leftcolumn !== '')
+        if (page.left_column && page.left_column !== '')
         {
             ddd += '    left_column\n' +
                    '        vertical_align_top\n' +
                    '        align_left\n';
-            ddd += util.htmlToSlideContent(page.leftcolumn, 2);
+            ddd += util.htmlToSlideContent(page.left_column, 2);
             empty = false;
         }
-        if (page.rightcolumn && page.rightcolumn !== '')
+        if (page.right_column && page.right_column !== '')
         {
             ddd += '    right_column\n' +
                    '        vertical_align_top\n' +
                    '        align_left\n';
-            ddd += util.htmlToSlideContent(page.rightcolumn, 2);
+            ddd += util.htmlToSlideContent(page.right_column, 2);
             empty = false;
         }
         if (empty)
@@ -476,20 +476,20 @@ function generateMovieSlide(Theme)
             empty = false;
             hasMovie = true;
         }
-        if (page.leftcolumn && page.leftcolumn !== '')
+        if (page.left_column && page.left_column !== '')
         {
             ddd += '    left_column\n' +
                    '        vertical_align_top\n' +
                    '        align_left\n';
-            ddd += util.htmlToSlideContent(page.leftcolumn, 2);
+            ddd += util.htmlToSlideContent(page.left_column, 2);
             empty = false;
         }
-        if (page.rightcolumn && page.rightcolumn !== '')
+        if (page.right_column && page.right_column !== '')
         {
             ddd += '    right_column\n' +
                    '        vertical_align_top\n' +
                    '        align_left\n';
-            ddd += util.htmlToSlideContent(page.rightcolumn, 2);
+            ddd += util.htmlToSlideContent(page.right_column, 2);
             empty = false;
         }
         if (empty)
@@ -526,44 +526,9 @@ function generateBaseSlide(Theme)
     {
         var empty = true;
         var ddd = '';
+        var indent = '    ';
         ddd += util.theme(page.ctx, Theme)
         ddd += 'base_slide "' + util.escape(page.name) + '",\n';
-        if (page.title && page.title !== '')
-        {
-            ddd += '    title\n';
-            ddd += util.htmlToSlideContent(page.title, 2);
-            empty = false;
-        }
-        if (page.subtitle && page.subtitle !== '')
-        {
-            ddd += '    subtitle\n';
-            ddd += util.htmlToSlideContent(page.subtitle, 2);
-            empty = false;
-        }
-        if (page.story && page.story !== '')
-        {
-            ddd += '    story\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.story, 2);
-            empty = false;
-        }
-        if (page.left_column && page.left_column !== '')
-        {
-            ddd += '    left_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.left_column, 2);
-            empty = false;
-        }
-        if (page.right_column && page.right_column !== '')
-        {
-            ddd += '    right_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.right_column, 2);
-            empty = false;
-        }
 
         // Emit dynamic fields (texts, pictures, etc)
         if(page.dynamicfields != '')

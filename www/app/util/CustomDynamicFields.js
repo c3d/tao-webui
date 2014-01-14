@@ -35,18 +35,18 @@ Ext.define('TE.util.CustomDynamicFields', {
                 break;
             case 'text':
             case 'story':
-            case 'leftcolumn':
-            case 'rightcolumn':
+            case 'left_column':
+            case 'right_column':
                 this.createCustomDisplayField(type, label, value);
                 break;
             case 'picture':
-            case 'leftpicture':
-            case 'rightpicture':
+            case 'left_picture':
+            case 'right_picture':
                 this.createCustomPictureField(type, label, value);
                 break;
             case 'movie':
-            case 'leftmovie':
-            case 'rightmovie':
+            case 'left_movie':
+            case 'right_movie':
                 this.createCustomMovieField(type, label, value);
                 break;
             case 'chart':
@@ -109,11 +109,11 @@ Ext.define('TE.util.CustomDynamicFields', {
             var value = items[name];
             if(value && value != '')
             {
-                // Get field type (in the form 'TYPE_ID')
-                var type = name.split('_')[0];
-                // Get correct field label from menu 'Add...'
+                // Get field type by remove id part (in the form 'TYPE_ID')
+                var type = name.replace(/_[0-9]+/g,'');
+                // // Get correct field label from menu 'Add...'
                 var label = Ext.ComponentQuery.query('[id='+ type +']')[0].text;
-                // Add field
+                // // Add field
                 this.addField(type, label, value);
             }
         }
