@@ -7,6 +7,9 @@ Ext.define('TE.util.CustomDynamicFields', {
     id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
+    text_idx:0,   // Current ID of text boxes
+    img_idx:0,    // Current ID of pictures
+    movie_idx: 0, // Current ID of movies
     items: [{
             xtype: 'hiddenfield',
             id:'dynamicfields',
@@ -22,56 +25,77 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
     }],
     listeners: {
-        remove: function()
-        {
-            // Need update if a field has been removed
-            this.saveDynamicFields();
-        }
+        remove: function(me, field) { this.removeField(field); }
     },
-    text_idx:0,
-    number_idx:0,
-    img_idx:0,
 
     // Add new field to this container
     addField: function(type, label, value)
     {
-        var field;
-        switch(type)
-        {
-            case 'title':
-            case 'subtitle':
-                field = this.createCustomTextField(type, label);
-                break;
-            case 'text':
-            case 'story':
-            case 'left_column':
-            case 'right_column':
-                field = this.createCustomDisplayField(type, label);
-                break;
-            case 'picture':
-            case 'left_picture':
-            case 'right_picture':
-                field = this.createCustomPictureField(type, label);
-                break;
-            case 'movie':
-            case 'left_movie':
-            case 'right_movie':
-                field = this.createCustomMovieField(type, label);
-                break;
-            case 'chart':
-                field = this.createCustomChartEditor(type, label);
-               break;
-            default: break;
-        }
-
+        var field = this.createField(type, label);
         if(field)
         {
             // Use setValue method
             // to update all fields
             field.setValue(value);
 
+            // Add remove button
+            this.addRemoveButton(field);
+
             this.add(field);
         }
+    },
+
+    // Create a field from given type
+    createField: function(type, label)
+    {
+        switch(type)
+        {
+            case 'title':
+            case 'subtitle':
+                return this.createCustomTextField(type, label);
+            case 'text':
+            case 'story':
+            case 'left_column':
+            case 'right_column':
+                return this.createCustomDisplayField(type, label);
+            case 'picture':
+            case 'left_picture':
+            case 'right_picture':
+                return this.createCustomPictureField(type, label);
+            case 'movie':
+            case 'left_movie':
+            case 'right_movie':
+                return this.createCustomMovieField(type, label);
+            case 'chart':
+                return this.createCustomChartEditor(type, label);
+            default: return;
+        }
+    },
+
+    // Remove field from container
+    // and update all indexes
+    removeField: function(field)
+    {
+        // If removed field contains id, then
+        // update label/name of all others fields
+        // with same type
+        if(field.name.search(/_[0-9]+/g) != -1)
+        {
+            var items = this.items.items;
+            var index = 0;
+            Ext.each(items, function(item) {
+                if(item.xtype == field.xtype)
+                {
+                    // Update item index if
+                    // necessary
+                    index++;
+                    item.setIndex(index);
+                }
+            })
+        }
+
+        // Then resave fields
+        this.saveDynamicFields();
     },
 
     // Check if a component with same name exists
@@ -90,19 +114,27 @@ Ext.define('TE.util.CustomDynamicFields', {
         return false;
     },
 
-    // Compute a new index for element of given type
-    computeNewIndex: function(type)
-    {
-        var fields = Ext.ComponentQuery.query('[type=' + type + ']');
-        var previousField = fields[(fields.length - 1)];
-        if(previousField)
-            return (fields.length + 1);
 
-        return 1;
+    // Add remove button to field legend
+    addRemoveButton: function(field)
+    {
+        if (!field.legend.closable) {
+            field.legend.insert(0, Ext.widget('tool', {
+                type: 'close',
+                handler: function() {
+                    if (this.ownerCt) {
+                        this.ownerCt.remove(this, true);
+                    }
+                },
+                scope: field
+            }));
+            field.legend.closable = true;
+        }
     },
 
     // Save all dynamic fields to hidden field
-    saveDynamicFields: function() {
+    saveDynamicFields: function()
+     {
         // Convert object to string
         var string = Ext.encode(this);
 
@@ -112,9 +144,11 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Override toJSON method
-    toJSON: function() {
+    toJSON: function()
+    {
         var json = "{";
         var items = this.items.items;
+
         Ext.each(items, function(item, index) {
             if(item.name != 'dynamicfields')
             {
@@ -139,14 +173,17 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
         });
         json += "}";
+
         return json;
     },
 
     // Override parseJSON method
-    parseJSON: function(json) {
+    parseJSON: function(json)
+    {
         if(!json || json == '')
             return;
 
+        // Decode JSON string
         var items = Ext.decode(json);
 
         for(var name in items)
@@ -165,7 +202,8 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Create a textfield
-    createCustomTextField: function(type, label) {
+    createCustomTextField: function(type, label)
+    {
         // Check if field already exists
         if(this.isExist(type))
             return;
@@ -176,6 +214,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         var field = new TE.util.CustomTextField({
             title: fieldLabel,
             name: fieldName,
+            index:0,
             width: '100%',
             listeners: {
                 change: function() {
@@ -191,12 +230,11 @@ Ext.define('TE.util.CustomDynamicFields', {
     // Create a picture field
     createCustomPictureField: function(type, label)
     {
-        var newIndex = this.computeNewIndex(type);
-        var fieldLabel = label + ' ' + newIndex; // Add id to label
-        var fieldName  = type + '_' + newIndex;  // Add id to name
-
         // Increase index to have unique attributes
         this.img_idx++;
+
+        var fieldLabel = label; // Add id to label
+        var fieldName  = type + '_' + this.img_idx;  // Add id to name
 
         var field = new TE.util.CustomPictureField({
             title: fieldLabel,
@@ -224,12 +262,11 @@ Ext.define('TE.util.CustomDynamicFields', {
     // Create a movie field
     createCustomMovieField: function(type, label)
     {
-        var newIndex = this.computeNewIndex(type);
-        var fieldLabel = label + ' ' + newIndex; // Add id to label
-        var fieldName  = type + '_' + newIndex;  // Add id to name
-
         // Increase index to have unique attributes
         this.movie_idx++;
+
+        var fieldLabel = label;
+        var fieldName  = type + '_' + this.movie_idx;  // Add id to name
 
         var field = new TE.util.CustomMovieField({
             title: fieldLabel,
@@ -253,7 +290,8 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Create display field
-    createCustomDisplayField: function(type, label) {
+    createCustomDisplayField: function(type, label)
+    {
         var fieldLabel = '';
         var fieldName  = '';
 
@@ -263,7 +301,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         {
             // Case of text box, define new label and name
             this.text_idx++;
-            fieldLabel = 'Text ' + this.text_idx;     // Label is equal to 'Text ID' (for instance, 'Text 3')
+            fieldLabel = 'Text';
             fieldName  = type + '_' + this.text_idx;  // Name is equal to TYPE_ID (for instance, 'text_3')
         }
         else
@@ -298,8 +336,8 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Create chart editor
-    createCustomChartEditor: function(type, label) {
-
+    createCustomChartEditor: function(type, label)
+    {
         // Check if field already exists
         if(this.isExist(type))
             return;
@@ -311,6 +349,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         var field = new TE.util.CustomChartEditor({
             name: fieldName,
             title: fieldLabel,
+            index:0,
             width: '100%',
             defaults: {
                 listeners: {

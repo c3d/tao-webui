@@ -4,57 +4,16 @@ Ext.define('TE.util.CustomChartEditor', {
     alias: 'widget.customcharteditor',
     requires:['TE.util.CustomGridEditor'],
     id:"chart_container",
+    index:'',
     name:"chart",
     title:tr('Chart', 'common'),
     collapsible: true,
     collapsed:true,
-    getChartTypes: function()
+
+
+    setIndex: function(index)
     {
-        return [{abbr:"Area",   name:tr('Area', 'common'),},
-                {abbr:"Bar",   name:tr('Bar', 'common')},
-                {abbr:"Line",    name:tr('Line', 'common')},
-                {abbr:"Pie",    name:tr('Pie', 'common')}]
-    },
-
-    getChartStyles: function(chart)
-    {
-        var data=[];
-        switch(chart){
-            case 'Area':
-                data=[{abbr:"Default",   name:tr('Default', 'common')},
-                      {abbr:"Stacked",   name:tr('Stacked', 'common')}];
-                break;
-
-            case 'Bar':
-                data=[{abbr:"Horizontal",   name:tr('Horizontal', 'common')},
-                      {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked', 'common')},
-                      {abbr:"Vertical",   name:tr('Vertical', 'common')},
-                      {abbr:"Vertical_stacked",   name:tr('Vertical stacked', 'common')}];
-                break;
-
-            case 'Line':
-                data=[{abbr:"Line",   name:tr('Line', 'common')},
-                      {abbr:"Line&Point",   name:tr('Line & Point', 'common')},
-                      {abbr:"Point",   name:tr('Point', 'common')}];
-                break;
-
-            case 'Pie':
-                data=[{abbr:"Default",   name:tr('Default', 'common')}];
-                break;
-        }
-
-        return data;
-    },
-
-
-    updateChartStyles: function()
-    {
-        var types  = Ext.getCmp('charttype');
-        var styles = Ext.getCmp('chartstyle');
-        var input  = types.getValue();
-        var data   = this.getChartStyles(input);
-        styles.store.loadData(this.getChartStyles(input));
-        styles.setValue(data[0].abbr);
+        this.index = index;
     },
 
     // Return all values of chart in a json object
@@ -100,6 +59,58 @@ Ext.define('TE.util.CustomChartEditor', {
     toJSON: function()
     {
         return this.getValue();
+    },
+
+     // Get all possible chart types
+    getChartTypes: function()
+    {
+        return [{abbr:"Area",   name:tr('Area', 'common'),},
+                {abbr:"Bar",   name:tr('Bar', 'common')},
+                {abbr:"Line",    name:tr('Line', 'common')},
+                {abbr:"Pie",    name:tr('Pie', 'common')}]
+    },
+
+    // Get all possible chart styles according to
+    // given type
+    getChartStyles: function(type)
+    {
+        var data=[];
+        switch(type){
+            case 'Area':
+                data=[{abbr:"Default",   name:tr('Default', 'common')},
+                      {abbr:"Stacked",   name:tr('Stacked', 'common')}];
+                break;
+
+            case 'Bar':
+                data=[{abbr:"Horizontal",   name:tr('Horizontal', 'common')},
+                      {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked', 'common')},
+                      {abbr:"Vertical",   name:tr('Vertical', 'common')},
+                      {abbr:"Vertical_stacked",   name:tr('Vertical stacked', 'common')}];
+                break;
+
+            case 'Line':
+                data=[{abbr:"Line",   name:tr('Line', 'common')},
+                      {abbr:"Line&Point",   name:tr('Line & Point', 'common')},
+                      {abbr:"Point",   name:tr('Point', 'common')}];
+                break;
+
+            case 'Pie':
+                data=[{abbr:"Default",   name:tr('Default', 'common')}];
+                break;
+        }
+
+        return data;
+    },
+
+    // Update field with chart styles
+    updateChartStyles: function()
+    {
+        var types  = Ext.getCmp('charttype');
+        var styles = Ext.getCmp('chartstyle');
+        var input  = types.getValue();
+        var data   = this.getChartStyles(input);
+        styles.store.loadData(this.getChartStyles(input));
+        styles.setValue(data[0].abbr);
     },
 
     initComponent: function () {
@@ -340,8 +351,9 @@ Ext.define('TE.util.CustomChartEditor', {
             }
         ]
 
-        // As there is no blur event for grid, check when
-        // mousedown event is outside the grid.
+        // As blur event didn't work for grid, we check when
+        // mousedown event is outside the grid to
+        // simulate it and unfocus all cells.
         Ext.getDoc().on("mousedown", function(e) {
             var chartgrid  = Ext.getCmp('chartgrid');
             var chart      = Ext.getCmp('chart_container');

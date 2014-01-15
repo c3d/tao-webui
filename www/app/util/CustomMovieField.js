@@ -51,7 +51,24 @@ Ext.define('TE.util.CustomMovieField', {
         });
     },
 
-    // Return all values of chart in a json object
+    // Update index of fieldset
+    setIndex: function(index)
+    {
+        var me = this;
+        me.index = index;
+
+        // We need also to update fields names as they depends
+        // of the index
+        Ext.each(me.items.items, function(item)
+        {
+            // Get name part without ID
+            var name = item.name.replace(/_[0-9]+/g,'');
+            // Update field name
+            item.name = name + me.separator + me.index;
+        });
+    },
+
+    // Return all fields values in a json object
     getValue: function()
     {
         var result = '{';
