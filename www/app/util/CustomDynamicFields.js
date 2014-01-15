@@ -2,7 +2,8 @@ Ext.define('TE.util.CustomDynamicFields', {
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_customdynamicfields',
     requires: ["TE.util.CustomPictureField",
-               "TE.util.CustomMovieField"],
+               "TE.util.CustomMovieField",
+               "TE.util.CustomTextField"],
     id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
@@ -20,6 +21,13 @@ Ext.define('TE.util.CustomDynamicFields', {
                 }
             }
     }],
+    listeners: {
+        remove: function()
+        {
+            // Need update if a field has been removed
+            this.saveDynamicFields();
+        }
+    },
     text_idx:0,
     number_idx:0,
     img_idx:0,
@@ -27,34 +35,70 @@ Ext.define('TE.util.CustomDynamicFields', {
     // Add new field to this container
     addField: function(type, label, value)
     {
+        var field;
         switch(type)
         {
             case 'title':
             case 'subtitle':
-                this.createTextField(type, label, value);
+                field = this.createCustomTextField(type, label);
                 break;
             case 'text':
             case 'story':
             case 'left_column':
             case 'right_column':
-                this.createCustomDisplayField(type, label, value);
+                field = this.createCustomDisplayField(type, label);
                 break;
             case 'picture':
             case 'left_picture':
             case 'right_picture':
-                this.createCustomPictureField(type, label, value);
+                field = this.createCustomPictureField(type, label);
                 break;
             case 'movie':
             case 'left_movie':
             case 'right_movie':
-                this.createCustomMovieField(type, label, value);
+                field = this.createCustomMovieField(type, label);
                 break;
             case 'chart':
-                this.createCustomChartEditor(type, label, value);
+                field = this.createCustomChartEditor(type, label);
                break;
             default: break;
         }
 
+        if(field)
+        {
+            // Use setValue method
+            // to update all fields
+            field.setValue(value);
+
+            this.add(field);
+        }
+    },
+
+    // Check if a component with same name exists
+    isExist: function(name)
+    {
+        // Get all fields with same name
+        var fields = Ext.ComponentQuery.query('[name='+ name +']')
+
+        if(fields.length >= 1)
+        {
+            // If there is already at least a
+            //  field defined, then focus it
+            fields[0].focus();
+            return true;
+        }
+        return false;
+    },
+
+    // Compute a new index for element of given type
+    computeNewIndex: function(type)
+    {
+        var fields = Ext.ComponentQuery.query('[type=' + type + ']');
+        var previousField = fields[(fields.length - 1)];
+        if(previousField)
+            return (fields.length + 1);
+
+        return 1;
     },
 
     // Save all dynamic fields to hidden field
@@ -102,6 +146,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     parseJSON: function(json) {
         if(!json || json == '')
             return;
+
         var items = Ext.decode(json);
 
         for(var name in items)
@@ -120,7 +165,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Create a textfield
-    createTextField: function(type, label, value) {
+    createCustomTextField: function(type, label) {
         // Check if field already exists
         if(this.isExist(type))
             return;
@@ -128,25 +173,23 @@ Ext.define('TE.util.CustomDynamicFields', {
         var fieldLabel = label; // Use same label
         var fieldName  = type;  // Use type as name
 
-        var field = new Ext.form.field.Text({
-            fieldLabel: fieldLabel,
+        var field = new TE.util.CustomTextField({
+            title: fieldLabel,
             name: fieldName,
-            labelAlign: 'top',
             width: '100%',
-            value: value,
             listeners: {
                 change: function() {
                     // Save when field change
-                    this.ownerCt.saveDynamicFields();
-                }
+                    Ext.getCmp("dynamic").saveDynamicFields();
+                },
             }
         });
 
-        this.add(field);
+        return field;
     },
 
     // Create a picture field
-    createCustomPictureField: function(type, label, value)
+    createCustomPictureField: function(type, label)
     {
         var newIndex = this.computeNewIndex(type);
         var fieldLabel = label + ' ' + newIndex; // Add id to label
@@ -164,25 +207,22 @@ Ext.define('TE.util.CustomDynamicFields', {
             type:type,
             defaults: {
                 listeners: {
-                    change: function(field, newVal, oldVal) {
+                    change: function() {
                         // Save when all fields change
                         // (except legend and datasets fields)
                         Ext.getCmp("dynamic").saveDynamicFields();
                     },
                 },
             },
+
         });
 
-        this.add(field);
-
-        // Use setValue method
-        // to update all fields
-        field.setValue(value);
+        return field;
     },
 
 
     // Create a movie field
-    createCustomMovieField: function(type, label, value)
+    createCustomMovieField: function(type, label)
     {
         var newIndex = this.computeNewIndex(type);
         var fieldLabel = label + ' ' + newIndex; // Add id to label
@@ -200,7 +240,7 @@ Ext.define('TE.util.CustomDynamicFields', {
             type:type,
             defaults: {
                 listeners: {
-                    change: function(field, newVal, oldVal) {
+                    change: function() {
                         // Save when all fields change
                         // (except legend and datasets fields)
                         Ext.getCmp("dynamic").saveDynamicFields();
@@ -209,15 +249,11 @@ Ext.define('TE.util.CustomDynamicFields', {
             },
         });
 
-        this.add(field);
-
-        // Use setValue method
-        // to update all fields
-        field.setValue(value);
+        return field;
     },
 
     // Create display field
-    createCustomDisplayField: function(type, label, value) {
+    createCustomDisplayField: function(type, label) {
         var fieldLabel = '';
         var fieldName  = '';
 
@@ -245,11 +281,10 @@ Ext.define('TE.util.CustomDynamicFields', {
             title: fieldLabel,
             name: fieldName,
             width: '100%',
-            value:value,
             listeners: {
                 change: function() {
                     // Save when field change
-                    this.ownerCt.saveDynamicFields();
+                    Ext.getCmp("dynamic").saveDynamicFields();
                 },
                 render: function(f) {
                     // Fire click in order to display field in the center pane
@@ -258,13 +293,12 @@ Ext.define('TE.util.CustomDynamicFields', {
                 }
             }
         });
-        this.add(field);
 
-        field.setValue(value);
+        return field;
     },
 
     // Create chart editor
-    createCustomChartEditor: function(type, label, value) {
+    createCustomChartEditor: function(type, label) {
 
         // Check if field already exists
         if(this.isExist(type))
@@ -280,7 +314,7 @@ Ext.define('TE.util.CustomDynamicFields', {
             width: '100%',
             defaults: {
                 listeners: {
-                    change: function(field, newVal, oldVal) {
+                    change: function() {
                         // Save when all fields change
                         // (except legend and datasets fields)
                         Ext.getCmp("dynamic").saveDynamicFields();
@@ -298,8 +332,6 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
         });
 
-        this.add(field);
-
         // Don't know why but need to redefine plugin
         // of chart grid otherwise edit event is not fired
         var grid = Ext.getCmp("chartgrid");
@@ -313,35 +345,8 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
         })];
 
-        // Use setValue method
-        // to update all fields
-        field.setValue(value);
+        return field;
     },
 
-    // Check if a component with same name exists
-    isExist: function(name)
-    {
-        // Get all fields with same name
-        var fields = Ext.ComponentQuery.query('[name='+ name +']')
 
-        if(fields.length >= 1)
-        {
-            // If there is already at least a
-            //  field defined, then focus it
-            fields[0].focus();
-            return true;
-        }
-        return false;
-    },
-
-    // Compute a new index for element of given type
-    computeNewIndex: function(type)
-    {
-        var fields = Ext.ComponentQuery.query('[type=' + type + ']');
-        var previousField = fields[(fields.length - 1)];
-        if(previousField)
-            return (fields.length + 1);
-
-        return 1;
-    }
 });

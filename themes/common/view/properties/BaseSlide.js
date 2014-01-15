@@ -1,5 +1,10 @@
 Ext.define('TE.themes.common.view.properties.BaseSlide', {
-    requires: ['TE.util.CustomHtmlEditor', 'TE.util.CustomDisplayField', 'TE.util.CustomChartEditor', 'TE.util.CustomDynamicFields', 'TE.util.CustomPictureField' ],
+    requires: ['TE.util.CustomHtmlEditor',
+               'TE.util.CustomDisplayField',
+               'TE.util.CustomChartEditor',
+               'TE.util.CustomDynamicFields',
+               'TE.util.CustomPictureField',
+               'TE.util.CustomTextField' ],
     extend: 'Ext.Container',
 
     initComponent: function(itemsBefore) {
@@ -19,12 +24,10 @@ Ext.define('TE.themes.common.view.properties.BaseSlide', {
 		},
                 items: itemsBefore.concat([
                     {
-                        xtype: 'textfield',
+                        xtype: 'te_textfield',
                         name: 'name',
-                        allowBlank: false,
                         vtype: 'pagename',
-                        msgTarget: 'under',
-                        fieldLabel: tr('Page name', 'common')
+                        title: tr('Page name', 'common')
                     },
                     {
                         xtype: 'te_customdynamicfields',
