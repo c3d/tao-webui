@@ -145,6 +145,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 name: 'charttype',
                 id:'charttype',
                 anchor:'100%',
+                value:'Bar',
                 fieldLabel: tr('Chart type', 'common'),
                 labelAlign: 'top',
                 listeners: {
@@ -167,6 +168,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 name: 'chartstyle',
                 id:'chartstyle',
                 anchor:'100%',
+                value:'Vertical',
                 fieldLabel: tr('Chart style', 'common'),
                 labelAlign: 'top',
             },
