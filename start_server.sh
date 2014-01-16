@@ -7,7 +7,7 @@ error() {
   exit
 }
 
-[ -e node_modules ] || npm install
+[ -e "$SCRIPTPATH/node_modules" ] || ( cd "$SCRIPTPATH" && npm install )
 [ -e "$SCRIPTPATH/www/ext-4" ] || error "ExtJS 4 not found under www/ext-4. Please install it from http://www.sencha.com/products/extjs/download."
 
 #export PORT=3000
