@@ -14,6 +14,7 @@ var async = require('async');
 var querystring = require('querystring');
 
 var VERBOSE = false;
+var CONVERT_AND_EXIT = false;
 var token = null;
 
 // Process command line
@@ -23,7 +24,7 @@ for (var i = 2; i < argv.length; i++)
     var arg = argv[i];
     if (arg === '-h') {
         console.log('Usage: ' + argv[0] + ' ' + argv[1] +
-                    ' [-v] [-t token] [/path/to/document/directory | /path/to/ddd/file]');
+                    ' [-v] [-t token | -c] [/path/to/document/directory | /path/to/ddd/file]');
         console.log('\nOptions:');
         console.log('    -v    Verbose output');
         console.log('    -t    Set security token. Client should connect to http://<host>/?token=<token>.');
@@ -32,6 +33,7 @@ for (var i = 2; i < argv.length; i++)
         console.log('          Requests void of the security token are rejected with HTTP status 401.');
         console.log('          A request to the home page with the token in the query string is redirected');
         console.log('          to the same URL with the \'token\' parameter removed (and the cookie set).');
+        console.log('    -c    Convert JSON file to DDD and exit.');
         console.log('\nIf the path to an existing directory is given, the server will');
         console.log('create doc.ddd in there. Otherwise the path is interpreted as a');
         console.log('file name and the server will attempt to save the DDD code');
@@ -46,6 +48,8 @@ for (var i = 2; i < argv.length; i++)
             console.log('Missing security token value');
             return 1;
         }
+    } else if (arg == '-c') {
+        CONVERT_AND_EXIT = true;
     } else if (arg.indexOf('-') === 0) {
         console.log('Unknown option: ' + arg);
         return 1;
@@ -70,9 +74,6 @@ if (fs.existsSync(DOC_DIR) && fs.statSync(DOC_DIR).isDirectory()) {
     }
 }
 verbose('Document: ' + DOC_DIR + '/' + DOC_FILENAME);
-if (!fs.existsSync(docPath())) {
-   fs.writeFileSync(docPath(), 'nil\n');
-}
 
 // TEST mode is enabled when no document path (or the path to the test document)
 // is given on the command line.
@@ -93,6 +94,20 @@ if (TEST_MODE) {
     preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
 }
 
+// Data loaded from/saved to JSON files
+var cached = {
+    pages: {
+        pages: null,
+        dddmd5: null // overwrite empty or 'nil' file only (except TEST_MODE)
+    },
+    resources: {
+        resources: null
+    }
+};
+
+var exporter = [];
+var forceReload = true; // Do not reuse files from cache after restart
+
 function docPath() {
     return DOC_DIR + '/' + DOC_FILENAME;
 }
@@ -110,6 +125,24 @@ function jsonFilePath(name, saving)
         default:
             throw('Unexpected file name');
     }
+}
+
+if (CONVERT_AND_EXIT === true) {
+    verbose('Converting: ' + jsonFilePath('pages') + " to " + docPath());
+
+    getData('pages', function(err, pages) {
+        writeTaoDocument(pages, 'en', function(err, sum) {
+            var status = 0;
+            if (err) {
+                console.log(err);
+                status = 1;
+            }
+            process.exit(status);
+        }, true /* overwrite */);
+    });
+    return;
+} else if (!fs.existsSync(docPath())) {
+   fs.writeFileSync(docPath(), 'nil\n');
 }
 
 // Read commands from stdin
@@ -552,17 +585,6 @@ server.listen(currentPort);
 
 // Helpers
 
-// Data loaded from/saved to JSON files
-var cached = {
-    pages: {
-        pages: null,
-        dddmd5: null // overwrite empty or 'nil' file only (except TEST_MODE)
-    },
-    resources: {
-        resources: null
-    }
-};
-
 // Read and cache JSON file (name = 'pages' or 'resources')
 // Example: getData('pages', function(error, pages) { ... } )
 function getData(name, callback)
@@ -701,8 +723,6 @@ function deleteResourceFile(type, name, callback)
     }
 }
 
-var exporter = [];
-var forceReload = true; // Do not reuse files from cache after restart
 // callback(err [, sum])
 function writeTaoDocument(pages, lang, callback, overwrite)
 {
