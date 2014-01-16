@@ -395,10 +395,6 @@ function generateTitleSlide(Kind, Theme)
             ddd += '    title\n';
             ddd += '        text "' + util.escape(page.title) + '"\n';
         }
-        else
-        {
-            ddd += '    title text page_label\n';
-        }
         if (page.subtitle != '')
         {
             ddd += '    subtitle\n';
