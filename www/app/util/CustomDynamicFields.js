@@ -29,7 +29,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Add new field to this container
-    addField: function(type, label, value)
+    addField: function(type, label, value, collapse)
     {
         var field = this.createField(type, label);
         if(field)
@@ -42,6 +42,10 @@ Ext.define('TE.util.CustomDynamicFields', {
 
             // Add remove button
             this.addRemoveButton(field);
+
+            // Expand fieldset if needed (first add)
+            if(!collapse)
+                field.expand();
         }
     },
 
@@ -196,7 +200,7 @@ Ext.define('TE.util.CustomDynamicFields', {
                 // // Get correct field label from menu 'Add...'
                 var label = Ext.ComponentQuery.query('[id='+ type +']')[0].text;
                 // // Add field
-                this.addField(type, label, value);
+                this.addField(type, label, value, true);
             }
         }
     },
