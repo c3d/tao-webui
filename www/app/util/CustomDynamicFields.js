@@ -34,14 +34,14 @@ Ext.define('TE.util.CustomDynamicFields', {
         var field = this.createField(type, label);
         if(field)
         {
+            this.add(field);
+
             // Use setValue method
             // to update all fields
             field.setValue(value);
 
             // Add remove button
             this.addRemoveButton(field);
-
-            this.add(field);
         }
     },
 
