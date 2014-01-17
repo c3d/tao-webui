@@ -1,7 +1,7 @@
 // ============================================================================
-// 
+//
 //    Standard slide structure
-// 
+//
 // ============================================================================
 
 var util = require('./util');
@@ -282,7 +282,6 @@ function generateMovieSlide(Theme)
         if (hasMovie)
             ddd += '    on "pageexit",\n' +
                    '        movie_drop "' + movie + '"\n';
-        
         return ddd;
     }
 }
@@ -371,6 +370,98 @@ function generateBaseSlide(Theme)
             ddd += '        image ' + page.rpicx + ', ' + page.rpicy + ', ' + page.rpicscale + '%, ' + page.rpicscale + '%, "' + page.right_picture + '"\n';
             empty = false;
         }
+
+        if(page.chartdata != '')
+        {
+            var dataIndexes = ['a', 'b', 'c', 'd'];
+
+            // Use page name as id for our chart (as we have only one chart per page for the moment)
+            var chartid = util.escape(page.name);
+            ddd += '    picture\n';
+            ddd += '        chart_current "' + chartid + '"\n';
+            ddd += '        once\n';
+            ddd += '            chart_reset\n';
+
+            if(page.charttitle != '')
+                ddd += '            chart_set_title "' + util.escape(page.charttitle) + '"\n';
+
+            ddd += '            chart_set_style "' + page.chartstyle.toLowerCase() + '"\n';
+
+            // Parse our chart data
+            var data = JSON.parse(page.chartdata);
+            for(var i = 0; i < data.length; i++)
+            {
+                for(var j = 0; j < dataIndexes.length; j++)
+                {
+                    var index = dataIndexes[j];
+                    var value = data[i][index];
+                    if(value == parseFloat(value)) // Check that value is really a number
+                        ddd += '            chart_push_data ' + (j + 1) + ', ' + data[i][index] + '\n';
+                }
+            }
+
+            if(page.chartxlabel != '')
+                ddd += '            chart_set_xlabel "' + util.escape(page.chartxlabel) + '"\n';
+            if(page.chartylabel != '')
+                ddd += '            chart_set_ylabel "' + util.escape(page.chartylabel) + '"\n';
+
+            if(page.chartlegend != '')
+            {
+                // Parse chart legend indexes
+                var indexes = page.chartlegend.split('$');
+                for(var i = 1; i < indexes.length; i+=2)
+                {
+                    var col = indexes[i];
+                    var row = indexes[i+1];
+                    if(col && row)
+                    {
+                        // Remove semi-colons
+                        col = col.replace(';', '').toLowerCase();
+                        row = row.replace(';', '');
+
+                        // Check that properties exist
+                        if(data.hasOwnProperty(row - 1) && data[row-1].hasOwnProperty(col))
+                        {
+                            var item = data[row - 1][col];
+                            if(item)
+                                ddd += '            chart_set_legend ' + (i + 1)/2 + ', "' + util.escape(item) + '"\n';
+                        }
+                    }
+                }
+            }
+
+            if(page.charttype)
+                ddd += '            chart_set_type "' + page.charttype.toLowerCase() + '"\n';
+
+            // If user has given datasets, then draw it
+            // Otherwise draw all datasets
+            if(page.chartdatasets != '')
+            {
+                // Parse datasets given by user and save it as a XL array ({1,2,etc.})
+                var datasets = '';
+                var datasetsIndexes = page.chartdatasets.split(';');
+                for(var i = 0; i < datasetsIndexes.length; i++)
+                {
+                    var datasetNumber = dataIndexes.indexOf(datasetsIndexes[i].toLowerCase()) + 1;
+                    if(datasetNumber > 0)
+                    {
+                        if(datasets == '')
+                            datasets += datasetNumber;
+                        else
+                            datasets += ',' + datasetNumber;
+                    }
+                }
+
+                // Use primitive which draw only given datasets
+                ddd += '        chart ' + datasets + '\n';
+            }
+            else
+            {
+                // Use primitive which draw all datasets
+                ddd += '        chart \n';
+            }
+        }
+
         if (empty)
             ddd += '    nil\n';
         return ddd;

@@ -39,7 +39,6 @@ Ext.define('TE.controller.PageControllerBase', {
 
         var record = form.getRecord();
         var values = form.getValues();
-        
         record.set(values);
         if (record.dirty) {
             me.getCenterpane().fireEvent('saving');

@@ -17,7 +17,7 @@ Ext.define('TE.tree.PageList', {
         store: 'Pages',
         id: 'page',
         autoScroll: false,
-        itemSelector: '.page-container',
+        itemSelector: '.taopage-container',
         prepareData : function(data, recordIndex, record ){
             // Add image url to the diplayed data
             var img = Ext.create(record.getPageTemplateViewClass()).image;
@@ -25,12 +25,12 @@ Ext.define('TE.tree.PageList', {
             return data;
         },
         tpl: [
-            '<div class="page-wrap">',
+            '<div class="taopage-wrap">',
             '<tpl for=".">',
-            '<div class="page-container">',
-            '<div class="page">',
-            '<div class="page-img"><img src="{img}"/></div>',
-            '<div class="page-name">{[xindex]} - {name}</div>',
+            '<div class="taopage-container">',
+            '<div class="taopage">',
+            '<div class="taopage-img"><img src="{img}"/></div>',
+            '<div class="taopage-named">{[xindex]} - {name}</div>',
             '</div>',
             '</div>',
             '</tpl>',
@@ -107,5 +107,3 @@ Ext.define('TE.tree.PageList', {
         this.callParent(arguments);
     },
 });
-
-

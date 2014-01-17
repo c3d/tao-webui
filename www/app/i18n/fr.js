@@ -1,6 +1,7 @@
 Ext.define('TE.i18n.fr', {
 
     translations: {
+        'Add':'Ajouter',
         'Add file...': 'Ajouter un fichier...',
         'Add image file': 'Ajouter un fichier image',
         'Add image from URL': 'Ajouter une image (URL)',
@@ -39,10 +40,12 @@ Ext.define('TE.i18n.fr', {
         'Pages': null,
         'Page name': 'Nom de la page',
         'Path/URL': 'Chemin/URL',
+        'Please select cells in the grid above...':'Veuillez sélectionner des cellules dans la tableau ci-dessus...',
         'Properties': 'Propriétés',
         'Layout': 'Positionnement',
         'Preview': 'Aperçu',
         'Overwrite': 'Remplacer',
+        'Remove':'Supprimer',
         'Save': 'Enregistrer',
         'Save changes (Ctrl+S)': 'Enregistrer les modifications (Ctrl+S)',
         'Saved': 'Enregistré',
