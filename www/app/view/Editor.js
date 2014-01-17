@@ -70,44 +70,14 @@ Ext.define('TE.view.Editor', {
                         }
                     },
                     {
+                        id:'picture',
                         text: tr('Picture'),
-                        menu: { //  submenu
-                            items: [
-                                {
-                                    id:'picture',
-                                    text: tr('Picture'),
-                                    action: 'addField'
-                                }, {
-                                    id:'left_picture',
-                                    text: tr('Left picture'),
-                                    action: 'addField'
-                                }, {
-                                    id:'right_picture',
-                                    text: tr('Right picture'),
-                                    action: 'addField'
-                                }
-                            ]
-                        }
+                        action: 'addField'
                     },
                     {
+                        id:'movie',
                         text: tr('Movie'),
-                        menu: { //  submenu
-                            items: [
-                                {
-                                    id:'movie',
-                                    text: tr('Movie'),
-                                    action: 'addField'
-                                }, {
-                                    id:'left_movie',
-                                    text: tr('Left movie'),
-                                    action: 'addField'
-                                }, {
-                                    id:'right_movie',
-                                    text: tr('Right movie'),
-                                    action: 'addField'
-                                }
-                            ]
-                        }
+                        action: 'addField'
                     },
                     {
                         id:'chart',

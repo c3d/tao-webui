@@ -165,28 +165,18 @@ function emitPicture(kind, picture, indent)
 }
 
 
-function emitPicturesWithType(page, indent, type, filter)
-{
-    var ddd = '';
-    var pictures = util.filterJSON(page, filter);
-    for(var i = 0; i < pictures.length; i++)
-    {
-        var picture = pictures[i];
-        if(picture)
-            ddd += emitPicture(type, picture, indent);
-    }
-    return ddd;
-}
-
-
 function emitPictures(page, indent)
 {
     var ddd = '';
 
-    // Emit all pictures according to their types (normal, left, right);
-    ddd += emitPicturesWithType(page, indent, 'picture', '^picture');
-    ddd += emitPicturesWithType(page, indent, 'left_picture', '^left_picture');
-    ddd += emitPicturesWithType(page, indent, 'right_picture', '^right_picture');
+    // Get all pictures
+    var pictures = util.filterJSON(page, '^picture');
+    for(var i = 0; i < pictures.length; i++)
+    {
+        var picture = pictures[i];
+        if(picture)
+            ddd += emitPicture('picture', picture, indent);
+    }
 
     return ddd;
 }
@@ -221,7 +211,7 @@ function emitMovie(kind, movie, indent)
 }
 
 
-function emitMoviesWithType(page, indent, type, filter)
+function emitMoviesWithType(page, indent, filter)
 {
     var ddd = '';
     var movies = util.filterJSON(page, filter);
@@ -229,7 +219,7 @@ function emitMoviesWithType(page, indent, type, filter)
     {
         var movie = movies[i];
         if(movie)
-            ddd += emitMovie(type, movie, indent);
+            ddd += emitMovie('picture', movie, indent);
     }
     return ddd;
 }
@@ -239,10 +229,14 @@ function emitMovies(page, indent)
 {
     var ddd = '';
 
-    // Emit all movies according to their types (normal, left, right);
-    ddd += emitMoviesWithType(page, indent, 'picture', '^movie');
-    ddd += emitMoviesWithType(page, indent, 'left_picture', '^left_movie');
-    ddd += emitMoviesWithType(page, indent, 'right_picture', '^right_movie');
+    // Get all movies
+    var movies = util.filterJSON(page, '^movie');
+    for(var i = 0; i < movies.length; i++)
+    {
+        var movie = movies[i];
+        if(movie)
+            ddd += emitMovie('picture', movie, indent);
+    }
 
     return ddd;
 }
