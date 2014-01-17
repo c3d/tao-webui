@@ -60,6 +60,7 @@ Ext.define('TE.i18n.fr', {
         'Select video': 'Choisissez une vidéo',
         'Subtitle': 'Sous-titre',
         'Text': 'Texte',
+        'Text box': 'Zone de Texte',
         'Theme default': 'Police du thème',
         'Themes': 'Thèmes',
         'This name is already used': 'Ce nom est déjà utilisé',

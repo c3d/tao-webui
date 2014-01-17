@@ -47,6 +47,7 @@ Ext.define('TE.view.Editor', {
                     }
                     ,{
                         text: tr('Text'),
+                        action: 'addField',
                         menu: { //  submenu
                             items: [
                                 {
@@ -63,7 +64,7 @@ Ext.define('TE.view.Editor', {
                                     action: 'addField'
                                 }, {
                                     id:'text',
-                                    text: tr('Other text'),
+                                    text: tr('Text box'),
                                     action: 'addField'
                                 }
                             ]

@@ -67,7 +67,8 @@ Ext.define('TE.util.CustomDynamicFields', {
                 return this.createCustomMovieField(type, label);
             case 'chart':
                 return this.createCustomChartEditor(type, label);
-            default: return;
+            default:
+                return this.createCustomDisplayField('story', tr('Main text'));
         }
     },
 
