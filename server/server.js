@@ -136,6 +136,8 @@ if (CONVERT_AND_EXIT === true) {
             if (err) {
                 console.log(err);
                 status = 1;
+            } else {
+                savePagesJSON(pages, null);
             }
             process.exit(status);
         }, true /* overwrite */);
