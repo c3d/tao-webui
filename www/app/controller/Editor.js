@@ -56,7 +56,8 @@ Ext.define('TE.controller.Editor', {
                 beforedrop: this.dragAndDropPages
             },
             'te_displayfield': {
-                click: this.displayFieldClicked
+                click: this.displayFieldClicked,
+                removed: this.displayFieldRemoved
             },
             '#ctx-menu-delete-page': {
                 click: this.deletePage
@@ -242,6 +243,7 @@ Ext.define('TE.controller.Editor', {
         var cp = this.getCenterpane();
         cp.removeAll();
         var view = Ext.create('TE.util.CustomHtmlEditor', {
+            name: displayField.name,
             value: displayField.getValue(),
             layout: 'fit',
             sourceField: displayField
@@ -256,6 +258,17 @@ Ext.define('TE.controller.Editor', {
                 displayField.setValue(editor.getContent());
             });
         });
+    },
+
+    displayFieldRemoved: function(displayField) {
+        var cp = this.getCenterpane();
+        var view = cp.items.items[0]; // Get view
+        if(view)
+        {
+            // Remove view from center pane if field has been deleted
+            if(view.name == displayField.name)
+                cp.removeAll();
+        }
     },
 
     _updatePageButtons: function() {

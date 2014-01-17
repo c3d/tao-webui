@@ -30,6 +30,9 @@ Ext.define('TE.util.CustomDisplayField', {
         render: function(f) {
             f.getEl().on('click',
                          function() { this.fireEvent('click', f); }, f);
+
+            f.getEl().on('removed',
+                         function() { this.fireEvent('removed', f); }, f);
         },
     },
 
