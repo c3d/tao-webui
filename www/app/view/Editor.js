@@ -32,83 +32,78 @@ Ext.define('TE.view.Editor', {
         xtype: 'toolbar',
         region: 'south',
         items: [{
-                text : 'Add...',
+                text: tr('Add'),
                 menu : {
                     xtype: 'menu',
-                    items : [{
-                        text: 'Slide components',
-                        menu: { //  submenu
-                            items: [
-                                {
-                                    id:'title',
-                                    text: 'Title',
-                                    action: 'addField'
-                                }, {
-                                    id:'subtitle',
-                                    text: 'Subtitle',
-                                    action: 'addField'
-                                }
-                            ]
-                        }
-                    },{
-                        text: 'Text',
+                    items : [
+                    {
+                        id:'title',
+                        text: tr('Title'),
+                        action: 'addField'
+                    }, {
+                        id:'subtitle',
+                        text: tr('Subtitle'),
+                        action: 'addField'
+                    }
+                    ,{
+                        text: tr('Text'),
                         menu: { //  submenu
                             items: [
                                 {
                                     id:'story',
-                                    text: tr('Main text', 'common'),
+                                    text: tr('Main text'),
                                     action: 'addField'
                                 }, {
                                     id:'left_column',
-                                    text: tr('Left column text', 'common'),
+                                    text: tr('Left column text'),
                                     action: 'addField'
                                 }, {
                                     id:'right_column',
-                                    text: tr('Right column text', 'common'),
+                                    text: tr('Right column text'),
                                     action: 'addField'
                                 }, {
                                     id:'text',
-                                    text: tr('Other text', 'common'),
+                                    text: tr('Other text'),
                                     action: 'addField'
                                 }
                             ]
                         }
                     },
                     {
-                        text: 'Picture',
+                        text: tr('Picture'),
                         menu: { //  submenu
                             items: [
                                 {
                                     id:'picture',
-                                    text: tr('Picture', 'common'),
+                                    text: tr('Picture'),
                                     action: 'addField'
                                 }, {
                                     id:'left_picture',
-                                    text: tr('Left picture', 'common'),
+                                    text: tr('Left picture'),
                                     action: 'addField'
                                 }, {
                                     id:'right_picture',
-                                    text: tr('Right picture', 'common'),
+                                    text: tr('Right picture'),
                                     action: 'addField'
                                 }
                             ]
                         }
                     },
                     {
-                        text: 'Movie',
+                        text: tr('Movie'),
                         menu: { //  submenu
                             items: [
                                 {
                                     id:'movie',
-                                    text: tr('Movie', 'common'),
+                                    text: tr('Movie'),
                                     action: 'addField'
                                 }, {
                                     id:'left_movie',
-                                    text: tr('Left movie', 'common'),
+                                    text: tr('Left movie'),
                                     action: 'addField'
                                 }, {
                                     id:'right_movie',
-                                    text: tr('Right movie', 'common'),
+                                    text: tr('Right movie'),
                                     action: 'addField'
                                 }
                             ]
@@ -116,7 +111,7 @@ Ext.define('TE.view.Editor', {
                     },
                     {
                         id:'chart',
-                        text: tr('Chart', 'common'),
+                        text: tr('Chart'),
                         action: 'addField'
                     }]
                 }
