@@ -267,6 +267,9 @@ function emitChart(page, index, name)
             if(chart.chartstyle && chart.chartstyle != '')
                 ddd += '            chart_set_style "' + chart.chartstyle.toLowerCase() + '"\n';
 
+            if(chart.chartformat && chart.chartformat != '')
+                ddd += '            chart_set_format "' + chart.chartformat + '"\n';
+
             // // Parse our chart data
             var data = JSON.parse(chart.chartdata);
             for(var i = 0; i < data.length; i++)

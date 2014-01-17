@@ -102,6 +102,11 @@ Ext.define('TE.util.CustomChartEditor', {
         return data;
     },
 
+    getChartFormats: function() {
+        return [{abbr:'2D',  name:tr('2D', 'common')},
+                {abbr:'3D',  name:tr('3D', 'common')}];
+    },
+
     // Update field with chart styles
     updateChartStyles: function()
     {
@@ -170,6 +175,24 @@ Ext.define('TE.util.CustomChartEditor', {
                 anchor:'100%',
                 value:'Vertical',
                 fieldLabel: tr('Chart style', 'common'),
+                labelAlign: 'top',
+            },
+            {
+                xtype: 'combobox',
+                store: Ext.create('Ext.data.Store', {
+                    fields: ['abbr', 'name'],
+                    data: this.getChartFormats(),
+                }),
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'abbr',
+                editable: false,
+                autoSelect: true,
+                name: 'chartformat',
+                id:'chartformat',
+                anchor:'100%',
+                value:'2D',
+                fieldLabel: tr('Chart format', 'common'),
                 labelAlign: 'top',
             },
             {
