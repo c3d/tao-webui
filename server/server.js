@@ -817,8 +817,6 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                             emit_columns: s.emitColumns,
                             emit_picture: s.emitPictures,
                             emit_pictures: s.emitPictures,
-                            emit_left:  s.emitLeft,
-                            emit_right: s.emitRight,
                             emit_page: s.emitPage,
 
                             escape: u.escape,

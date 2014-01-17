@@ -346,23 +346,6 @@ function emitChart(page, index, name)
 }
 
 
-function emitLeft(page, indent)
-{
-    var ddd = emitLeftColumn(page, indent);
-    if (page.left_picture)
-        ddd += emitPicture('left_picture', page.left_picture, indent);
-    return ddd;
-}
-
-
-function emitRight(page, indent)
-{
-    var ddd = emitRightColumn(page, indent);
-    if (page.right_picture)
-        ddd += emitPicture('right_picture', page.right_picture, indent);
-    return ddd;
-}
-
 
 function emitPage(page, indent)
 {
@@ -445,7 +428,5 @@ module.exports = {
     emitRightColumn: emitRightColumn,
     emitColumns: emitColumns,
     emitPictures: emitPictures,
-    emitLeft:  emitLeft,
-    emitRight: emitRight,
     emitPage: emitPage
 }
