@@ -20,16 +20,16 @@ Usage
 
  ** Running the debug version
 
-1) ./start_server.sh
+1) ./server.sh
 2) Connect to http://localhost:3000/
 3) Open ./server/test_data/doc.ddd in Tao Presentations
 
-./start_server.sh -h for help.
+./server.sh -h for help.
 
  ** Running the "production" version, replacing the version bundled with Tao Presentations
 
 1) make -f Makefile.all install   # On Windows this assumes you have installed MSys
-2) ./install/start_server.sh
+2) ./install/server.sh
 3) Connect to http://localhost:3000/
 4) Open ./install/server/test_data/doc.ddd in Tao Presentations
 

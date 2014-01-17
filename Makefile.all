@@ -53,7 +53,7 @@ install: deps
 	# Find all OUR .js files, copy them to install but prepend our copyright header
 	find "$(DEST)" -name '*.js' -not -path '$(DEST)/node_modules/*' -and -not -path '$(DEST)/www/ext-4/*' \
                 -exec bash -c "cat js_header.txt \"{}\" >> \"{}_\" && mv \"{}_\" \"{}\"" \;
-	cp start_server.sh "$(DEST)"
+	cp server.sh "$(DEST)"
 
 clean:
 	rm -f js_header.txt
