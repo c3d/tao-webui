@@ -9,9 +9,6 @@ Ext.define('TE.themes.pastel_triangles.view.PageTemplates', {
         var names = [
             'MainTitleSlide',
             'SectionSlide',
-            'Slide',
-            'PictureSlide',
-            'MovieSlide',
             'BaseSlide'
         ];
 

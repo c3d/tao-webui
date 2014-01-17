@@ -9,9 +9,6 @@ Ext.define('TE.themes.seyes.view.PageTemplates', {
         var names = [
             'MainTitleSlide',
             'SectionSlide',
-            'Slide',
-            'PictureSlide',
-            'MovieSlide',
             'BaseSlide'
         ];
 

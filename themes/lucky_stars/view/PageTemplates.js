@@ -9,9 +9,6 @@ Ext.define('TE.themes.lucky_stars.view.PageTemplates', {
         var names = [
             'MainTitleSlide',
             'SectionSlide',
-            'Slide',
-            'PictureSlide',
-            'MovieSlide',
             'BaseSlide',
             'TextCrawl'
         ];

@@ -409,107 +409,6 @@ function generateSectionSlide(Theme)
     return generateTitleSlide('section_slide', Theme)
 }
 
-function generatePictureSlide(Theme)
-{
-    return function (page)
-    {
-        var empty = true;
-        var ddd = '';
-        ddd += util.theme(page.ctx, Theme)
-        ddd += 'picture_slide "' + util.escape(page.name) + '",\n';
-        if (page.picture != '')
-        {
-            ddd += '    locally\n';
-            ddd += '        color "white"\n';
-            ddd += '        image ' + page.picturex + ', ' + page.picturey + ', ' + page.picturescalepercent + '%, ' + page.picturescalepercent + '%, "' + page.picture + '"\n';
-            empty = false;
-        }
-        if (page.left_column && page.left_column !== '')
-        {
-            ddd += '    left_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.left_column, 2);
-            empty = false;
-        }
-        if (page.right_column && page.right_column !== '')
-        {
-            ddd += '    right_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.right_column, 2);
-            empty = false;
-        }
-        if (empty)
-            ddd += '    nil\n';
-        return ddd;
-    }
-}
-
-function generateMovieSlide(Theme)
-{
-    return function (page)
-    {
-        var empty = true;
-        var movie = page.movie;
-        var hasMovie = false;
-        var ddd = '';
-        ddd += util.theme(page.ctx, Theme)
-        ddd += 'picture_slide "' + util.escape(page.name) + '",\n';
-        if (page.movie != '')
-        {
-            if (page.movie.indexOf('://') === -1)
-                movie = 'videos/' + movie;
-            ddd += '    locally\n';
-            ddd += '        color "white"\n';
-            ddd += '        movie ' + page.moviex + ', ' + page.moviey + ', ' + page.moviescalepercent + '%, ' + page.moviescalepercent + '%, "' + movie + '"\n';
-            empty = false;
-            hasMovie = true;
-        }
-        if (page.left_column && page.left_column !== '')
-        {
-            ddd += '    left_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.left_column, 2);
-            empty = false;
-        }
-        if (page.right_column && page.right_column !== '')
-        {
-            ddd += '    right_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.right_column, 2);
-            empty = false;
-        }
-        if (empty)
-            ddd += '    nil\n';
-        if (hasMovie)
-            ddd += '    on "pageexit",\n' +
-                   '        movie_drop "' + movie + '"\n';
-        return ddd;
-    }
-}
-
-function generateSlide(Theme)
-{
-    return function(page)
-    {
-        var empty = true;
-        var ddd = '';
-        ddd += util.theme(page.ctx, Theme)
-        ddd += 'slide "' + util.escape(page.name) + '",\n';
-        if (page.text != '')
-        {
-            ddd += util.htmlToSlideContent(page.text);
-            empty = false;
-        }
-        if (empty)
-            ddd += '    nil\n';
-        return ddd;
-    }
-}
-
 function generateBaseSlide(Theme)
 {
     return function (page)
@@ -538,9 +437,6 @@ module.exports = {
     importHeaders: importHeaders,
     generateMainTitleSlide: generateMainTitleSlide,
     generateSectionSlide: generateSectionSlide,
-    generateSlide: generateSlide,
-    generatePictureSlide: generatePictureSlide,
-    generateMovieSlide: generateMovieSlide,
     generateBaseSlide: generateBaseSlide,
 
     emitTitle: emitTitle,

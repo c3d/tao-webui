@@ -9,9 +9,6 @@ Ext.define('TE.themes.seasons_greetings.view.PageTemplates', {
         var names = [
             'MainTitleSlide',
             'SectionSlide',
-            'Slide',
-            'PictureSlide',
-            'MovieSlide',
             'BaseSlide'
         ];
 
