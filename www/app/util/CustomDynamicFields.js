@@ -140,6 +140,7 @@ Ext.define('TE.util.CustomDynamicFields', {
 
         // Save string in hidden field (as we can't serialize dynamic fields)
         var dynamic = Ext.getCmp('dynamicfields');
+
         dynamic.setValue(string);
     },
 

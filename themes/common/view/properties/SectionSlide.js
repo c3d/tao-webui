@@ -1,6 +1,6 @@
 Ext.define('TE.themes.common.view.properties.SectionSlide', {
     extend: 'Ext.Container',
-
+    requires: ['TE.util.CustomDynamicFields', 'TE.util.CustomTextField', 'TE.util.CustomDisplayField' ],
     initComponent: function(itemsBefore) {
 
         itemsBefore = itemsBefore || [];
@@ -18,22 +18,26 @@ Ext.define('TE.themes.common.view.properties.SectionSlide', {
                 },
                 items: itemsBefore.concat([
                     {
-                        xtype: 'textfield',
+                        xtype: 'te_textfield',
                         name: 'name',
-                        allowBlank: false,
                         vtype: 'pagename',
-                        msgTarget: 'under',
-                        fieldLabel: tr('Page name', 'common')
+                        title: tr('Page name', 'common')
                     },
                     {
-                        xtype: 'textfield',
+                        xtype: 'te_textfield',
                         name: 'title',
-                        fieldLabel: tr('Title', 'common')
+                        vtype: 'pagetitle',
+                        title: tr('Title', 'common')
                     },
                     {
-                        xtype: 'textfield',
+                        xtype: 'te_displayfield',
                         name: 'subtitle',
-                        fieldLabel: tr('Subtitle', 'common')
+                        vtype: 'pagesubtitle',
+                        title: tr('Subtitle', 'common')
+                    },
+                    {
+                        xtype: 'te_customdynamicfields',
+                        name: 'dynamicfields'
                     }
                 ])
             }

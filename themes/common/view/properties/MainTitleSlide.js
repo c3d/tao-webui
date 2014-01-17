@@ -1,5 +1,6 @@
 Ext.define('TE.themes.common.view.properties.MainTitleSlide', {
     extend: 'Ext.Container',
+    requires: ['TE.util.CustomDynamicFields', 'TE.util.CustomTextField', 'TE.util.CustomDisplayField' ],
 
     initComponent: function(itemsBefore) {
 
@@ -19,22 +20,26 @@ Ext.define('TE.themes.common.view.properties.MainTitleSlide', {
                 items: itemsBefore.concat(
                     [
                         {
-                            xtype: 'textfield',
+                            xtype: 'te_textfield',
                             name: 'name',
-                            allowBlank: false,
                             vtype: 'pagename',
-                            msgTarget: 'under',
-                            fieldLabel: tr('Page name', 'common')
+                            title: tr('Page name', 'common')
                         },
                         {
-                            xtype: 'textfield',
+                            xtype: 'te_textfield',
                             name: 'title',
-                            fieldLabel: tr('Title', 'common')
+                            vtype: 'pagetitle',
+                            title: tr('Title', 'common')
                         },
                         {
                             xtype: 'te_displayfield',
                             name: 'subtitle',
+                            vtype: 'pagesubtitle',
                             title: tr('Subtitle', 'common')
+                        },
+                        {
+                            xtype: 'te_customdynamicfields',
+                            name: 'dynamicfields'
                         }
                     ])
             }

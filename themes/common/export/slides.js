@@ -211,20 +211,6 @@ function emitMovie(kind, movie, indent)
 }
 
 
-function emitMoviesWithType(page, indent, filter)
-{
-    var ddd = '';
-    var movies = util.filterJSON(page, filter);
-    for(var i = 0; i < movies.length; i++)
-    {
-        var movie = movies[i];
-        if(movie)
-            ddd += emitMovie('picture', movie, indent);
-    }
-    return ddd;
-}
-
-
 function emitMovies(page, indent)
 {
     var ddd = '';
@@ -379,6 +365,12 @@ function generateTitleSlide(Kind, Theme)
         {
             ddd += '    subtitle\n';
             ddd += util.htmlToSlideContent(page.subtitle, 2);
+        }
+
+        // Emit dynamic fields (texts, pictures, etc)
+        if(page.dynamicfields != '')
+        {
+            ddd += emitDynamicFields(page, '    ');
         }
 
         return ddd;
