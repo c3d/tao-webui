@@ -58,3 +58,12 @@ Chrome/Safari (it gives a empty zone below the page) */
 .x-mask {
     display: none !important;
 }
+
+/* iconCls property of the fieldset */
+.x-tool-close
+{
+    background-image: url('app/resources/images/delete.png') !important;
+    background-position: 0 2px !important;
+    background-size: 75% 75%;
+    background-repeat: no-repeat;
+}

@@ -34,7 +34,7 @@ Ext.define('TE.themes.common.view.properties.MainTitleSlide', {
                         {
                             xtype: 'te_displayfield',
                             name: 'subtitle',
-                            fieldLabel: tr('Subtitle', 'common')
+                            title: tr('Subtitle', 'common')
                         }
                     ])
             }

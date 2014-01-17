@@ -9,6 +9,6 @@ Ext.define('TE.themes.common.model.PictureSlide', {
         { name: 'picturex', type: 'float', defaultValue: 0 },
         { name: 'picturey', type: 'float', defaultValue: 0 },
         // Optional HTML/plain text for right/left columns
-        'leftcolumn', 'rightcolumn'
+        'left_column', 'right_column'
     ]
 })

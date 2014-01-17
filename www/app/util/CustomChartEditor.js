@@ -1,11 +1,67 @@
 
 Ext.define('TE.util.CustomChartEditor', {
-    extend:'Ext.form.FieldContainer',
+    extend:'Ext.form.FieldSet',
     alias: 'widget.customcharteditor',
     requires:['TE.util.CustomGridEditor'],
-    id:"chart",
+    id:"chart_container",
+    index:'',
     name:"chart",
+    title:tr('Chart', 'common'),
+    collapsible: true,
+    collapsed:true,
 
+
+    setIndex: function(index)
+    {
+        this.index = index;
+    },
+
+    // Return all values of chart in a json object
+    getValue: function()
+    {
+        var result = '{';
+        var items = this.items.items;
+        Ext.each(items, function(item, index) {
+            var value = item.value;
+            if(value && value != '')
+            {
+                // Add coma if needed
+                if(result != '{')
+                    result += ',';
+
+                result += '\"' + item.name + '\":' + Ext.encode(value) + '';
+            }
+        });
+        result+='}';
+        return result;
+    },
+
+    // Set all values of chart according to a json object
+    setValue: function(json)
+    {
+        if(!json || json == '')
+            return;
+
+        var fields = this.items.items;
+        for(var idx in fields)
+        {
+            var field = fields[idx];
+            if(json.hasOwnProperty(field.name))
+            {
+                var value = json[field.name];
+                if(value && value != '')
+                    field.setValue(value);
+            }
+        }
+    },
+
+    // Override toJSON method
+    toJSON: function()
+    {
+        return this.getValue();
+    },
+
+     // Get all possible chart types
     getChartTypes: function()
     {
         return [{abbr:"Area",   name:tr('Area', 'common'),},
@@ -14,10 +70,12 @@ Ext.define('TE.util.CustomChartEditor', {
                 {abbr:"Pie",    name:tr('Pie', 'common')}]
     },
 
-    getChartStyles: function(chart)
+    // Get all possible chart styles according to
+    // given type
+    getChartStyles: function(type)
     {
         var data=[];
-        switch(chart){
+        switch(type){
             case 'Area':
                 data=[{abbr:"Default",   name:tr('Default', 'common')},
                       {abbr:"Stacked",   name:tr('Stacked', 'common')}];
@@ -44,7 +102,7 @@ Ext.define('TE.util.CustomChartEditor', {
         return data;
     },
 
-
+    // Update field with chart styles
     updateChartStyles: function()
     {
         var types  = Ext.getCmp('charttype');
@@ -63,10 +121,11 @@ Ext.define('TE.util.CustomChartEditor', {
             {
                 fieldLabel: tr('Chart title', 'common'),
                 name: 'charttitle',
+                id:'charttitle',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
-                value:'chart'
+                value:'chart',
+                anchor:'100%'
             },
             {
                 xtype: 'combobox',
@@ -85,11 +144,13 @@ Ext.define('TE.util.CustomChartEditor', {
                 autoSelect: true,
                 name: 'charttype',
                 id:'charttype',
+                anchor:'100%',
+                value:'Bar',
                 fieldLabel: tr('Chart type', 'common'),
                 labelAlign: 'top',
                 listeners: {
                     select: function(combo, record, index) {
-                        Ext.getCmp('chart').updateChartStyles();
+                        Ext.getCmp('chart_container').updateChartStyles();
                     },
                 },
             },
@@ -106,6 +167,8 @@ Ext.define('TE.util.CustomChartEditor', {
                 autoSelect: true,
                 name: 'chartstyle',
                 id:'chartstyle',
+                anchor:'100%',
+                value:'Vertical',
                 fieldLabel: tr('Chart style', 'common'),
                 labelAlign: 'top',
             },
@@ -115,15 +178,16 @@ Ext.define('TE.util.CustomChartEditor', {
                 id: 'chartxlabel',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: "x-axis",
             },
             {
                 fieldLabel: tr('Chart y-label', 'common'),
                 name: 'chartylabel',
+                id:'chartylabel',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: "y-axis",
             },
             {
@@ -139,6 +203,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 xtype: 'customgrideditor',
                 name:'chartgrid',
                 id:'chartgrid',
+                anchor:'100%',
                 resizable: true,
                 width: 500,
                 maxHeight: 450,
@@ -248,12 +313,17 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'chartlegend',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: tr("Please select cells in the grid above..."),
                 listeners: {
                     focus: function() {
                         // Update last focused item
                         this.ownerCt.lastFocus = this;
+                    },
+                    change: function(){
+                        // Need to fire change event to parent
+                        // As we have redefine listeners
+                        this.ownerCt.fireEvent('change', this.ownerCt);
                     },
                 },
                 regex: /^(\$[A-Za-z]\$([1-9]+)\;)*$/,
@@ -265,12 +335,17 @@ Ext.define('TE.util.CustomChartEditor', {
                 id:'chartdatasets',
                 xtype: 'textfield',
                 labelAlign: 'top',
-                width:'100%',
+                anchor:'100%',
                 emptyText: tr("Please select cells in the grid above..."),
                 listeners: {
                     focus: function() {
                         // Update last focused item
                         this.ownerCt.lastFocus = this;
+                    },
+                    change: function(){
+                        // Need to fire change event to parent
+                        // As we have redefine listeners
+                        this.ownerCt.fireEvent('change', this.ownerCt);
                     },
                 },
                 regex: /^([A-Za-z]\;)*$/,
@@ -278,11 +353,12 @@ Ext.define('TE.util.CustomChartEditor', {
             }
         ]
 
-        // As there is no blur event for grid, check when
-        // mousedown event is outside the grid.
+        // As blur event didn't work for grid, we check when
+        // mousedown event is outside the grid to
+        // simulate it and unfocus all cells.
         Ext.getDoc().on("mousedown", function(e) {
             var chartgrid  = Ext.getCmp('chartgrid');
-            var chart      = Ext.getCmp('chart');
+            var chart      = Ext.getCmp('chart_container');
             if(chart && chart.lastFocus && !e.within(chartgrid.getEl()))
             {
                 chart.lastFocus = null;
@@ -291,5 +367,6 @@ Ext.define('TE.util.CustomChartEditor', {
         });
 
         this.callParent(this);
-    }
+    },
+
 });

@@ -47,13 +47,13 @@ Ext.define('TE.themes.common.view.properties.MovieSlide', {
                     },
                     {
                         xtype: 'te_displayfield',
-                        name: 'leftcolumn',
-                        fieldLabel: tr('Left column text', 'common')
+                        name: 'left_column',
+                        title: tr('Left column text', 'common')
                     },
                     {
                         xtype: 'te_displayfield',
-                        name: 'rightcolumn',
-                        fieldLabel: tr('Right column text', 'common')
+                        name: 'right_column',
+                        title: tr('Right column text', 'common')
                     }
                 ])
             }

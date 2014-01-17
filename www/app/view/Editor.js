@@ -31,7 +31,96 @@ Ext.define('TE.view.Editor', {
     },{
         xtype: 'toolbar',
         region: 'south',
-        items: [
+        items: [{
+                text : 'Add...',
+                menu : {
+                    xtype: 'menu',
+                    items : [{
+                        text: 'Slide components',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'title',
+                                    text: 'Title',
+                                    action: 'addField'
+                                }, {
+                                    id:'subtitle',
+                                    text: 'Subtitle',
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    },{
+                        text: 'Text',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'story',
+                                    text: tr('Main text', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'left_column',
+                                    text: tr('Left column text', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'right_column',
+                                    text: tr('Right column text', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'text',
+                                    text: tr('Other text', 'common'),
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        text: 'Picture',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'picture',
+                                    text: tr('Picture', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'left_picture',
+                                    text: tr('Left picture', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'right_picture',
+                                    text: tr('Right picture', 'common'),
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        text: 'Movie',
+                        menu: { //  submenu
+                            items: [
+                                {
+                                    id:'movie',
+                                    text: tr('Movie', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'left_movie',
+                                    text: tr('Left movie', 'common'),
+                                    action: 'addField'
+                                }, {
+                                    id:'right_movie',
+                                    text: tr('Right movie', 'common'),
+                                    action: 'addField'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        id:'chart',
+                        text: tr('Chart', 'common'),
+                        action: 'addField'
+                    }]
+                }
+             },
             {
                 xtype: 'button',
                 text: tr('Image library') + '...',

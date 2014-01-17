@@ -15,6 +15,19 @@ function decodeHtml(txt)
     return escape(ent.decode(txt));
 }
 
+// Filter json object according to a filter
+function filterJSON(json, filter)
+{
+    var results = [];
+    for(var property in json)
+    {
+        if(json.hasOwnProperty(property))
+            if(property.match(filter))
+                results.push(json[property]);
+    }
+    return results;
+}
+
 var DomToSlideConverter = (function(nindent) {
 
     var indentString = '    ';
@@ -267,7 +280,7 @@ var DomToSlideConverter = (function(nindent) {
             dom.children.length == 1 &&
             dom.children[0].type == 'text')
         {
-            output(currentListSymbol() + 
+            output(currentListSymbol() +
                    ' "' + decodeHtml(dom.children[0].data) + '"\n')
         }
         else
@@ -407,6 +420,7 @@ function theme(ctx, Theme) {
 
 module.exports = {
     escape: escape,
+    filterJSON: filterJSON,
     htmlToSlideContent: htmlToSlideContent,
     theme: theme
 }
