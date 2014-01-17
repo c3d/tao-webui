@@ -371,7 +371,7 @@ function generateBaseSlide(Theme)
             empty = false;
         }
 
-        if(page.chartdata != '')
+        if(page.chartdata && page.chartdata != '')
         {
             var dataIndexes = ['a', 'b', 'c', 'd'];
 
