@@ -165,28 +165,18 @@ function emitPicture(kind, picture, indent)
 }
 
 
-function emitPicturesWithType(page, indent, type, filter)
-{
-    var ddd = '';
-    var pictures = util.filterJSON(page, filter);
-    for(var i = 0; i < pictures.length; i++)
-    {
-        var picture = pictures[i];
-        if(picture)
-            ddd += emitPicture(type, picture, indent);
-    }
-    return ddd;
-}
-
-
 function emitPictures(page, indent)
 {
     var ddd = '';
 
-    // Emit all pictures according to their types (normal, left, right);
-    ddd += emitPicturesWithType(page, indent, 'picture', '^picture');
-    ddd += emitPicturesWithType(page, indent, 'left_picture', '^left_picture');
-    ddd += emitPicturesWithType(page, indent, 'right_picture', '^right_picture');
+    // Get all pictures
+    var pictures = util.filterJSON(page, '^picture');
+    for(var i = 0; i < pictures.length; i++)
+    {
+        var picture = pictures[i];
+        if(picture)
+            ddd += emitPicture('picture', picture, indent);
+    }
 
     return ddd;
 }
@@ -221,28 +211,18 @@ function emitMovie(kind, movie, indent)
 }
 
 
-function emitMoviesWithType(page, indent, type, filter)
-{
-    var ddd = '';
-    var movies = util.filterJSON(page, filter);
-    for(var i = 0; i < movies.length; i++)
-    {
-        var movie = movies[i];
-        if(movie)
-            ddd += emitMovie(type, movie, indent);
-    }
-    return ddd;
-}
-
-
 function emitMovies(page, indent)
 {
     var ddd = '';
 
-    // Emit all movies according to their types (normal, left, right);
-    ddd += emitMoviesWithType(page, indent, 'picture', '^movie');
-    ddd += emitMoviesWithType(page, indent, 'left_picture', '^left_movie');
-    ddd += emitMoviesWithType(page, indent, 'right_picture', '^right_movie');
+    // Get all movies
+    var movies = util.filterJSON(page, '^movie');
+    for(var i = 0; i < movies.length; i++)
+    {
+        var movie = movies[i];
+        if(movie)
+            ddd += emitMovie('picture', movie, indent);
+    }
 
     return ddd;
 }
@@ -272,6 +252,9 @@ function emitChart(page, index, name)
 
             if(chart.chartstyle && chart.chartstyle != '')
                 ddd += '            chart_set_style "' + chart.chartstyle.toLowerCase() + '"\n';
+
+            if(chart.chartformat && chart.chartformat != '')
+                ddd += '            chart_set_format "' + chart.chartformat + '"\n';
 
             // // Parse our chart data
             var data = JSON.parse(chart.chartdata);
@@ -352,23 +335,6 @@ function emitChart(page, index, name)
 }
 
 
-function emitLeft(page, indent)
-{
-    var ddd = emitLeftColumn(page, indent);
-    if (page.left_picture)
-        ddd += emitPicture('left_picture', page.left_picture, indent);
-    return ddd;
-}
-
-
-function emitRight(page, indent)
-{
-    var ddd = emitRightColumn(page, indent);
-    if (page.right_picture)
-        ddd += emitPicture('right_picture', page.right_picture, indent);
-    return ddd;
-}
-
 
 function emitPage(page, indent)
 {
@@ -401,6 +367,12 @@ function generateTitleSlide(Kind, Theme)
             ddd += util.htmlToSlideContent(page.subtitle, 2);
         }
 
+        // Emit dynamic fields (texts, pictures, etc)
+        if(page.dynamicfields != '')
+        {
+            ddd += emitDynamicFields(page, '    ');
+        }
+
         return ddd;
     }
 }
@@ -413,107 +385,6 @@ function generateMainTitleSlide(Theme)
 function generateSectionSlide(Theme)
 {
     return generateTitleSlide('section_slide', Theme)
-}
-
-function generatePictureSlide(Theme)
-{
-    return function (page)
-    {
-        var empty = true;
-        var ddd = '';
-        ddd += util.theme(page.ctx, Theme)
-        ddd += 'picture_slide "' + util.escape(page.name) + '",\n';
-        if (page.picture != '')
-        {
-            ddd += '    locally\n';
-            ddd += '        color "white"\n';
-            ddd += '        image ' + page.picturex + ', ' + page.picturey + ', ' + page.picturescalepercent + '%, ' + page.picturescalepercent + '%, "' + page.picture + '"\n';
-            empty = false;
-        }
-        if (page.left_column && page.left_column !== '')
-        {
-            ddd += '    left_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.left_column, 2);
-            empty = false;
-        }
-        if (page.right_column && page.right_column !== '')
-        {
-            ddd += '    right_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.right_column, 2);
-            empty = false;
-        }
-        if (empty)
-            ddd += '    nil\n';
-        return ddd;
-    }
-}
-
-function generateMovieSlide(Theme)
-{
-    return function (page)
-    {
-        var empty = true;
-        var movie = page.movie;
-        var hasMovie = false;
-        var ddd = '';
-        ddd += util.theme(page.ctx, Theme)
-        ddd += 'picture_slide "' + util.escape(page.name) + '",\n';
-        if (page.movie != '')
-        {
-            if (page.movie.indexOf('://') === -1)
-                movie = 'videos/' + movie;
-            ddd += '    locally\n';
-            ddd += '        color "white"\n';
-            ddd += '        movie ' + page.moviex + ', ' + page.moviey + ', ' + page.moviescalepercent + '%, ' + page.moviescalepercent + '%, "' + movie + '"\n';
-            empty = false;
-            hasMovie = true;
-        }
-        if (page.left_column && page.left_column !== '')
-        {
-            ddd += '    left_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.left_column, 2);
-            empty = false;
-        }
-        if (page.right_column && page.right_column !== '')
-        {
-            ddd += '    right_column\n' +
-                   '        vertical_align_top\n' +
-                   '        align_left\n';
-            ddd += util.htmlToSlideContent(page.right_column, 2);
-            empty = false;
-        }
-        if (empty)
-            ddd += '    nil\n';
-        if (hasMovie)
-            ddd += '    on "pageexit",\n' +
-                   '        movie_drop "' + movie + '"\n';
-        return ddd;
-    }
-}
-
-function generateSlide(Theme)
-{
-    return function(page)
-    {
-        var empty = true;
-        var ddd = '';
-        ddd += util.theme(page.ctx, Theme)
-        ddd += 'slide "' + util.escape(page.name) + '",\n';
-        if (page.text != '')
-        {
-            ddd += util.htmlToSlideContent(page.text);
-            empty = false;
-        }
-        if (empty)
-            ddd += '    nil\n';
-        return ddd;
-    }
 }
 
 function generateBaseSlide(Theme)
@@ -544,9 +415,6 @@ module.exports = {
     importHeaders: importHeaders,
     generateMainTitleSlide: generateMainTitleSlide,
     generateSectionSlide: generateSectionSlide,
-    generateSlide: generateSlide,
-    generatePictureSlide: generatePictureSlide,
-    generateMovieSlide: generateMovieSlide,
     generateBaseSlide: generateBaseSlide,
 
     emitTitle: emitTitle,
@@ -555,7 +423,5 @@ module.exports = {
     emitRightColumn: emitRightColumn,
     emitColumns: emitColumns,
     emitPictures: emitPictures,
-    emitLeft:  emitLeft,
-    emitRight: emitRight,
     emitPage: emitPage
 }

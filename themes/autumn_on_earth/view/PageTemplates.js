@@ -9,9 +9,6 @@ Ext.define('TE.themes.autumn_on_earth.view.PageTemplates', {
         var names = [
             'MainTitleSlide',
             'SectionSlide',
-            'Slide',
-            'PictureSlide',
-            'MovieSlide',
             'BaseSlide'
         ];
 

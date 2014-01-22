@@ -14,7 +14,6 @@ Ext.define('TE.util.CustomDynamicFields', {
             xtype: 'hiddenfield',
             id:'dynamicfields',
             name:'dynamicfields',
-            value:'toto',
             flex: 1,
             listeners: {
                 change: function() {
@@ -63,16 +62,13 @@ Ext.define('TE.util.CustomDynamicFields', {
             case 'right_column':
                 return this.createCustomDisplayField(type, label);
             case 'picture':
-            case 'left_picture':
-            case 'right_picture':
                 return this.createCustomPictureField(type, label);
             case 'movie':
-            case 'left_movie':
-            case 'right_movie':
                 return this.createCustomMovieField(type, label);
             case 'chart':
                 return this.createCustomChartEditor(type, label);
-            default: return;
+            default:
+                return this.createCustomDisplayField('story', tr('Main text'));
         }
     },
 
@@ -144,6 +140,7 @@ Ext.define('TE.util.CustomDynamicFields', {
 
         // Save string in hidden field (as we can't serialize dynamic fields)
         var dynamic = Ext.getCmp('dynamicfields');
+
         dynamic.setValue(string);
     },
 
@@ -261,7 +258,6 @@ Ext.define('TE.util.CustomDynamicFields', {
 
         return field;
     },
-
 
     // Create a movie field
     createCustomMovieField: function(type, label)
@@ -390,6 +386,4 @@ Ext.define('TE.util.CustomDynamicFields', {
 
         return field;
     },
-
-
 });

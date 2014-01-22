@@ -214,7 +214,7 @@ app.use(function(req, res, next) {
 //                   POST          GET        PUT         DELETE
 // Resource          (Create)      (Read)     (Update)    (Delete)
 //
-// /pages            Create one    List all   Not used    Not used 
+// /pages            Create one    List all   Not used    Not used
 // /pages/:id        Error         Get one    Update one  Delete one
 //
 // /resources        [like pages]
@@ -343,7 +343,7 @@ app.delete('/pages/:id', function(req, res) {
                     res.send(rsp);
                 });
                 found = true;
-            }            
+            }
         }
         if (!found)
             res.send(404);
@@ -773,7 +773,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
             var template = modname + '.ddt';
             if (fs.existsSync(template)) {
                 return loadExporterFromTemplate(template, callback);
-            } 
+            }
             var modfile = modname + '.js';
             if (fs.existsSync(modfile) === false) {
                 return loadExporterFromCache(kind, callback);
@@ -800,7 +800,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                     data = fs.readFileSync(template, 'utf8');
                     dataMtime = fs.statSync(template).mtime;
                 }
-            } 
+            }
 
             var obj = {
                 header: function(ctx) {
@@ -830,11 +830,8 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                             importHeaders: s.importHeaders,
                             generateMainTitleSlide: s.generateMainTitleSlide,
                             generateSectionSlide: s.generateSectionSlide,
-                            generateSlide: s.generateSlide,
-                            generatePictureSlide: s.generatePictureSlide,
-                            generateMovieSlide: s.generateMovieSlide,
                             generateBaseSlide: s.generateBaseSlide,
-                            
+
                             emit_title: s.emitTitle,
                             emit_story: s.emitStory,
                             emit_left_column: s.emitLeftColumn,
@@ -842,8 +839,6 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                             emit_columns: s.emitColumns,
                             emit_picture: s.emitPictures,
                             emit_pictures: s.emitPictures,
-                            emit_left:  s.emitLeft,
-                            emit_right: s.emitRight,
                             emit_page: s.emitPage,
 
                             escape: u.escape,
