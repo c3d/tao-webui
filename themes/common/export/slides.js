@@ -157,6 +157,7 @@ function emitPicture(kind, picture, indent)
         var picy = util.filterJSON(picture, 'picy')[0];
         var picscale = util.filterJSON(picture, 'picscale')[0];
         ddd = indent + kind + '\n'
+            + indent + '    color "white"\n'
             + indent + '    image ' + picx + ', ' + picy + ', '
             + picscale + '%, ' + picscale + '%, "'
             + util.escape(pic) + '"\n';
