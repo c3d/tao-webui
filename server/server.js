@@ -736,7 +736,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
             var ddd = fs.readFileSync(docPath(), 'utf8');
             if (ddd.trim().length === 0 || ddd.trim() === 'nil')
                 md5 = prevmd5; // allow overwrite
-            else if (prevmd5 === null && TEST_MODE)
+            else if (prevmd5 === null)
                 md5 = null;    // allow overwrite
             else
                 md5 = crypto.createHash('md5').update(ddd).digest('hex');
