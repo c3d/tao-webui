@@ -339,13 +339,7 @@ function emitChart(page, index, name)
 
 function emitPage(page, indent)
 {
-    var ddd = '';
-    ddd += emitTitle(page, indent);
-    ddd += emitStory(page, indent);
-    ddd += emitLeftColumn(page, indent);
-    ddd += emitRightColumn(page, indent);
-    ddd += emitPictures(page, indent);
-    return ddd;
+    return emitDynamicFields(page, indent);
 }
 
 

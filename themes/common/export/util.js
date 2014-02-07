@@ -28,7 +28,8 @@ function filterJSON(json, filter)
     return results;
 }
 
-var DomToSlideConverter = (function(nindent) {
+function DomToSlideConverter(nindent)
+{
 
     var indentString = '    ';
     var lineStart = true;
@@ -375,7 +376,7 @@ var DomToSlideConverter = (function(nindent) {
         convert: convert,
         clear: clear
     }
-});
+}
 
 // Convert HTML code produced by Ext.form.field.HtmlEditor to a block code
 // suitable for use in Tao slides.
