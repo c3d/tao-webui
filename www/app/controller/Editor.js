@@ -158,14 +158,44 @@ Ext.define('TE.controller.Editor', {
     },
 
     loadThemes: function() {
+        var themePanel = this.getThemePanel();
+
+        // Loading modern themes
+        function httpGet(theUrl)
+        {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", theUrl, false );
+            xmlHttp.send( null );
+            return xmlHttp.responseText;
+        }
+
+        function loadThemeFromPath(theme) {
+            var trans = TE.i18n.Translate;
+            try {
+                var panel = Ext.create('TE.themes.common.view.Theme', {
+                    image: 'app/themes/' + theme.theme + '.theme.png',
+                    caption: theme.theme,
+                    path: theme.theme,
+                    pageTemplates: theme.templates
+                });
+                themePanel.add(panel);
+            } catch(e) {
+                console.log('Warning: unable to load theme: ' + theme);
+                console.log(e);
+            }
+        }
+
+        // Loading legacy themes
         function load(theme) {
             try {
-                this.getThemePanel().add(Ext.create('TE.themes.' + theme + '.view.Theme'));
+                var panel = Ext.create('TE.themes.' + theme + '.view.Theme');
+                themePanel.add(panel);
             } catch (e) {
                 console.log('Warning: failed to load theme: ' + theme);
                 console.log(e);
             }
         }
+
         Ext.each([
             'blueclaire',
             'keyboard',
@@ -181,6 +211,10 @@ Ext.define('TE.controller.Editor', {
             'landscapes',
             'black_white'
             ], load, this);
+
+        var themeArray = JSON.parse(httpGet("/theme-list"));
+        Ext.each(themeArray, loadThemeFromPath, this);
+
     },
 
     onLaunch: function() {
@@ -189,6 +223,8 @@ Ext.define('TE.controller.Editor', {
     },
 
     themeClicked: function(theme) {
+        console.log("Clicked on theme: " + theme.caption);
+
         this.savePage();
         this.getTools().setPageTemplates(theme.getPageTemplatesPanel());
 

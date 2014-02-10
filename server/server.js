@@ -472,6 +472,50 @@ app.use('/library/images', express.static(IMAGES_DIR));
 
 app.use('/app/themes', express.static(__dirname + '/../themes/'));
 app.use('/themes', express.static(__dirname + '/../themes/'));
+app.get('/theme-list', function(req, res) {
+    var filelist = [];
+    var rootPath = __dirname + "/../themes";
+    var rootPathSlash = rootPath + '/';
+
+    function strip(name, pattern)
+    {
+        return name.replace(rootPathSlash, '').replace(pattern, '');
+    }
+
+    function getFiles(dir)
+    {
+        var files = fs.readdirSync(dir);
+        var pageTemplates = [];
+
+        // First find the page template files (can be shared across themes)
+        for(var i in files)
+        {
+            if (!files.hasOwnProperty(i))
+                continue;
+            var name = dir + '/' + files[i];
+            if (!fs.statSync(name).isDirectory())
+                if (/\.pt.png$/.test(name))
+                    pageTemplates.push(strip(name, /.pt.png/));
+        }
+        // Then find all themes
+        for(var i in files)
+        {
+            if (!files.hasOwnProperty(i))
+                continue;
+            var name = dir + '/' + files[i];
+            if (fs.statSync(name).isDirectory())
+                getFiles(name);
+            else if (/\.theme.png$/.test(name))
+                filelist.push(new Object({
+                    theme: strip(name, /.theme.png/),
+                    templates: pageTemplates
+                }));
+        }
+    }
+
+    getFiles(rootPath);
+    res.send(JSON.stringify(filelist));
+});
 
 
 // Root document (index*.html) contains EJS markup for i18n
@@ -856,8 +900,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                     var noImports = data
                         .replace(importRe, '')
                         .replace(themeRe, '[[- theme(ctx, $1) ]]')
-                        .replace(templateRe,
-                                 '[[- emit_$2(page, "$1") ]]');
+                        .replace(templateRe, '[[- emit_$2(page, "$1") ]]');
                     var result = ejs.render(noImports, options);
                     return result;
                 }

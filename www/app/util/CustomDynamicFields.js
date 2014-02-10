@@ -99,7 +99,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
     // Check if a component with same name exists
-    isExist: function(name)
+    componentExist: function(name)
     {
         // Get all fields with same name
         var fields = Ext.ComponentQuery.query('[name='+ name +']')
@@ -206,7 +206,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     createCustomTextField: function(type, label)
     {
         // Check if field already exists
-        if(this.isExist(type))
+        if(this.componentExist(type))
             return;
 
         var fieldLabel = label; // Use same label
@@ -307,7 +307,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         else
         {
             // Check if component already exists
-            if(this.isExist(type))
+            if(this.componentExist(type))
                 return;
 
             fieldLabel = label; // Use same label
@@ -339,7 +339,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     createCustomChartEditor: function(type, label)
     {
         // Check if field already exists
-        if(this.isExist(type))
+        if(this.componentExist(type))
             return;
 
         var fieldLabel = label; // Use same label
