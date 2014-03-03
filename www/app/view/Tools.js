@@ -31,7 +31,6 @@ Ext.define('TE.view.Tools', {
     }],
 
     setPageTemplates: function(tmpl) {
-        console.log(this.items);
         var comp = this.items.items[1];
         var pageList = this.items.items[2];
 

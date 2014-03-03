@@ -3,22 +3,22 @@ Ext.define('TE.view.Theme', {
     alias: 'widget.theme',
 
     getPageTemplatesPanel: function() {
-        if (typeof this.self.pt === 'undefined') {
+        if (typeof this.pt === 'undefined') {
             // Create and cache instance
             var pageTemplates = this.pageTemplates;
             if (pageTemplates)
             {
-                this.self.pt = Ext.create('TE.view.PageTemplates', {
+                this.pt = Ext.create('TE.view.PageTemplates', {
                     title: this.caption,
                     pageTemplates: pageTemplates
                 });
             }
             else
             {
-                this.self.pt = Ext.create(this.self.ptclassname);
+                this.pt = Ext.create(this.self.ptclassname);
             }
         }
-        return this.self.pt;
+        return this.pt;
     },
 
     toggleCurrentTheme: function(on) {

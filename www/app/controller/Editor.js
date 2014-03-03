@@ -223,8 +223,6 @@ Ext.define('TE.controller.Editor', {
     },
 
     themeClicked: function(theme) {
-        console.log("Clicked on theme: " + theme.caption);
-
         this.savePage();
         this.getTools().setPageTemplates(theme.getPageTemplatesPanel());
 
@@ -250,11 +248,16 @@ Ext.define('TE.controller.Editor', {
         this.savePage();
         Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
                  function(child) {
-            child.toggleSelected(false);
-        });
+                     child.toggleSelected(false);
+                 });
 
         if (this.pagectrl)
             this.pagectrl.endDisplay();
+
+        console.log('Record');
+        console.log(record);
+        console.log('Grid');
+        console.log(grid);
 
         // Make sure controller for the specific kind of page is loaded
         var ctrl = this.application.getController(record.getControllerName());
