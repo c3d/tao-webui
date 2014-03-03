@@ -31,11 +31,12 @@ Ext.define('TE.view.Tools', {
     }],
 
     setPageTemplates: function(tmpl) {
-        var comp = this.items.items[1];
+        var component = this.items.items[1];
         var pageList = this.items.items[2];
 
         // Placeholder may be deleted, not objects passed to this function (they are cached)
-        var del = typeof comp.itemId !== 'undefined' && comp.itemId === 'placeholder';
+        var del = typeof component.itemId !== 'undefined'
+            &&           component.itemId === 'placeholder';
         this.remove(2, false);
         this.remove(1, del);
         this.add(tmpl);
