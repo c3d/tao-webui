@@ -174,7 +174,7 @@ Ext.define('TE.controller.Editor', {
             try {
                 var panel = Ext.create('TE.themes.common.view.Theme', {
                     image: 'app/themes/' + theme.theme + '.theme.png',
-                    caption: theme.theme,
+                    caption: theme.theme.replace(/.*\//, ''),
                     path: theme.theme,
                     pageTemplates: theme.templates
                 });
@@ -365,12 +365,8 @@ Ext.define('TE.controller.Editor', {
     newPageFromTemplate: function(tmpl) {
         var selectedPage = this.selectedPage();
 
-        var model = tmpl.getModelClassName();
-        console.log(model);
-        var page = Ext.create(model);
+        var page = tmpl.createPage();
         var store = this.getPagesStore();
-        // Example: TE.themes.blueclaire.model.PictureSlide -> blueclaire.PictureSlide
-        page.set('kind', model.replace('TE.themes.', '').replace('.model', ''));
         function unusedPageName() {
             var i = 1;
             var stem = tr('New page');

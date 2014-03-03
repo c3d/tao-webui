@@ -800,9 +800,10 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     var getTmpl = function(page, callback)
     {
         var kind = page.kind;
+        var path = page.path;
         if (kind in exporter)
             return callback(null, exporter[kind]);
-        loadExporter(kind, function (err, obj) {
+        loadExporter(kind, path, function (err, obj) {
             if (err)
                 return callback(err);
             exporter[kind] = obj;
@@ -810,11 +811,20 @@ function writeTaoDocument(pages, lang, callback, overwrite)
         });
 
         // callback(err, obj)
-        function loadExporter(kind, callback)
+        function loadExporter(kind, path, callback)
         {
-            // Example: 'vellum.TitleAndSubtitle' => './../themes/vellum/export/TitleAndSubtitle'
+            // First check if there is a specialized version
+            var specializedTemplate = __dirname + '/../themes/' + path + '.ddt';
+            console.log("Looking at specialized " + specializedTemplate);
+            if (fs.existsSync(specializedTemplate)) {
+                return loadExporterFromTemplate(specializedTemplate, callback);
+            }
+
+            // Example: 'vellum.TitleAndSubtitle'
+            // => './../themes/vellum/export/TitleAndSubtitle'
             var modname = __dirname + '/../themes/' + kind.replace('.', '/export/');
             var template = modname + '.ddt';
+            console.log("Looking at template " + template);
             if (fs.existsSync(template)) {
                 return loadExporterFromTemplate(template, callback);
             }

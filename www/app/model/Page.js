@@ -1,7 +1,7 @@
 Ext.define('TE.model.Page', {
     extend: 'Ext.data.Model',
     requires: [ 'TE.util.ServerErrors' ],
-    fields: [ 'name', 'kind', { name: 'idx', type: 'int', defaultValue: -1 }  ],
+    fields: [ 'name', 'kind', 'path', { name: 'idx', type: 'int', defaultValue: -1 }  ],
 
     proxy: {
         type: 'rest',

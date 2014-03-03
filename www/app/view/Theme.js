@@ -9,7 +9,7 @@ Ext.define('TE.view.Theme', {
             if (pageTemplates)
             {
                 this.pt = Ext.create('TE.view.PageTemplates', {
-                    title: this.caption,
+                    title: this.caption.replace(/.*\//, ''),
                     pageTemplates: pageTemplates
                 });
             }

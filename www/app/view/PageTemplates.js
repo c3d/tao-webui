@@ -11,9 +11,12 @@ Ext.define('TE.view.PageTemplates', {
         if (this.pageTemplates) {
             this.items = [];
             Ext.Array.forEach(this.pageTemplates, function(name) {
+                var shortName = name.replace(/.*\//, '');
                 this.items.push(Ext.create('TE.view.PageTemplate', {
                     image: 'app/themes/' + name + '.pt.png',
-                    caption: name
+                    fullPageTemplate: name,
+                    caption: shortName,
+                    pageTemplate: shortName
                 }));
             }, this);
         }
