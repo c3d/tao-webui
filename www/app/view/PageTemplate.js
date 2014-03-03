@@ -26,8 +26,8 @@ Ext.define('TE.view.PageTemplate', {
 
     createPage: function() {
         var model = this.getModelClassName();
-        var page = Ext.create(model);
         var path = this.fullPageTemplate || '';
+        var page = Ext.create(model);
         var kind = model.replace('TE.themes.','').replace('.model','');
         page.set('path', path);
         page.set('kind', kind);

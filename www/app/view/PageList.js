@@ -20,7 +20,11 @@ Ext.define('TE.tree.PageList', {
         itemSelector: '.taopage-container',
         prepareData : function(data, recordIndex, record ){
             // Add image url to the diplayed data
-            var img = Ext.create(record.getPageTemplateViewClass()).image;
+            var img = '';
+            if (record.data.path)
+                img = 'app/themes/' + record.data.path + '.pt.png'
+            else
+                img = Ext.create(record.getPageTemplateViewClass()).image;
             data['img'] = img;
             return data;
         },
