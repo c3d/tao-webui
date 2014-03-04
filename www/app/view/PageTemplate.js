@@ -13,9 +13,7 @@ Ext.define('TE.view.PageTemplate', {
         if (this.pageTemplate) {
             // New case: we have a dynamically defined page template name
             // We use the common theme
-            return 'TE.themes.common.model.' + this.pageTemplate
-                .replace('.pt.png', '')
-                .replace(/ /g, '');
+            return 'TE.themes.common.model.BaseSlide';
         }
 
         // Old case: we have a statically defined page template name

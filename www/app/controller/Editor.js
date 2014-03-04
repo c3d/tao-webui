@@ -200,20 +200,22 @@ Ext.define('TE.controller.Editor', {
             }
         }
 
-        Ext.each([
-            'blueclaire',
-            'keyboard',
-            'autumn_on_earth',
-            //'greenclaire',  // Uncomment this one to check the 'remote theme' feature at Taodyne (=> nano.local)
-            'seyes',
-            'pastel_triangles',
-            'bright_rectangles',
-            'seasons_greetings',
-            'lucky_stars',
-            'water',
-            'finance',
-            'landscapes',
-            'black_white'
+        // No longer load legacy themes
+        if (false)
+            Ext.each([
+                'blueclaire',
+                'keyboard',
+                'autumn_on_earth',
+                //'greenclaire',  // Uncomment this one to check the 'remote theme' feature at Taodyne (=> nano.local)
+                'seyes',
+                'pastel_triangles',
+                'bright_rectangles',
+                'seasons_greetings',
+                'lucky_stars',
+                'water',
+                'finance',
+                'landscapes',
+                'black_white'
             ], load, this);
 
         var themeArray = JSON.parse(httpGet("/theme-list"));

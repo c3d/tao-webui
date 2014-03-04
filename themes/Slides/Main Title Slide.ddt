@@ -1,5 +1,0 @@
-import AutumnOnEarthTheme
-theme "AutumnOnEarth"
-
-base_slide "[[= page.name ]]",
-    template_page
