@@ -1,29 +1,35 @@
 Ext.define('TE.util.CustomDynamicFields', {
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_customdynamicfields',
-    requires: ["TE.util.CustomPictureField",
-               "TE.util.CustomMovieField",
-               "TE.util.CustomTextField"],
+    requires: [
+        "TE.util.CustomPictureField",
+        "TE.util.CustomMovieField",
+        "TE.util.CustomTextField"
+    ],
     id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
     text_idx:0,   // Current ID of text boxes
     img_idx:0,    // Current ID of pictures
     movie_idx: 0, // Current ID of movies
-    items: [{
-            xtype: 'hiddenfield',
-            id:'dynamicfields',
-            name:'dynamicfields',
-            flex: 1,
-            listeners: {
-                change: function() {
-                    // Parse json only when container is loaded (i.e no other fields)
-                    if(this.ownerCt.items.length == 1)
-                        this.ownerCt.parseJSON(this.getValue());
-                }
+    items:
+    [{
+        xtype: 'hiddenfield',
+        id:'dynamicfields',
+        name:'dynamicfields',
+        flex: 1,
+        listeners: {
+            change: function()
+            {
+                // Parse json only when container is loaded
+                // (i.e no other fields)
+                if(this.ownerCt.items.length == 1)
+                    this.ownerCt.parseJSON(this.getValue());
             }
+        }
     }],
-    listeners: {
+    listeners:
+    {
         remove: function(me, field) { this.removeField(field); }
     },
 
@@ -134,7 +140,7 @@ Ext.define('TE.util.CustomDynamicFields', {
 
     // Save all dynamic fields to hidden field
     saveDynamicFields: function()
-     {
+    {
         // Convert object to string
         var string = Ext.encode(this);
 
@@ -192,9 +198,9 @@ Ext.define('TE.util.CustomDynamicFields', {
             var value = items[name];
             if(value && value != '')
             {
-                // Get field type by remove id part (in the form 'TYPE_ID')
+                // Get field type by removing id part (in the form 'TYPE_ID')
                 var type = name.replace(/_[0-9]+/g,'');
-                // // Get correct field label from menu 'Add...'
+                // // Get correct field label from 'Add...' menu
                 var label = Ext.ComponentQuery.query('[id='+ type +']')[0].text;
                 // // Add field
                 this.addField(type, label, value, true);
@@ -302,7 +308,9 @@ Ext.define('TE.util.CustomDynamicFields', {
             // Case of text box, define new label and name
             this.text_idx++;
             fieldLabel = 'Text';
-            fieldName  = type + '_' + this.text_idx;  // Name is equal to TYPE_ID (for instance, 'text_3')
+
+            // Name is equal to TYPE_ID (for instance, 'text_3')
+            fieldName  = type + '_' + this.text_idx;
         }
         else
         {
@@ -326,8 +334,9 @@ Ext.define('TE.util.CustomDynamicFields', {
                 },
                 render: function(f) {
                     // Fire click in order to display field in the center pane
-                    f.getEl().on('click',
-                                 function() { this.fireEvent('click', f); }, f);
+                    var el = f.getEl();
+                    el.on('click',
+                          function() { this.fireEvent('click', f); }, f);
                 }
             }
         });

@@ -7,7 +7,8 @@ Ext.define('TE.controller.Editor', {
 
     stores: [ 'Pages', 'Images', 'Videos' ],
     models: [ 'Page', 'ResourceFile' ],
-    views: [
+    views:
+    [
         'Editor',
         'EditResourceFile',
         'EditResourceURL',
@@ -21,7 +22,8 @@ Ext.define('TE.controller.Editor', {
         'Tools'
     ],
     refs: [
-        // Make components accessible through this.getCenterpane(), this.getTools(), etc.
+        // Make components accessible through
+        // this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
         { ref: 'properties', selector: '#properties' },
         { ref: 'tools', selector: '#tools' },
