@@ -415,17 +415,18 @@ function generateBaseSlide(Theme)
 }
 
 module.exports = {
-    importHeader: importHeader,
-    importHeaders: importHeaders,
-    generateMainTitleSlide: generateMainTitleSlide,
-    generateSectionSlide: generateSectionSlide,
-    generateBaseSlide: generateBaseSlide,
+    importHeader:               importHeader,
+    importHeaders:              importHeaders,
+    generateMainTitleSlide:     generateMainTitleSlide,
+    generateSectionSlide:       generateSectionSlide,
+    generateBaseSlide:          generateBaseSlide,
 
-    emitTitle: emitTitle,
-    emitStory: emitStory,
-    emitLeftColumn: emitLeftColumn,
-    emitRightColumn: emitRightColumn,
-    emitColumns: emitColumns,
-    emitPictures: emitPictures,
-    emitPage: emitPage
+    emitTitle:                  emitTitle,
+    emitStory:                  emitStory,
+    emitLeftColumn:             emitLeftColumn,
+    emitRightColumn:            emitRightColumn,
+    emitColumns:                emitColumns,
+    emitPictures:               emitPictures,
+    emitMovies:                 emitMovies,
+    emitPage:                   emitPage
 }

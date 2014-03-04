@@ -367,7 +367,8 @@ Ext.define('TE.controller.Editor', {
     },
 
     newPageMenuItemClicked: function() {
-        this.newPageFromTemplate(this.getPageTemplateContextMenu().getPageTemplate());
+        var pageTemplate = this.getPageTemplateContextMenu().getPageTemplate();
+        this.newPageFromTemplate(pageTemplate);
     },
 
     newPageFromTemplate: function(tmpl) {
@@ -377,7 +378,7 @@ Ext.define('TE.controller.Editor', {
         var store = this.getPagesStore();
         function unusedPageName() {
             var i = 1;
-            var stem = tr('New page');
+            var stem = tr('Page');
             while (true) {
                 var n = stem + ' ' + i++;
                 if (store.find('name', n) === -1)

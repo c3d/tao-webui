@@ -1,0 +1,8 @@
+import AutumnOnEarthTheme
+import VLCAudioVideo
+theme "AutumnOnEarth"
+
+// Movie slide
+base_slide "[[= page.name ]]",
+    template_page
+    template_movies

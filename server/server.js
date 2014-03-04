@@ -249,6 +249,14 @@ app.get('/pages/:id', function(req, res) {
 app.post('/pages', function (req, res) {
     getData('pages', function(err, pages) {
         var page = req.body;
+
+        // Check if we can get the dynamic fields from the template
+        if (page.dynamicfields === '')
+        {
+            page.dynamicfields = loadPageFromTemplate(page, page.path);
+            req.body = page;
+        }
+
         page.id = allocateId(pages);
 
         var idx = pages.length; // Insert at end by default
@@ -801,12 +809,13 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     {
         var kind = page.kind;
         var path = page.path;
-        if (kind in exporter)
-            return callback(null, exporter[kind]);
+        var key = kind + ':' + path;
+        if (key in exporter)
+            return callback(null, exporter[key]);
         loadExporter(kind, path, function (err, obj) {
             if (err)
                 return callback(err);
-            exporter[kind] = obj;
+            exporter[key] = obj;
             callback(null, obj);
         });
 
@@ -891,8 +900,8 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                             emit_left_column: s.emitLeftColumn,
                             emit_right_column: s.emitRightColumn,
                             emit_columns: s.emitColumns,
-                            emit_picture: s.emitPictures,
                             emit_pictures: s.emitPictures,
+                            emit_movies: s.emitMovies,
                             emit_page: s.emitPage,
 
                             escape: u.escape,
@@ -981,7 +990,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                                             return cb('ERR_WRITETMPL');
                                         }
                                         try {
-                                            exporter[kind] = require(modname);
+                                            exporter[key] = require(modname);
                                         } catch (e) {
                                             console.log('require() failed');
                                             return cb('ERR_LOADTMPL');
@@ -1076,6 +1085,57 @@ function writeDDD(ddd, warn, callback)
     cached.pages.dddmd5 = crypto.createHash('md5').update(ddd).digest('hex');
     callback(null, cached.pages.dddmd5);
 }
+
+
+function loadPageFromTemplate(page, template)
+{
+    var file = __dirname + '/../themes/' + template + '.ddt';
+    if (!fs.existsSync(file))
+        return '';
+
+    var f = require(__dirname + '/../themes/common/export/fields');
+    var u = require(__dirname + '/../themes/common/export/util');
+
+    var importRe = /import\W+(\w+).*\n/gm;
+    var themeRe = /theme\W(".*")/gm;
+    var templateRe = /^(\W+)template_(\w+)/gm;
+    var data = fs.readFileSync(file, 'utf8');
+    verbose('Loading page default from template ' + file);
+
+    var options = {
+        locals: {
+            page: page,
+            ctx: page.ctx,
+
+            need_title: f.needTitle,
+            need_story: f.needStory,
+            need_left_column: f.needLeftColumn,
+            need_right_column: f.needRightColumn,
+            need_columns: f.needColumns,
+            need_pictures: f.needPictures,
+            need_movies: f.needMovies,
+            need_page: f.needPage,
+            
+        },
+        filename: template,
+        cached: false,
+        scope: this,
+        open: "[[",
+        close: "]]"
+    };
+
+    var noImports = data
+        .replace(importRe, '')
+        .replace(themeRe, '')
+        .replace(templateRe, '[[- need_$2(page) ]]');
+    verbose('Generating default fields from template:\n' + noImports);
+    f.beginFields();
+    ejs.render(noImports, options);
+    var result = f.endFields();
+    verbose('Returned value: ' + result);
+    return result;
+}
+
 
 function verbose()
 {

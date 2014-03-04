@@ -37,7 +37,7 @@ Ext.define('TE.i18n.fr', {
         'Move before': 'Déplacer avant',
         'Move after': 'Déplacer après',
         'Movie': 'Vidéo',
-        'New page': 'Nouvelle page',
+        'Page': 'Page',
         'New page from this template': 'Nouvelle page',
         'OK': null,
         'Page': null,

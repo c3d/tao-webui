@@ -1,0 +1,6 @@
+import AutumnOnEarthTheme
+theme "AutumnOnEarth"
+
+// Section slide
+section_slide "[[= page.name ]]",
+    template_page

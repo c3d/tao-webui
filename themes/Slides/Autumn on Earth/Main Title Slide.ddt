@@ -1,0 +1,6 @@
+import AutumnOnEarthTheme
+theme "AutumnOnEarth"
+
+// Main title slide
+main_title_slide "[[= page.name ]]",
+    template_page

@@ -1,0 +1,7 @@
+import AutumnOnEarthTheme
+theme "AutumnOnEarth"
+
+// Picture slide
+base_slide "[[= page.name ]]",
+    template_page
+    template_pictures
