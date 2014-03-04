@@ -140,7 +140,8 @@ Ext.define('TE.controller.Editor', {
         var store = this.getPagesStore();
         Ext.apply(Ext.form.field.VTypes, {
             pagename: function(val, field) {
-                if (field.originalValue === undefined || val === field.originalValue) {
+                if (field.originalValue === undefined ||
+                    val === field.originalValue) {
                     return true;
                 }
                 return (store.findExact('name', val) === -1);
@@ -265,9 +266,6 @@ Ext.define('TE.controller.Editor', {
         // REVISIT Use a store to cache data
         var id = record.get('id');
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
-        console.log('Exact model: ' + record.getModelClassName());
-        console.log('Is registered: ' + Ext.ModelManager.isRegistered(record.getModelClassName()));
-        console.log (exactmodel);
         exactmodel.load(id, {
             scope: this,
             success: function(newrecord, operation) {

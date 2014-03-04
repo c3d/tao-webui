@@ -32,6 +32,7 @@ Ext.define('TE.controller.PageControllerBase', {
     // Save page immediately, if modified
     updatePage: function() {
         var me = this;
+
         // Copy form values into record
         var form = me.getProperties().down('form');
         if (!form || !form.isValid())
