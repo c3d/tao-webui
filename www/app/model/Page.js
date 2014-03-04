@@ -1,7 +1,12 @@
 Ext.define('TE.model.Page', {
     extend: 'Ext.data.Model',
     requires: [ 'TE.util.ServerErrors' ],
-    fields: [ 'name', 'kind', 'path', { name: 'idx', type: 'int', defaultValue: -1 }  ],
+    fields: [
+        'name',
+        'kind',
+        'path',
+        { name: 'idx', type: 'int', defaultValue: -1 }
+    ],
 
     proxy: {
         type: 'rest',
@@ -69,11 +74,17 @@ Ext.define('TE.model.Page', {
 
     // Example: if kind = vellum.TitleAndSubtitle, returns 'TE.themes.vellum.model.TitleAndSubtitle'
     getModelClassName: function() {
+        var path = this.get('path');
+        if (path && path.length > 0)
+            return 'TE.themes.common.model.' + this.template();
         return 'TE.themes.' + this.theme() + '.model.' + this.template();
     },
 
     // Example: if kind = 'vellum.AnyThing', returns 'TE.themes.vellum.controller.Controller'
     getControllerName: function() {
+        var path = this.get('path');
+        if (path && path.length > 0)
+            return 'TE.controller.PageControllerBase';
         return 'TE.themes.' + this.theme() + '.controller.Controller';
     }
 

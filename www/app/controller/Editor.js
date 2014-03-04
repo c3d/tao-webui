@@ -1,6 +1,9 @@
 Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
-    requires: [ 'Ext.window.MessageBox' ],
+    requires: [
+        'Ext.window.MessageBox',
+        'TE.themes.common.controller.Controller'
+    ],
 
     stores: [ 'Pages', 'Images', 'Videos' ],
     models: [ 'Page', 'ResourceFile' ],
@@ -262,6 +265,9 @@ Ext.define('TE.controller.Editor', {
         // REVISIT Use a store to cache data
         var id = record.get('id');
         var exactmodel = Ext.ModelManager.getModel(record.getModelClassName());
+        console.log('Exact model: ' + record.getModelClassName());
+        console.log('Is registered: ' + Ext.ModelManager.isRegistered(record.getModelClassName()));
+        console.log (exactmodel);
         exactmodel.load(id, {
             scope: this,
             success: function(newrecord, operation) {
