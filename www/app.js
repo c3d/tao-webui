@@ -2,16 +2,16 @@
 var tr = function(txt) { throw 'tr() not set (should not happen)'; }
 
 Ext.Loader.setPath('Ext.ux.form.field', 'ext-tinymce/ux/form/field');
-Ext.Loader.setPath('TE.themes', '../themes');
 
-Ext.application({
+Ext.application(
+{
     name: 'TE',  // 'Tao Editor'
     requires: ['Ext.container.Viewport', 'TE.i18n.Translate' ],
 
     appFolder: 'app',
 
-    init: function() {
-
+    init: function()
+    {
         // Setup translations
         var lang = typeof TE_lang !== 'undefined' ? TE_lang : 'en';
         TE.i18n.Translate.lang = lang;
@@ -23,7 +23,8 @@ Ext.application({
         this.controllers = [ 'Editor' ];
     },
 
-    launch: function() {
+    launch: function()
+    {
         Ext.create('Ext.container.Viewport', {
             layout: 'fit',
             items: [

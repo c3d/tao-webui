@@ -1,3 +1,23 @@
+// ****************************************************************************
+//  server.js                                                      Tao project
+// ****************************************************************************
+//
+//   File Description:
+//
+//    Application server to build the user interface for Tao
+//
+//
+//
+//
+//
+//
+//
+//
+// ****************************************************************************
+//  (C) 2014 Christophe de Dinechin <christophe@taodyne.com>
+//  (C) 2014 Taodyne SAS
+// ****************************************************************************
+
 // Usage
 // node server.js [options]
 
@@ -12,12 +32,20 @@ var ejs = require('ejs');
 var crypto = require('crypto');
 var async = require('async');
 var querystring = require('querystring');
+var fields = require('./fields');
+var templates = require('./templates');
 
 var VERBOSE = false;
 var CONVERT_AND_EXIT = false;
 var token = null;
 
-// Process command line
+
+// ============================================================================
+// 
+//    Command line processing
+// 
+// ============================================================================
+
 var argv = process.argv;
 for (var i = 2; i < argv.length; i++)
 {
@@ -116,14 +144,15 @@ function jsonFilePath(name, saving)
 {
     saving = saving || false;
     switch (name) {
-        case 'pages' :
-            return docPath().replace(/\.ddd$/, '') + '.json' + (TEST_MODE && saving ? '.saved' : '');
-
-        case 'resources':
-            return docPath().replace(/\.ddd$/, '') + '_resources.json' + (TEST_MODE && saving ? '.saved' : '');
-
-        default:
-            throw('Unexpected file name');
+    case 'pages' :
+        return docPath().replace(/\.ddd$/, '') + '.json'
+            + (TEST_MODE && saving ? '.saved' : '');
+        
+    case 'resources':
+        return docPath().replace(/\.ddd$/, '') + '_resources.json' + (TEST_MODE && saving ? '.saved' : '');
+        
+    default:
+        throw('Unexpected file name');
     }
 }
 
@@ -178,26 +207,41 @@ process.stdin.on('data', function(chunk) {
         stdinbuf = stdinbuf.substring(j + 1);
 });
 
+
+
+// ============================================================================
+//
+//    Application callbacks
+//
+// ============================================================================
+
 // Required to parse JSON body in REST requests
 app.use(express.bodyParser());
+
 // i18n
-// A session cookie is used to save the UI language that is set in the query parameters
-// when the user connects to the main page (index.html?lang=*).
-// Then, every request comming from the same browser, including requests to the REST API,
-// will have this cookie. The server uses this value to write a header in the
+// A session cookie is used to save the UI language that is set in the
+// query parameters when the user connects to the main page
+// (index.html?lang=*).  Then, every request comming from the same
+// browser, including requests to the REST API, will have this
+// cookie. The server uses this value to write a header in the
 // generated .ddd file in the user's language.
-// BUG: due to the per-browser nature of the cookie (not per-window/per-tab),
-// if two tabs with different language specifications are opened, the last one wins.
-// That is: if you open index.html?lang=en then index.html?lang=fr in a separate tab,
-// then update the document from the first one, the server will save in french.
-// Of course this has no effect on the language on the client side (both tabs remain
-// in the expected language).
-// Another option would be to modify the client side so that is always sends a ?lang=*
-// parameter in its REST requests.
+// BUG: due to the per-browser nature of the cookie (not
+// per-window/per-tab), if two tabs with different language
+// specifications are opened, the last one wins.  That is: if you open
+// index.html?lang=en then index.html?lang=fr in a separate tab, then
+// update the document from the first one, the server will save in
+// french.  Of course this has no effect on the language on the client
+// side (both tabs remain in the expected language).  Another option
+// would be to modify the client side so that is always sends a
+// ?lang=* parameter in its REST requests.
 app.use(express.cookieParser());
 
+
+app.use(function(req, res, next)
+// ----------------------------------------------------------------------------
 // Check security token
-app.use(function(req, res, next) {
+// ----------------------------------------------------------------------------
+{
     if (token) {
         var tok = req.query.token || req.cookies.token || null;
         if (tok !== token) {
@@ -208,8 +252,14 @@ app.use(function(req, res, next) {
     next();
 })
 
-// REST API
+
+
+// ============================================================================
+// 
+//      REST API
 //
+// ============================================================================
+// 
 //                   ------------------ Method ---------------------
 //                   POST          GET        PUT         DELETE
 // Resource          (Create)      (Read)     (Update)    (Delete)
@@ -220,13 +270,22 @@ app.use(function(req, res, next) {
 // /resources        [like pages]
 // /resources/:id    [like pages]
 
-app.get('/pages', function(req, res) {
+app.get('/pages', function(req, res)
+// ----------------------------------------------------------------------------
+//    Return the list of all pages
+// ----------------------------------------------------------------------------
+{
     getData('pages', function(err, pages) {
         res.send(err ? 500 : pages);
     });
 });
 
-app.get('/pages/:id', function(req, res) {
+
+app.get('/pages/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//   Get a specific page
+// ----------------------------------------------------------------------------
+{
     getData('pages', function(err, pages) {
         var found = [];
         var pageIndex = -1;
@@ -246,7 +305,12 @@ app.get('/pages/:id', function(req, res) {
     });
 });
 
-app.post('/pages', function (req, res) {
+
+app.post('/pages', function (req, res)
+// ----------------------------------------------------------------------------
+//    Create a new page
+// ----------------------------------------------------------------------------
+{
     getData('pages', function(err, pages) {
         var page = req.body;
 
@@ -285,7 +349,12 @@ app.post('/pages', function (req, res) {
     });
 });
 
-app.put('/pages/:id', function(req, res) {
+
+app.put('/pages/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//   Update a page
+// ----------------------------------------------------------------------------
+{
     getData('pages', function(err, pages) {
         var ret, found = null;
         var i = 0;
@@ -332,7 +401,12 @@ app.put('/pages/:id', function(req, res) {
     });
 });
 
-app.delete('/pages/:id', function(req, res) {
+
+app.delete('/pages/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//   Delete a page
+// ----------------------------------------------------------------------------
+{
     getData('pages', function(err, pages) {
         var found = false;
         for (var i = 0; i < pages.length; i++) {
@@ -359,13 +433,22 @@ app.delete('/pages/:id', function(req, res) {
 });
 
 
-app.get('/resources', function(req, res) {
+app.get('/resources', function(req, res)
+// ----------------------------------------------------------------------------
+//    List all resources
+// ----------------------------------------------------------------------------
+{
     getData('resources', function(err, resources) {
         res.send(err ? 500 : resources);
     });
 });
 
-app.post('/resources', function (req, res) {
+
+app.post('/resources', function (req, res)
+// ----------------------------------------------------------------------------
+//    Create a new resource
+// ----------------------------------------------------------------------------
+{
     getData('resources', function(err, resources) {
         var resource = req.body;
         resource.id = allocateId(resources);
@@ -379,7 +462,12 @@ app.post('/resources', function (req, res) {
     });
 });
 
-app.put('/resources/:id', function(req, res) {
+
+app.put('/resources/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//    Update a single resource
+// ----------------------------------------------------------------------------
+{
     getData('resources', function(err, resources) {
         var prevfile, prevtype, found = null;
         var i = 0;
@@ -408,7 +496,12 @@ app.put('/resources/:id', function(req, res) {
     });
 });
 
-app.delete('/resources/:id', function(req, res) {
+
+app.delete('/resources/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//    Delete a given resource
+// ----------------------------------------------------------------------------
+{
     getData('resources', function(err, resources) {
         var found = undefined;
         for (var i = 0; i < resources.length; i++) {
@@ -430,11 +523,18 @@ app.delete('/resources/:id', function(req, res) {
     });
 });
 
+
 app.post('/image-upload', fileUpload(IMAGES_DIR));
 app.post('/video-upload', fileUpload(VIDEOS_DIR));
 
-function fileUpload(dir) {
-    return function (req, res, next) {
+
+function fileUpload(dir)
+// ----------------------------------------------------------------------------
+//   Upload a file to the proper directory
+// ----------------------------------------------------------------------------
+{
+    return function (req, res, next)
+    {
         // req.files.<name of form field>
         if (typeof req.files.file === undefined)
         {
@@ -472,15 +572,30 @@ function fileUpload(dir) {
     }
 };
 
-// Accessing the image library
+
+// ============================================================================
+// 
+//    Accessing the image library
+// 
+// ============================================================================
 
 app.use('/library/images', express.static(IMAGES_DIR));
 
-// Accessing the themes
+
+
+// ============================================================================
+// 
+//    Accessing the themes
+// 
+// ============================================================================
 
 app.use('/app/themes', express.static(__dirname + '/../themes/'));
 app.use('/themes', express.static(__dirname + '/../themes/'));
-app.get('/theme-list', function(req, res) {
+app.get('/theme-list', function(req, res)
+// ----------------------------------------------------------------------------
+//   Return the list of themes and page templates
+// ----------------------------------------------------------------------------
+{
     var filelist = [];
     var rootPath = __dirname + "/../themes";
     var rootPathSlash = rootPath + '/';
@@ -526,13 +641,15 @@ app.get('/theme-list', function(req, res) {
 });
 
 
-// Root document (index*.html) contains EJS markup for i18n
-
-app.get(/^\/+(index.*\.html|)$/, function(req, res) {
+app.get(/^\/+(index.*\.html|)$/, function(req, res)
+// ----------------------------------------------------------------------------
+//   Root document (index*.html) contains EJS markup for i18n
+// ----------------------------------------------------------------------------
+{
     if (token && req.query.token) {
         // Query to root document has a valid token in query params.
-        // Save token in a session cookie and redirect to same URL without the token
-        // in the query string (to hide it).
+        // Save token in a session cookie and redirect to same URL
+        // without the token in the query string (to hide it).
         res.cookie('token', token);
         delete req.query.token;
         var url = req.protocol + '://' + req.headers.host + req.path;
@@ -548,43 +665,57 @@ app.get(/^\/+(index.*\.html|)$/, function(req, res) {
     if (path === '')
         path = 'index.html';
 
-    fs.readFile(__dirname + '/../www/' + path, { encoding: 'utf8' }, function(err, data) {
-        if (err)
-            return res.send(404);
-        var lang = req.query.lang || 'en';
-        function titleString() {
-            switch (lang) {
+    fs.readFile(
+        __dirname + '/../www/' + path,
+        { encoding: 'utf8' },
+        function(err, data)
+        {
+            if (err)
+                return res.send(404);
+            var lang = req.query.lang || 'en';
+            function titleString() {
+                switch (lang) {
                 case 'fr':
                     return 'Éditeur Tao Presentations';
                 default:
-                    console.log("titleString() Unsupported language '" + lang + "', using 'en'");
+                    console.log("titleString() Unsupported language '"
+                                + lang + "', using 'en'");
                     // Fallthrough
                 case 'en':
                     return 'Tao Presentations Editor';
+                }
             }
+            var options = {
+                locals: {
+                    setLanguage: function() {
+                        if (!req.query.lang)
+                            return '';
+                        verbose(path + ": language is '" + req.query.lang +"'");
+                        return '<script type="text/javascript" '
+                            + 'src="ext-4/locale/ext-lang-'
+                            + req.query.lang + '.js"></script>'
+                            + '<script type="text/javascript">var TE_lang = "'
+                            + req.query.lang + '";</script>';
+                    },
+                    title: DOC_FILENAME + ' - ' + titleString()
+                }
+            };
+            res.cookie('taoeditorlang', lang);
+            res.send(ejs.render(data, options));
         }
-        var options = {
-            locals: {
-                setLanguage: function() {
-                    if (!req.query.lang)
-                        return '';
-                    verbose(path + ": language is '" + req.query.lang +"'");
-                    return '<script type="text/javascript" src="ext-4/locale/ext-lang-' + req.query.lang + '.js"></script>' +
-                           '<script type="text/javascript">var TE_lang = "' + req.query.lang + '";</script>';
-                },
-                title: DOC_FILENAME + ' - ' + titleString()
-            }
-        };
-        res.cookie('taoeditorlang', lang);
-        res.send(ejs.render(data, options));
-    });
+    );
 });
 
-// Serve static files
 
+// Serve static files
 app.use(express.static( __dirname + '/../www'));
 
-// Proxy themes not available locally
+
+// ============================================================================
+// 
+//    Proxy themes (loaded remotely)
+// 
+// ============================================================================
 
 // Testing:
 // Just place a theme directory in a location where it can be served by
@@ -595,9 +726,9 @@ var THEME_BASE_URL = {
 
 var proxy = new httpProxy.RoutingProxy();
 Object.keys(THEME_BASE_URL).forEach(function(theme) {
-
+    
     verbose('Remote theme \'' + theme + '\' at: ' + THEME_BASE_URL[theme]);
-
+    
     var proxyFunction = function(req, res)
     {
         var dest = url.parse(THEME_BASE_URL[theme]);
@@ -608,17 +739,29 @@ Object.keys(THEME_BASE_URL).forEach(function(theme) {
             port: dest.port || 80
         })
     }
-
+    
     app.use('/app/themes/' + theme, proxyFunction);
     app.use('/themes/' + theme, proxyFunction);
 });
 
-// Start server
+
+
+// ============================================================================
+// 
+//    Start server
+// 
+// ============================================================================
 
 var server = http.createServer(app);
 var PORT = process.env.PORT || 3000;
 var currentPort = PORT;
-server.on('error', function(err) {
+
+
+server.on('error', function(err)
+// ----------------------------------------------------------------------------
+//    Error handler, used to find a port to use for the server
+// ----------------------------------------------------------------------------
+{
     if (currentPort === PORT + 10) {
         // No luck, ask for a dynamic port
         currentPort = 0;
@@ -630,48 +773,78 @@ server.on('error', function(err) {
     }
     server.listen(currentPort);
 });
-server.on('listening', function() {
+
+
+server.on('listening', function()
+// ----------------------------------------------------------------------------
+//    Emit message indicating URL to use for the server
+// ----------------------------------------------------------------------------
+{
     // If you change this message, change it also in tao/webui.cpp
     console.log('Server listening on port ' + server.address().port);
 });
 server.listen(currentPort);
 
 
-// Helpers
 
-// Read and cache JSON file (name = 'pages' or 'resources')
-// Example: getData('pages', function(error, pages) { ... } )
+
+// ============================================================================
+// 
+//     Helper functions
+// 
+// ============================================================================
+
 function getData(name, callback)
+// ----------------------------------------------------------------------------
+// Read and cache JSON file
+// ----------------------------------------------------------------------------
+// Usage: getData('pages', function(error, pages) { ... } )
+// (The name argument can be 'pages' or 'resources')
 {
     name = name || '';
     switch (name) {
-        case 'pages':
-        case 'resources':
-            break;
-        default:
-            var msg = 'Unexpected dataset name: ' + name;
-            callback(msg);
-            return;
+    case 'pages':
+    case 'resources':
+        break;
+    default:
+        var msg = 'Unexpected dataset name: ' + name;
+        callback(msg);
+        return;
     }
-    if (cached[name][name] !== null) {
+
+    if (cached[name][name] !== null)
+    {
         callback(null, cached[name][name]);
-    } else {
+    }
+    else
+    {
         var file = jsonFilePath(name);
-        fs.exists(file, function(exists) {
-            if (!exists) {
+        fs.exists(file, function(exists)
+        {
+            if (!exists)
+            {
                 console.log(file + ' does not exist');
                 cached[name][name] = [];
                 callback(null, []);
-            } else {
-                fs.readFile(file, 'utf8', function (err, data) {
-                    if (err) {
+            }
+            else
+            {
+                fs.readFile(file, 'utf8', function (err, data)
+                {
+                    if (err)
+                    {
                         console.log('File read error: ' + err);
                         callback(err);
-                    } else {
-                        if (data.trim().length === 0) {
+                    }
+                    else
+                    {
+                        if (data.trim().length === 0)
+                        {
                             console.log(file + ' is empty');
                             cached[name][name] = [];
-                        } else {
+                        }
+                        else
+                        {
                             cached[name] = JSON.parse(data);
                         }
                         callback(null, cached[name][name]);
@@ -682,12 +855,16 @@ function getData(name, callback)
     }
 }
 
-// Save all pages to DDD document and JSON file
-// req is the original HTTP request (may be used to retrieve language)
+
 function save(pages, req, callback)
+// ----------------------------------------------------------------------------
+//   Save all pages to DDD document and JSON file
+// ----------------------------------------------------------------------------
+// req is the original HTTP request (may be used to retrieve language)
 {
     var lang = req.cookies['taoeditorlang'] || 'en';
-    var sum = writeTaoDocument(pages, lang, function(err, sum) {
+    var sum = writeTaoDocument(pages, lang, function(err, sum)
+    {
         if (err)
             return callback(err);
         savePagesJSON(pages, sum);
@@ -695,8 +872,11 @@ function save(pages, req, callback)
     }, req.query.overwrite || false);
 }
 
-// Save pages to JSON file
+
 function savePagesJSON(pages, dddmd5sum)
+// ----------------------------------------------------------------------------
+//   Save pages to JSON file
+// ----------------------------------------------------------------------------
 {
     var path = jsonFilePath('pages', true);
     cached.pages.pages = pages;
@@ -708,7 +888,11 @@ function savePagesJSON(pages, dddmd5sum)
     verbose(path + ' saved');
 }
 
+
 function saveResources(resources)
+// ----------------------------------------------------------------------------
+//    Save the list of resources
+// ----------------------------------------------------------------------------
 {
     var path = jsonFilePath('resources', true);
     verbose('Saving ' + path);
@@ -719,10 +903,15 @@ function saveResources(resources)
     fs.writeFileSync(path, JSON.stringify(sav));
 }
 
+
 function allocateId(arr)
+// ----------------------------------------------------------------------------
+//    Allocate a new page ID when creating a new page
+// ----------------------------------------------------------------------------
 {
     var ids = {};
-    arr.forEach(function(elt) {
+    arr.forEach(function(elt)
+    {
         ids[elt.id] = 1;
     });
     var id = 1;
@@ -731,9 +920,12 @@ function allocateId(arr)
     return id;
 }
 
-// If file name exists in dir, generate modified name. Otherwise keep name.
-// Call callback(err, unused_name)
+
 function findUnusedFileName(dir, name, callback)
+// ----------------------------------------------------------------------------
+//   Find a file name that does not exist in given directory
+// ----------------------------------------------------------------------------
+//   Callback prototype is callback(err, unused_name)
 {
     fs.exists(dir + '/' + name, function(exists) {
         if (exists) {
@@ -747,44 +939,62 @@ function findUnusedFileName(dir, name, callback)
     });
 }
 
-// If name is a file in IMAGES_DIR or VIDEOS_DIR (depending on type)
-// and is not in the 'preserve' list, delete it
+
 function deleteResourceFile(type, name, callback)
+// ----------------------------------------------------------------------------
+//    Delete resource file unless in the 'preserve' list.
+// ----------------------------------------------------------------------------
+//    Depending on 'type', IMAGES_DIR or VIDEOS_DIR is searched for the file
 {
     var dir;
     type = type || 'image';
-    switch (type) {
-        case 'image': dir = IMAGES_DIR; break;
-        case 'video': dir = VIDEOS_DIR; break;
-        default:
-            var msg = 'Error: unknown resource type ' + type;
-            console.log(msg);
-            callback(msg)
-            return;
+    switch (type)
+    {
+    case 'image': dir = IMAGES_DIR; break;
+    case 'video': dir = VIDEOS_DIR; break;
+    default:
+        var msg = 'Error: unknown resource type ' + type;
+        console.log(msg);
+        callback(msg)
+        return;
     }
-    if (name.indexOf('://') === -1) {
-        if (preserve_files.indexOf(name) !== -1) {
+    if (name.indexOf('://') === -1)
+    {
+        if (preserve_files.indexOf(name) !== -1)
+        {
             verbose('Debug: file ' + name + ' not deleted (in preserve_files)');
             callback();
-        } else {
+        }
+        else
+        {
             var path = dir + '/' + name;
             verbose('Delete resource file: ' + path);
             fs.unlink(path, callback);
         }
-    } else {
+    }
+    else
+    {
         // name is a URL, nothing to do
         callback();
     }
 }
 
-// callback(err [, sum])
+
 function writeTaoDocument(pages, lang, callback, overwrite)
+// ----------------------------------------------------------------------------
+//    Write the .ddd file for the given pages
+// ----------------------------------------------------------------------------
+//    callback(err [, sum])
 {
     overwrite = overwrite || false;
-    if (!overwrite) {
+
+    if (!overwrite)
+    {
+        // Check cached MD5 sum, if different, don't overwrite (changed by user)
         var prevmd5 = cached.pages.dddmd5;
         var md5;
-        try {
+        try
+        {
             var ddd = fs.readFileSync(docPath(), 'utf8');
             if (ddd.trim().length === 0 || ddd.trim() === 'nil')
                 md5 = prevmd5; // allow overwrite
@@ -792,26 +1002,32 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                 md5 = null;    // allow overwrite
             else
                 md5 = crypto.createHash('md5').update(ddd).digest('hex');
-        } catch (e) {
+        }
+        catch (e)
+        {
             md5 = prevmd5;
         }
-        if (md5 !== prevmd5) {
-            console.log('MD5 sum of ' + docPath() + ' differs from the value it had when ' +
-                        'last saved (file not modified by us).\n' +
-                        'Will NOT overwrite file. Delete .ddd and save again if you wish.');
+        if (md5 !== prevmd5)
+        {
+            console.log('MD5 sum of ' + docPath()
+                        + ' differs from the value it had when '
+                        + 'last saved (file not modified by us).\n'
+                        + 'Will NOT overwrite file. '
+                        + 'Delete .ddd and save again if you wish.');
             return callback('ERR_FILECHANGED');
         }
     }
 
     var missing = [];
-    // callback(err, tmpl)
-    var getTmpl = function(page, callback)
+
+    function getTemplateExporter(page, callback)
     {
         var kind = page.kind;
         var path = page.path;
         var key = kind + ':' + path;
         if (key in exporter)
             return callback(null, exporter[key]);
+
         loadExporter(kind, path, function (err, obj) {
             if (err)
                 return callback(err);
@@ -819,267 +1035,94 @@ function writeTaoDocument(pages, lang, callback, overwrite)
             callback(null, obj);
         });
 
-        // callback(err, obj)
         function loadExporter(kind, path, callback)
         {
             // First check if there is a specialized version
-            var specializedTemplate = __dirname + '/../themes/' + path + '.ddt';
-            console.log("Looking at specialized " + specializedTemplate);
-            if (fs.existsSync(specializedTemplate)) {
-                return loadExporterFromTemplate(specializedTemplate, callback);
-            }
-
-            // Example: 'vellum.TitleAndSubtitle'
-            // => './../themes/vellum/export/TitleAndSubtitle'
-            var modname = __dirname + '/../themes/' + kind.replace('.', '/export/');
-            var template = modname + '.ddt';
-            console.log("Looking at template " + template);
-            if (fs.existsSync(template)) {
-                return loadExporterFromTemplate(template, callback);
-            }
-            var modfile = modname + '.js';
-            if (fs.existsSync(modfile) === false) {
-                return loadExporterFromCache(kind, callback);
-            }
-            verbose('Loading ' + modname);
-            callback(null, require(modname));
+            var templateFile = __dirname + '/../themes/' + path + '.ddt';
+            if (!fs.existsSync(templateFile))
+                return callback('Template file not found', templateFile);
+            return loadExporterFromTemplate(templateFile, callback);
         }
 
-        // callback(err, obj)
         function loadExporterFromTemplate(template, callback)
         {
-            var s = require(__dirname + '/../themes/common/export/slides');
-            var u = require(__dirname + '/../themes/common/export/util');
-
-            var importRe = /import\W+(\w+).*\n/gm;
-            var themeRe = /theme\W(".*")/gm;
-            var templateRe = /^(\W+)template_(\w+)/gm;
-            var data = fs.readFileSync(template, 'utf8');
-            var dataMtime = fs.statSync(template).mtime;
-
-            function updateDataIfNeeded() {
-                if (fs.statSync(template).mtime > dataMtime) {
-                    verbose ('Reloading ' + template);
-                    data = fs.readFileSync(template, 'utf8');
-                    dataMtime = fs.statSync(template).mtime;
-                }
-            }
-
-            var obj = {
-                header: function(ctx) {
-
-                    // Reload data in case it changed
-                    updateDataIfNeeded();
-
-                    var imports = data.match(importRe);
-                    var result = '';
-                    if (imports) {
-                        imports.forEach(function(imp) {
-                            var impName = imp.replace(importRe, '$1');
-                            var callback = s.importHeader(impName);
-                            result += callback(ctx);
-                        });
-                    }
-                    return result;
-                },
-                generate: function(page) {
-                    updateDataIfNeeded();
-                    var options = {
-                        locals: {
-                            page: page,
-                            ctx: page.ctx,
-
-                            importHeader: s.importHeader,
-                            importHeaders: s.importHeaders,
-                            generateMainTitleSlide: s.generateMainTitleSlide,
-                            generateSectionSlide: s.generateSectionSlide,
-                            generateBaseSlide: s.generateBaseSlide,
-
-                            emit_title: s.emitTitle,
-                            emit_story: s.emitStory,
-                            emit_left_column: s.emitLeftColumn,
-                            emit_right_column: s.emitRightColumn,
-                            emit_columns: s.emitColumns,
-                            emit_pictures: s.emitPictures,
-                            emit_movies: s.emitMovies,
-                            emit_page: s.emitPage,
-
-                            escape: u.escape,
-                            html: u.htmlToSlideContent,
-                            theme: u.theme
-                        },
-                        filename: template,
-                        cached: false,
-                        scope: this,
-                        open: "[[",
-                        close: "]]"
-                    };
-
-                    verbose('Rendering from template: ' + template);
-                    var noImports = data
-                        .replace(importRe, '')
-                        .replace(themeRe, '[[- theme(ctx, $1) ]]')
-                        .replace(templateRe, '[[- emit_$2(page, "$1") ]]');
-                    var result = ejs.render(noImports, options);
-                    return result;
-                }
-            }
+            var path = __dirname + '/exports';
+            var obj = templates.processTemplatePath(template, path);
             verbose("Exported from template: " + template);
             callback(null, obj);
         }
-
-
-        // callback(err, obj)
-        function loadExporterFromCache(kind, callback)
-        {
-            var modname = __dirname + '/../themes/export_cache/' + kind.replace('.', '/');
-            var modfile = modname + '.js';
-            if (fs.existsSync(modfile) === false || forceReload)
-            {
-                function error(msg) {
-                    if (msg)
-                        console.log(msg);
-                    if (missing.indexOf(kind) == -1)
-                        missing.push(kind);
-                    var empty = function() { return ''; }
-                    return { header: empty, generate: empty };
-                }
-                var dot = kind.indexOf('.');
-                var theme = kind.substring(0, dot);
-                if (THEME_BASE_URL.hasOwnProperty(theme))
-                {
-                    var file = kind.substring(dot + 1) + '.js';
-                    var dst = THEME_BASE_URL[theme] + '/export/' + file;
-                    var dstu = url.parse(dst);
-                    verbose('Fetching ' + dst);
-
-                    function createDir(dir)
-                    {
-                        if (!fs.existsSync(dir))
-                        {
-                            verbose('Creating ' + dir);
-                            fs.mkdirSync(dir);
-                        }
-                        return true;
-                    }
-                    var cachedir = __dirname + '/../themes/export_cache';
-                    if (!createDir(cachedir))
-                        return cb('ERR_MKCACHEDIR');
-                    var themedir = cachedir + '/' + theme;
-                    if (!createDir(themedir))
-                        return cb('ERR_MKTHEMECACHEDIR');
-                    var filepath = themedir + '/' + file;
-
-                    (function (buffer, dstpath, modname, cb) {
-                        verbose('Fetching remote from ' + dstu.host + '/' + dstu.path);
-                        http.get({ host: dstu.host, port: dstu.port || 80, path: dstu.path },
-                            function(res) {
-                                res.on('data', function(chunk) {
-                                    buffer += chunk;
-                                });
-                                res.on('end', function() {
-                                    if (res.statusCode !== 200) {
-                                        console.log('HTTP status code ' + res.statusCode);
-                                        return cb('ERR_TMPLDLHTTP');
-                                    }
-                                    verbose('Saving ' + dstpath);
-                                    fs.writeFile(dstpath, buffer, function(err) {
-                                        if (err) {
-                                            console.log(err);
-                                            endLoad();
-                                            return cb('ERR_WRITETMPL');
-                                        }
-                                        try {
-                                            exporter[key] = require(modname);
-                                        } catch (e) {
-                                            console.log('require() failed');
-                                            return cb('ERR_LOADTMPL');
-                                        }
-                                        verbose('Exporter for ' + kind + ' loaded');
-                                        return cb(null);
-                                    });
-                                })
-                        }).on('error', function(e) {
-                            console.log('Download failed [' + dst + ']');
-                            return callback('ERR_TMPLDL');
-                        });
-                    }('', filepath, modname, function(err) {
-                        if (err)
-                            return callback(err);
-                        callback(null, require(modname));
-                    }));
-                } else {
-                    verbose('No local file nor remote URL for ' + kind);
-                    return callback('ERR_NOTMPL');
-                }
-            } else {
-                return callback(null, require(modname));
-            }
-        }
     }
 
-    var ddd;
-    if (lang === 'fr') {
-        ddd = "// Document généré par l'Éditeur Tao depuis le fichier\n" +
-              "// "+ path.basename(jsonFilePath('pages', true)) +
-              " le " + (new Date()).toISOString() + ".\n//\n" +
-              "// NE MODIFIEZ PAS ce fichier manuellement, sauf si vous comptez ne plus utiliser\n" +
-              "// l'Éditeur Tao pour faire d'autres modifications. En effet, l'éditeur n'écrase\n" +
-              "// jamais un fichier modifié.\n\n"
-    } else {
-        ddd = '// Document generated by the Tao Editor from file\n' +
-              '// '+ path.basename(jsonFilePath('pages', true)) +
-              ' on ' + (new Date()).toISOString() + '.\n//\n' +
-              '// DO NOT EDIT this file manually, unless you plan to stop using the\n' +
-              '// Tao Editor to further change the document. Indeed, the editor will not\n' +
-              '// overwrite a modified file.\n\n'
-    }
+    var headerPath = __dirname + '/exports/header-' + lang + '.txt';
+    if (!fs.existsSync(headerPath))
+        headerPath = __dirname + '/exports/header-en.txt'
+    var ddd = fs.readFileSync(headerPath, 'utf8');
+    ddd = ddd
+        .replace('$PATH', path.basename(jsonFilePath('pages', true)))
+        .replace('$DATE', (new Date()).toISOString());
     var ctx = {};
 
-    async.eachSeries(pages, function(page, cb) {
-        getTmpl(page, function(err, tmpl) {
-            if (err)
-                return cb(err);
-            ddd += tmpl.header(ctx);
-            cb(null);
-        })
-    }, function(err) {
-        if (err)
-            return callback(err);
-
-        async.eachSeries(pages, function(page, cb) {
-            getTmpl(page, function(err, tmpl) {
+    async.eachSeries(
+        pages,
+        function(page, cb)
+        {
+            getTemplateExporter(page, function(err, tmpl) {
                 if (err)
                     return cb(err);
-                page.ctx = ctx;
-                ddd += tmpl.generate(page);
-                delete page.ctx;
+                ddd += tmpl.header(ctx);
                 cb(null);
             })
-        }, function (err) {
+        },
+        function(err)
+        {
             if (err)
-                return callback(err)
-
-            var warn = '';
-            if (missing.length !== 0)
-                warn = ' with error: missing output module(s) for page kind(s): ' + missing.toString();
-            writeDDD(ddd, warn, callback);
-        })
-    })
-
+                return callback(err);
+            async.eachSeries(
+                pages,
+                function(page, cb)
+                {
+                    getTemplateExporter(page, function(err, tmpl) {
+                        if (err)
+                            return cb(err);
+                        page.ctx = ctx;
+                        ddd += tmpl.generate(page);
+                        delete page.ctx;
+                        cb(null);
+                    })
+                },
+                function (err)
+                {
+                    if (err)
+                        return callback(err)
+                    var warn = '';
+                    if (missing.length !== 0)
+                        warn = ' with error: missing output module(s) '
+                        + 'for page kind(s): '
+                        + missing.toString();
+                    writeDDD(ddd, warn, callback);
+                }
+            );
+        }
+    );
+    
 }
 
 
-// Write text to .ddd file and update cached MD5 sum
-// callback(err [, md5sum])
 function writeDDD(ddd, warn, callback)
+// ----------------------------------------------------------------------------
+// Write text to .ddd file and update cached MD5 sum
+// ----------------------------------------------------------------------------
+// callback(err [, md5sum])
 {
     var file = docPath();
     warn = warn || '';
-    try {
+    try
+    {
         fs.writeFileSync(file, ddd);
-    } catch (e) {
-        return callback('ERR_FILEACCESS');
+    }
+    catch (e)
+    {
+        return callback('Error writing file');
     }
     verbose(file + ' saved' + warn);
     cached.pages.dddmd5 = crypto.createHash('md5').update(ddd).digest('hex');
@@ -1088,56 +1131,27 @@ function writeDDD(ddd, warn, callback)
 
 
 function loadPageFromTemplate(page, template)
+// ----------------------------------------------------------------------------
+//   Load page properties from a template
+// ----------------------------------------------------------------------------
 {
-    var file = __dirname + '/../themes/' + template + '.ddt';
-    if (!fs.existsSync(file))
-        return '';
+    var path = __dirname + '/properties';
 
-    var f = require(__dirname + '/../themes/common/export/fields');
-    var u = require(__dirname + '/../themes/common/export/util');
-
-    var importRe = /import\W+(\w+).*\n/gm;
-    var themeRe = /theme\W(".*")/gm;
-    var templateRe = /^(\W+)template_(\w+)/gm;
-    var data = fs.readFileSync(file, 'utf8');
-    verbose('Loading page default from template ' + file);
-
-    var options = {
-        locals: {
-            page: page,
-            ctx: page.ctx,
-
-            need_title: f.needTitle,
-            need_story: f.needStory,
-            need_left_column: f.needLeftColumn,
-            need_right_column: f.needRightColumn,
-            need_columns: f.needColumns,
-            need_pictures: f.needPictures,
-            need_movies: f.needMovies,
-            need_page: f.needPage,
-            
-        },
-        filename: template,
-        cached: false,
-        scope: this,
-        open: "[[",
-        close: "]]"
-    };
-
-    var noImports = data
-        .replace(importRe, '')
-        .replace(themeRe, '')
-        .replace(templateRe, '[[- need_$2(page) ]]');
-    verbose('Generating default fields from template:\n' + noImports);
-    f.beginFields();
-    ejs.render(noImports, options);
+    fields.beginFields();
+    var obj = templates.processTemplatePath(template, path);
+    verbose("Exported from template: " + template);
+    callback(null, obj);
     var result = f.endFields();
+
     verbose('Returned value: ' + result);
     return result;
 }
 
 
 function verbose()
+// ----------------------------------------------------------------------------
+//   Show something only when in VERBOSE mode
+// ----------------------------------------------------------------------------
 {
     if (VERBOSE)
         console.log.apply(console, arguments);

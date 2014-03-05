@@ -2,7 +2,7 @@ Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.MessageBox',
-        'TE.themes.common.controller.Controller'
+        'TE.editor.controller.Controller'
     ],
 
     stores: [ 'Pages', 'Images', 'Videos' ],
@@ -175,50 +175,26 @@ Ext.define('TE.controller.Editor', {
             return xmlHttp.responseText;
         }
 
-        function loadThemeFromPath(theme) {
+        function loadThemeFromPath(theme)
+        {
             var trans = TE.i18n.Translate;
-            try {
-                var panel = Ext.create('TE.themes.common.view.Theme', {
+            try
+            {
+                var panel = Ext.create('TE.editor.view.Theme',
+                {
                     image: 'app/themes/' + theme.theme + '.theme.png',
                     caption: theme.theme.replace(/.*\//, ''),
                     path: theme.theme,
                     pageTemplates: theme.templates
                 });
                 themePanel.add(panel);
-            } catch(e) {
+            }
+            catch(e)
+            {
                 console.log('Warning: unable to load theme: ' + theme);
                 console.log(e);
             }
         }
-
-        // Loading legacy themes
-        function load(theme) {
-            try {
-                var panel = Ext.create('TE.themes.' + theme + '.view.Theme');
-                themePanel.add(panel);
-            } catch (e) {
-                console.log('Warning: failed to load theme: ' + theme);
-                console.log(e);
-            }
-        }
-
-        // No longer load legacy themes
-        if (false)
-            Ext.each([
-                'blueclaire',
-                'keyboard',
-                'autumn_on_earth',
-                //'greenclaire',  // Uncomment this one to check the 'remote theme' feature at Taodyne (=> nano.local)
-                'seyes',
-                'pastel_triangles',
-                'bright_rectangles',
-                'seasons_greetings',
-                'lucky_stars',
-                'water',
-                'finance',
-                'landscapes',
-                'black_white'
-            ], load, this);
 
         var themeArray = JSON.parse(httpGet("/theme-list"));
         Ext.each(themeArray, loadThemeFromPath, this);

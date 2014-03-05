@@ -9,20 +9,13 @@ Ext.define('TE.view.PageTemplate', {
         this.callParent(arguments);
     },
 
-    getModelClassName: function() {
-        if (this.pageTemplate) {
-            // New case: we have a dynamically defined page template name
-            // We use the common theme
-            return 'TE.themes.common.model.BaseSlide';
-        }
-
-        // Old case: we have a statically defined page template name
-        // Example : TE.themes.vellum.view.TitleAndSubtitle
-        //        => TE.themes.vellum.model.TitleAndSubtitle
-        return this.self.getName().replace('.view.', '.model.');
+    getModelClassName: function()
+    {
+        return 'TE.editor.model.BaseSlide';
     },
 
-    createPage: function() {
+    createPage: function()
+    {
         var model = this.getModelClassName();
         var path = this.fullPageTemplate || '';
         var page = Ext.create(model);

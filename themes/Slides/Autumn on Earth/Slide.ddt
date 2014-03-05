@@ -2,5 +2,5 @@ import AutumnOnEarthTheme
 theme "AutumnOnEarth"
 
 // Slide
-base_slide "[[= page.name ]]",
-    template_page
+base_slide "[[name]]",
+    [[page]]
