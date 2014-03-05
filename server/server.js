@@ -1057,54 +1057,39 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     if (!fs.existsSync(headerPath))
         headerPath = __dirname + '/exports/header-en.txt'
     var ddd = fs.readFileSync(headerPath, 'utf8');
-    ddd = ddd
-        .replace('$PATH', path.basename(jsonFilePath('pages', true)))
-        .replace('$DATE', (new Date()).toISOString());
-    var ctx = {};
+    var ctx = { header: '' };
+    var body = '';
 
     async.eachSeries(
         pages,
-        function(page, cb)
-        {
+        function(page, cb) {
             getTemplateExporter(page, function(err, tmpl) {
                 if (err)
                     return cb(err);
-                ddd += tmpl.header(ctx);
+                page.ctx = ctx;
+                body += tmpl(page);
+                console.log('Page ' + page.name + ' body ' + body);
                 cb(null);
             })
         },
-        function(err)
-        {
+        function (err) {
             if (err)
                 return callback(err);
-            async.eachSeries(
-                pages,
-                function(page, cb)
-                {
-                    getTemplateExporter(page, function(err, tmpl) {
-                        if (err)
-                            return cb(err);
-                        page.ctx = ctx;
-                        ddd += tmpl.generate(page);
-                        delete page.ctx;
-                        cb(null);
-                    })
-                },
-                function (err)
-                {
-                    if (err)
-                        return callback(err)
-                    var warn = '';
-                    if (missing.length !== 0)
-                        warn = ' with error: missing output module(s) '
-                        + 'for page kind(s): '
-                        + missing.toString();
-                    writeDDD(ddd, warn, callback);
-                }
-            );
+
+            var warn = '';
+            if (missing.length !== 0)
+                warn = ' with error: missing output module(s) '
+                + 'for page kind(s): '
+                + missing.toString();
+
+            ddd = ddd
+                .replace('$PATH', path.basename(jsonFilePath('pages', true)))
+                .replace('$DATE', (new Date()).toISOString())
+                .replace('$HEADER', ctx.header)
+                .replace('$BODY', body);
+            writeDDD(ddd, warn, callback);
         }
     );
-    
 }
 
 

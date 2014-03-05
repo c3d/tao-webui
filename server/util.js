@@ -122,18 +122,19 @@ function theme(ctx, Theme)
     return 'theme "' + Theme + '"\n';
 }
 
-function importHeader(Name)
+
+function importHeader(ctx, Name)
 // ----------------------------------------------------------------------------
 //   Return a function that imports the given name only once
 // ----------------------------------------------------------------------------
 {
-    return function(ctx)
+    console.log("IMPORT HEADER " + Name);
+    if (!ctx.hasOwnProperty(Name))
     {
-        if (ctx.hasOwnProperty(Name))
-            return ''
-        ctx[Name] = 1
-        return 'import ' + Name + '\n'
+        ctx[Name] = 1;
+        ctx.header += 'import ' + Name + '\n';
     }
+    return '';
 }
 
 

@@ -20,7 +20,7 @@
 
 var util = require('../util');
 
-function emitMovie(movie, indent)
+function emitMovie(page, movie, indent)
 // ----------------------------------------------------------------------------
 //   Emit for a single movie
 // ----------------------------------------------------------------------------
@@ -30,6 +30,8 @@ function emitMovie(movie, indent)
     var mov = util.JSONitem(movie, 'movie');
     if (mov)
     {
+        util.importHeader(page.ctx, 'VLCAudioVideo');
+
         if (mov.indexOf('://') === -1)
             mov = 'videos/' + mov;
 
@@ -61,7 +63,7 @@ function emitMovies(page, indent)
     // Emit code for all movies
     var movies = util.filterJSON(page, '^movie');
     movies.forEach(function(movie) {
-        ddd += emitMovie(movie, indent);
+        ddd += emitMovie(page, movie, indent);
     });
     return ddd;
 }

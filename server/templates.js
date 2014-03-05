@@ -64,37 +64,16 @@ function processTemplate(template, importCB, themeCB, primitiveCB)
     }
 
 
-    return {
-        header: function(context)
-        // --------------------------------------------------------------------
-        //   A function that returns the imports
-        // --------------------------------------------------------------------
-        {
-            // Reload data in case it changed
-            updateDataIfNeeded();
-            
-            var imports = data.match(importRe);
-            var result = '';
-            if (imports)
-            {
-                imports.forEach(function(imp) {
-                    var impName = imp.replace(importRe, '$1');
-                    result += importCB(context, impName);
-                });
-            }
-            return result;
-        },
-
-        generate: function(page)
-        // --------------------------------------------------------------------
-        //  A function that generates the .DDD file from the template
-        // --------------------------------------------------------------------
-        {
-            // Reload data if it changed
-            updateDataIfNeeded();
-
-            // Build execution context for EJS
-            var options =
+    return function(page)
+    // ------------------------------------------------------------------------
+    //  A function that generates the .DDD file from the template
+    // ------------------------------------------------------------------------
+    {
+        // Reload data if it changed
+        updateDataIfNeeded();
+        
+        // Build execution context for EJS
+        var options =
             {
                 locals:
                 {
@@ -103,7 +82,8 @@ function processTemplate(template, importCB, themeCB, primitiveCB)
                     escape: util.escape,
                     html: util.htmlToSlide,
                     run: primitiveCB,
-                    theme: themeCB
+                    theme: themeCB,
+                    importHeader: importCB
                 },
                 filename: template,
                 cached: false,
@@ -111,15 +91,14 @@ function processTemplate(template, importCB, themeCB, primitiveCB)
                 open: "[[",
                 close: "]]"
             };
-
-            var noImports = data
-                .replace(importRe, '')
-                .replace(themeRe, '[[- theme(ctx, $1) ]]')
-                .replace(indentedRe, '[[- run(page, "$2", "$1") ]]')
-                .replace(templateRe, '[[- run(page, "$1", "") ]]');
-            var result = ejs.render(noImports, options);
-            return result;
-        }
+        
+        var noImports = data
+            .replace(importRe, '[[- importHeader(ctx, "$1") ]]')
+            .replace(themeRe, '[[- theme(ctx, $1) ]]')
+            .replace(indentedRe, '[[- run(page, "$2", "$1") ]]')
+            .replace(templateRe, '[[- run(page, "$1", "") ]]');
+        var result = ejs.render(noImports, options);
+        return result;
     }
 }
 

@@ -19,16 +19,4 @@
 // ****************************************************************************
 
 var util = require('../util');
-
-
-function processImport(context, importName)
-// ----------------------------------------------------------------------------
-//   Process 'import' statement during export
-// ----------------------------------------------------------------------------
-{
-    var callback = util.importHeader(importName);
-    return callback(context);
-}
-
-
-module.exports = processImport;
+module.exports = util.importHeader;
