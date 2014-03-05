@@ -128,7 +128,6 @@ function importHeader(ctx, Name)
 //   Return a function that imports the given name only once
 // ----------------------------------------------------------------------------
 {
-    console.log("IMPORT HEADER " + Name);
     if (!ctx.hasOwnProperty(Name))
     {
         ctx[Name] = 1;
@@ -166,7 +165,6 @@ function indent(code, before)
     });
     return result;
 }
-
 
 
 // ============================================================================

@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  tao-import.js                                                  Tao project
+//  tao-theme.js                                                  Tao project
 // ****************************************************************************
 //
 //   File Description:
 //
-//     Process the 'import' statements during default properties generation
+//     Process the 'theme' statements during default properties generation
 //
 //
 //
@@ -18,13 +18,13 @@
 //  (C) 2014 Taodyne SAS
 // ****************************************************************************
 
-function processImport(context, importName)
+function processTheme(context, themeName)
 // ----------------------------------------------------------------------------
-//   Process 'import' statement during properties generation
+//   Process 'theme' statement during properties generation
 // ----------------------------------------------------------------------------
 {
     return '';
 }
 
 
-module.exports = processImport;
+module.exports = processTheme;

@@ -1068,7 +1068,6 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                     return cb(err);
                 page.ctx = ctx;
                 body += tmpl(page);
-                console.log('Page ' + page.name + ' body ' + body);
                 cb(null);
             })
         },
@@ -1121,12 +1120,12 @@ function loadPageFromTemplate(page, template)
 // ----------------------------------------------------------------------------
 {
     var path = __dirname + '/properties';
+    var templateFile = __dirname + '/../themes/' + template + '.ddt';
 
     fields.beginFields();
-    var obj = templates.processTemplatePath(template, path);
-    verbose("Exported from template: " + template);
-    callback(null, obj);
-    var result = f.endFields();
+    var obj = templates.processTemplatePath(templateFile, path);
+    var empty = obj(page);
+    var result = fields.endFields();
 
     verbose('Returned value: ' + result);
     return result;

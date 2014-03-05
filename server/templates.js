@@ -116,9 +116,15 @@ function processTemplatePath(template, path)
         var modpath = path + '/' + name;
         var file = modpath + '.js';
         if (!fs.existsSync(file))
+        {
             console.log("UNIMPLEMENTED PRIMITIVE: " + file);
-        var module = require(modpath);
-        return module(page, indent);
+            return '';
+        }
+        else
+        {
+            var module = require(modpath);
+            return module(page, indent);
+        }
     }
 
     return processTemplate(template, importCB, themeCB, primitiveCB);
