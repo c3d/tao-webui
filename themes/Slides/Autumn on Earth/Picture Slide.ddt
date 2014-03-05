@@ -1,7 +1,0 @@
-import AutumnOnEarthTheme
-theme "AutumnOnEarth"
-
-// Picture slide
-base_slide "[[name]]",
-    [[page]]
-    [[picture]]

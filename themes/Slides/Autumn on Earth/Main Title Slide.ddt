@@ -1,6 +1,0 @@
-import AutumnOnEarthTheme
-theme "AutumnOnEarth"
-
-// Main title slide
-main_title_slide "[[name]]",
-    [[page]]

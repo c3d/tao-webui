@@ -1,6 +1,0 @@
-import AutumnOnEarthTheme
-theme "AutumnOnEarth"
-
-// Section slide
-section_slide "[[name]]",
-    [[page]]

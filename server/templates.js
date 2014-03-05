@@ -29,7 +29,7 @@ var indentedRe = /^(\s*)\[\[\s*(\w+)\s*\]\]/gm;
 var templateRe = /\[\[\s*(\w+)\s*\]\]/g;
 
 
-function processTemplate(template, importCB, themeCB, primitiveCB)
+function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
 // ----------------------------------------------------------------------------
 //    Load a .DDT file and process it using EJS
 // ----------------------------------------------------------------------------
@@ -48,7 +48,6 @@ function processTemplate(template, importCB, themeCB, primitiveCB)
     // Fetch data from the file
     var data = fs.readFileSync(template, 'utf8');
     var dataMtime = fs.statSync(template).mtime;
-
     
     function updateDataIfNeeded()
     // ------------------------------------------------------------------------
@@ -71,7 +70,17 @@ function processTemplate(template, importCB, themeCB, primitiveCB)
     {
         // Reload data if it changed
         updateDataIfNeeded();
-        
+
+        // Save template path name and short name
+        if (page.ctx)
+        {
+            var re = /(.*\/)*([^\/]+)\/[^\/]+$/;
+            page.ctx.themePath = themePath;
+            page.ctx.themeName = themePath.replace(re,'$2');
+            console.log("NAME=" + page.ctx.themeName);
+            page.ctx.themeShort = page.ctx.themeName.replace(/ /g, '')
+        }
+
         // Build execution context for EJS
         var options =
             {
@@ -103,7 +112,7 @@ function processTemplate(template, importCB, themeCB, primitiveCB)
 }
 
 
-function processTemplatePath(template, path)
+function processTemplatePath(template, themePath, path)
 // ----------------------------------------------------------------------------
 //   Process template with modules 
 // ----------------------------------------------------------------------------
@@ -127,7 +136,7 @@ function processTemplatePath(template, path)
         }
     }
 
-    return processTemplate(template, importCB, themeCB, primitiveCB);
+    return processTemplate(template, themePath, importCB,themeCB,primitiveCB);
 }
 
 

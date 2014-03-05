@@ -1038,16 +1038,12 @@ function writeTaoDocument(pages, lang, callback, overwrite)
         function loadExporter(kind, path, callback)
         {
             // First check if there is a specialized version
-            var templateFile = __dirname + '/../themes/' + path + '.ddt';
-            if (!fs.existsSync(templateFile))
-                return callback('Template file not found', templateFile);
-            return loadExporterFromTemplate(templateFile, callback);
-        }
+            var template = ddtFilePath(path);
+            if (!template)
+                return callback('Template file not found', path);
 
-        function loadExporterFromTemplate(template, callback)
-        {
-            var path = __dirname + '/exports';
-            var obj = templates.processTemplatePath(template, path);
+            var exportsPath = __dirname + '/exports';
+            var obj = templates.processTemplatePath(template,path,exportsPath);
             verbose("Exported from template: " + template);
             callback(null, obj);
         }
@@ -1120,15 +1116,49 @@ function loadPageFromTemplate(page, template)
 // ----------------------------------------------------------------------------
 {
     var path = __dirname + '/properties';
-    var templateFile = __dirname + '/../themes/' + template + '.ddt';
-
-    fields.beginFields();
-    var obj = templates.processTemplatePath(templateFile, path);
-    var empty = obj(page);
-    var result = fields.endFields();
-
-    verbose('Returned value: ' + result);
+    var templateFile = ddtFilePath(template);
+    var result = '';
+    if (templateFile)
+    {
+        fields.beginFields();
+        var obj = templates.processTemplatePath(templateFile, template, path);
+        var empty = obj(page);
+        result = fields.endFields();
+    }
+    verbose('Initial value for template ' + template + ' is ' + result);
     return result;
+}
+
+
+var ddtFileCache = [];
+function ddtFilePath(themePath)
+// ----------------------------------------------------------------------------
+//   Return the DDT file given a theme path
+// ----------------------------------------------------------------------------
+//   We start in the themes directory with the complete theme path,
+//   and keep going up until we find it
+{
+    if (themePath in ddtFileCache)
+        return ddtFileCache[themePath];
+
+    var origPath = themePath;
+    while (themePath != '')
+    {
+        var templateFile = __dirname + '/../themes/' + themePath + '.ddt';
+        console.log("Looking at " + templateFile + " for " + origPath);
+        if (fs.existsSync(templateFile))
+        {
+            console.log("Selected " + templateFile + " for " + origPath);
+            ddtFileCache[origPath] = templateFile;
+            return templateFile;
+        }
+        var repl = themePath.replace(/[^\/]+\/([^\/]+)$/, '$1');
+        if (repl == themePath)
+            themePath = '';
+        else
+            themePath = repl;
+    }
+    return null;
 }
 
 

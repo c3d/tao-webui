@@ -1,7 +1,0 @@
-import AutumnOnEarthTheme
-theme "AutumnOnEarth"
-
-// Movie slide
-base_slide "[[name]]",
-    [[page]]
-    [[movie]]

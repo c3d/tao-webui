@@ -1,6 +1,0 @@
-import AutumnOnEarthTheme
-theme "AutumnOnEarth"
-
-// Slide
-base_slide "[[name]]",
-    [[page]]
