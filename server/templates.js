@@ -77,7 +77,6 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
             var re = /(.*\/)*([^\/]+)\/[^\/]+$/;
             page.ctx.themePath = themePath;
             page.ctx.themeName = themePath.replace(re,'$2');
-            console.log("NAME=" + page.ctx.themeName);
             page.ctx.themeShort = page.ctx.themeName.replace(/ /g, '')
         }
 

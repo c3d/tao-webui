@@ -1064,6 +1064,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                     return cb(err);
                 page.ctx = ctx;
                 body += tmpl(page);
+                delete page.ctx;
                 cb(null);
             })
         },
