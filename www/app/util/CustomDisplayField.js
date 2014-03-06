@@ -6,7 +6,6 @@ Ext.define('TE.util.CustomDisplayField', {
     autoScroll:true,
     collapsible: true,
     collapsed:true,
-    index:'',
     items: [ {
         xtype:'displayfield',
         height:100,
@@ -36,28 +35,29 @@ Ext.define('TE.util.CustomDisplayField', {
         },
     },
 
-    // Update index of fieldset
-    setIndex: function(index)
-    {
-        this.index = index;
-    },
-
-    // Return displayfield value in a json object
     getValue: function()
+    // ------------------------------------------------------------------------
+    //  Return displayfield value in a json object
+    // ------------------------------------------------------------------------
     {
         return this.items.items[0].getValue();
     },
 
-    // Set displayfield according to a json object
+
     setValue: function(value)
+    // ------------------------------------------------------------------------
+    // Set displayfield according to a json object
+    // ------------------------------------------------------------------------
     {
         this.items.items[0].setValue(value);
     },
 
-    // Override toJSON method
+
     toJSON: function()
+    // ------------------------------------------------------------------------
+    // Override toJSON method
+    // ------------------------------------------------------------------------
     {
         return Ext.encode(this.getValue());
-    },
-
+    }
 });

@@ -4,14 +4,14 @@
 // 
 // ============================================================================
 
-var result = '';
+var result = { };
 
 function beginFields()
 // ----------------------------------------------------------------------------
 //    Create an empty list of properties
 // ----------------------------------------------------------------------------
 {
-    result = '';
+    result = { };
 }
 
 
@@ -20,23 +20,29 @@ function endFields()
 //   Wrap a list of properties, JSON style
 // ----------------------------------------------------------------------------
 {
-    result = '{' + result + '}';
-    return result;
+    return JSON.stringify(result);
 }
 
 
-function property(name, value)
+function property(object)
 // ----------------------------------------------------------------------------
 //   Add a property to the properties of the objec
 // ----------------------------------------------------------------------------
 {
-    return function(page, indent) {
-        var field = '"' + name + '":' + value;
-        
-        if (result.length > 0)
-            result = result + ',' + field;
-        else
-            result = field;
+    return function(page, indent, id) {
+
+        // Populate the 'result' object with fields, creating unique ones
+        for (field in object)
+        {
+            var index = 0;
+            var name = field;
+            while (object.hasOwnProperty(name))
+            {
+                index++;
+                name = field + '_' + index;
+            }
+            result[name] = object[field];
+        }
         return '';
     }
 }

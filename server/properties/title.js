@@ -1,2 +1,3 @@
-var fields = require('../fields');
-module.exports = fields.property('title', '"Insert title"');
+module.exports = require('../fields').property({
+    title: "Insert title"
+});

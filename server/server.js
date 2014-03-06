@@ -122,15 +122,15 @@ if (TEST_MODE) {
     preserve_files = [ 'small.png', 'big.png', 'Lenna.png' ];
 }
 
-// Data loaded from/saved to JSON files
-var cached = {
-    pages: {
-        pages: null,
-        dddmd5: null // overwrite empty or 'nil' file only (except TEST_MODE)
-    },
-    resources: {
-        resources: null
-    }
+
+var cached =
+// ----------------------------------------------------------------------------
+//   Data loaded from/saved to JSON files
+// ----------------------------------------------------------------------------
+{
+    pages: null,
+    resources: null,
+    dddmd5: null
 };
 
 var exporter = [];
@@ -141,6 +141,9 @@ function docPath() {
 }
 
 function jsonFilePath(name, saving)
+// ----------------------------------------------------------------------------
+//   Return the file path for the JSON document
+// ----------------------------------------------------------------------------
 {
     saving = saving || false;
     switch (name) {
@@ -276,6 +279,7 @@ app.get('/pages', function(req, res)
 // ----------------------------------------------------------------------------
 {
     getData('pages', function(err, pages) {
+        convertToClientSide(pages);
         res.send(err ? 500 : pages);
     });
 });
@@ -289,19 +293,32 @@ app.get('/pages/:id', function(req, res)
     getData('pages', function(err, pages) {
         var found = [];
         var pageIndex = -1;
-        for (var i = 0; i < pages.length; i++) {
-            if (pages[i].id == req.params.id) {
+        for (var i = 0; i < pages.length; i++)
+        {
+            if (pages[i].id == req.params.id)
+            {
                 found.push(pages[i]);
                 pageIndex = i+1;
             }
         }
-        if (pageIndex >= 0) {
+        if (pageIndex >= 0)
+        {
             fs.writeFileSync(docPath() + '.tao-instrs',
                              'page ' + pageIndex);
             var now = new Date();
             fs.utimesSync(docPath(), now, now);
         }
-        res.send(found.length === 1 ? found : 404);
+        if (found.length === 1)
+        {
+            convertToClientSide(found);
+            res.send(found);
+        }
+        else
+        {
+            console.log("GOT 404 FROM GET /page/:id " + req.params.id
+                        + "\n" + stringify(found));
+            res.send(404);
+        }
     });
 });
 
@@ -359,16 +376,22 @@ app.put('/pages/:id', function(req, res)
         var ret, found = null;
         var i = 0;
         var pageIndex = 0;
-        for (i = 0; i < pages.length; i++) {
-            if (pages[i].id == req.params.id) {
-                found = pages[i] = req.body;
+        convertToClientSide(pages);
+        for (i = 0; i < pages.length; i++)
+        {
+            if (pages[i].id == req.params.id)
+            {
+                found = req.body;
+                pages[i] = found;
                 pageIndex = i + 1;
                 verbose('Page ' + found.id + ' updated');
                 break;
             }
         }
-        if (found) {
-            if (found.idx !== -1) {
+        if (found)
+        {
+            if (found.idx !== -1)
+            {
                 // Move page:
                 // - delete from previous position
                 pages.splice(i, 1);
@@ -382,20 +405,25 @@ app.put('/pages/:id', function(req, res)
                 delete found.idx;
             save(pages, req, function(err) {
                 var rsp = {};
-                if (err) {
+                if (err)
+                {
                     rsp.success = false;
                     rsp.status = err;
                     rsp.filename = DOC_FILENAME;
-                } else {
+                }
+                else
+                {
                     rsp = found;
-                    if (pageIndex >= 0) {
+                    if (pageIndex >= 0)
                         fs.writeFileSync(docPath() + '.tao-instrs',
                                          'page ' + pageIndex);
-                    }
                 }
                 res.send(rsp);
             });
-        } else {
+        }
+        else
+        {
+            console.log("GOT 404 FROM PUT /page/:id " + req.params.id);
             res.send(404);
         }
     });
@@ -428,7 +456,10 @@ app.delete('/pages/:id', function(req, res)
             }
         }
         if (!found)
+        {
+            console.log("GOT 404 FROM DELETE /page/:id " + req.params.id);
             res.send(404);
+        }
     });
 });
 
@@ -471,8 +502,10 @@ app.put('/resources/:id', function(req, res)
     getData('resources', function(err, resources) {
         var prevfile, prevtype, found = null;
         var i = 0;
-        for (i = 0; i < resources.length; i++) {
-            if (resources[i].id == req.params.id) {
+        for (i = 0; i < resources.length; i++)
+        {
+            if (resources[i].id == req.params.id)
+            {
                 prevfile = resources[i].file;
                 prevtype = resources[i].type || 'image';
                 found = resources[i] = req.body;
@@ -481,18 +514,25 @@ app.put('/resources/:id', function(req, res)
                 break;
             }
         }
-        if (found) {
+        if (found)
+        {
             saveResources(resources);
-            if (prevfile.indexOf('://') === -1 && prevfile !== found.file) {
+            if (prevfile.indexOf('://') === -1 && prevfile !== found.file)
+            {
                 deleteResourceFile(prevtype, prevfile, function (err) {
                     res.send(err ? 500 : found);
                 });
-            } else {
+            }
+            else
+            {
                 res.send(found);
             }
-        } else {
-           res.send(404);
-    }
+        }
+        else
+        {
+            console.log("GOT 404 FROM PUT /resources/:id " + req.params.id);
+            res.send(404);
+        }
     });
 });
 
@@ -504,8 +544,10 @@ app.delete('/resources/:id', function(req, res)
 {
     getData('resources', function(err, resources) {
         var found = undefined;
-        for (var i = 0; i < resources.length; i++) {
-            if (resources[i].id == req.params.id) {
+        for (var i = 0; i < resources.length; i++)
+        {
+            if (resources[i].id == req.params.id)
+            {
                 found = resources[i];
                 verbose('Resource ' + found.id + ' deleted ' +
                         ' (type ' + found.type +')');
@@ -513,11 +555,15 @@ app.delete('/resources/:id', function(req, res)
                 saveResources(resources);
             }
         }
-        if (found) {
+        if (found)
+        {
             deleteResourceFile(found.type, found.file, function(err) {
                 res.send(err ? 500 : { success: true })
             })
-        } else {
+        }
+        else
+        {
+            console.log("GOT 404 FROM DELETE /resources/:id " + req.params.id);
             res.send(404);
         }
     });
@@ -671,7 +717,10 @@ app.get(/^\/+(index.*\.html|)$/, function(req, res)
         function(err, data)
         {
             if (err)
+            {
+                console.log("GOT 404 FROM GET index " + req.params.id);
                 return res.send(404);
+            }
             var lang = req.query.lang || 'en';
             function titleString() {
                 switch (lang) {
@@ -802,19 +851,12 @@ function getData(name, callback)
 // (The name argument can be 'pages' or 'resources')
 {
     name = name || '';
-    switch (name) {
-    case 'pages':
-    case 'resources':
-        break;
-    default:
-        var msg = 'Unexpected dataset name: ' + name;
-        callback(msg);
-        return;
-    }
+    if (name != 'pages' && name != 'resources')
+        return callback('Unexpected dataset name: ' + name);
 
-    if (cached[name][name] !== null)
+    if (cached[name] !== null)
     {
-        callback(null, cached[name][name]);
+        callback(null, cached[name]);
     }
     else
     {
@@ -824,7 +866,7 @@ function getData(name, callback)
             if (!exists)
             {
                 console.log(file + ' does not exist');
-                cached[name][name] = [];
+                cached[name] = [];
                 callback(null, []);
             }
             else
@@ -841,13 +883,22 @@ function getData(name, callback)
                         if (data.trim().length === 0)
                         {
                             console.log(file + ' is empty');
-                            cached[name][name] = [];
+                            cached[name] = [];
                         }
                         else
                         {
-                            cached[name] = JSON.parse(data);
+                            try
+                            {
+                                var saved = JSON.parse(data);
+                                cached[name] = saved[name];
+                            }
+                            catch(e)
+                            {
+                                console.log("ERROR PARSING DATA FILE:\n"+data);
+                                cached[name] = { };
+                            }
                         }
-                        callback(null, cached[name][name]);
+                        callback(null, cached[name]);
                     }
                 });
             }
@@ -879,12 +930,14 @@ function savePagesJSON(pages, dddmd5sum)
 // ----------------------------------------------------------------------------
 {
     var path = jsonFilePath('pages', true);
-    cached.pages.pages = pages;
+    cached.pages = pages;
+    cached.dddmd5 = dddmd5sum;
+    convertToServerSide(pages);
     var sav = {
         dddmd5: dddmd5sum,
         pages: pages
     }
-    fs.writeFileSync(path, JSON.stringify(sav));
+    fs.writeFileSync(path, stringify(sav));
     verbose(path + ' saved');
 }
 
@@ -896,11 +949,11 @@ function saveResources(resources)
 {
     var path = jsonFilePath('resources', true);
     verbose('Saving ' + path);
-    cached.resources.resources = resources;
+    cached.resources = resources;
     var sav = {
         resources: resources
     }
-    fs.writeFileSync(path, JSON.stringify(sav));
+    fs.writeFileSync(path, stringify(sav));
 }
 
 
@@ -991,7 +1044,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     if (!overwrite)
     {
         // Check cached MD5 sum, if different, don't overwrite (changed by user)
-        var prevmd5 = cached.pages.dddmd5;
+        var prevmd5 = cached.dddmd5;
         var md5;
         try
         {
@@ -1056,6 +1109,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     var ctx = { header: '' };
     var body = '';
 
+    convertToServerSide(pages);
     async.eachSeries(
         pages,
         function(page, cb) {
@@ -1106,8 +1160,8 @@ function writeDDD(ddd, warn, callback)
         return callback('Error writing file');
     }
     verbose(file + ' saved' + warn);
-    cached.pages.dddmd5 = crypto.createHash('md5').update(ddd).digest('hex');
-    callback(null, cached.pages.dddmd5);
+    cached.dddmd5 = crypto.createHash('md5').update(ddd).digest('hex');
+    callback(null, cached.dddmd5);
 }
 
 
@@ -1160,6 +1214,47 @@ function ddtFilePath(themePath)
             themePath = repl;
     }
     return null;
+}
+
+
+function convertToClientSide(pages)
+// ----------------------------------------------------------------------------
+//   Convert all pages to client side (serialized dynamicfields)
+// ----------------------------------------------------------------------------
+{
+    pages.forEach(function(page) {
+        if (page.properties)
+        {
+            page.dynamicfields = JSON.stringify(page.properties);
+            delete page.properties;
+        }
+    });
+}
+
+
+function convertToServerSide(pages)
+// ----------------------------------------------------------------------------
+//   Convert all pages to server side (unserialized properties)
+// ----------------------------------------------------------------------------
+{
+    pages.forEach(function(page) {
+        if (page.dynamicfields)
+        {
+            page.properties = JSON.parse(page.dynamicfields);
+            delete page.dynamicfields;
+        }
+    });
+}
+
+
+function stringify(object)
+// ----------------------------------------------------------------------------
+//   Stringify in verbose or normal mode
+// ----------------------------------------------------------------------------
+{
+    if (VERBOSE)
+        return JSON.stringify(object, null, '  ');
+    return JSON.stringify(object);
 }
 
 

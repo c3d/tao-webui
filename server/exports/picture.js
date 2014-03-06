@@ -20,45 +20,37 @@
 
 var util = require('../util');
 
-function emitPicture(picture, indent)
+function emitPicture(page, indent, id)
 // ----------------------------------------------------------------------------
 //   Emit for a single picture
 // ----------------------------------------------------------------------------
 {
     var ddd = '';
-    // Get correct picture url (ignore id)
-    var pic = util.JSONitem(picture, 'picture');
-    if (pic)
+
+    if (id)
     {
-        // Parse and get picture settings by ignoring id behind
-        // property name (for instance, {picx_1:30} returns 30).
-        var picx = util.JSONitem(picture, 'picx');
-        var picy = util.JSONitem(picture, 'picy');
-        var picscale = util.JSONitem(picture, 'picscale');
-        ddd = indent + 'picture' + '\n'
-            + indent + '    color "white"\n'
-            + indent + '    image ' + picx + ', ' + picy + ', '
-            + picscale + '%, ' + picscale + '%, "'
-            + util.escape(pic) + '"\n';
+        var picture = page.properties[id];
+        if (picture)
+        {
+            // Get correct picture url (ignore id)
+            var pic = util.item(picture, 'url');
+            if (pic)
+            {
+                // Parse and get picture settings by ignoring id behind
+                // property name (for instance, {x_1:30} returns 30).
+                var picx = util.item(picture, 'x');
+                var picy = util.item(picture, 'y');
+                var picscale = util.item(picture, 'scale');
+                ddd = indent + 'picture' + '\n'
+                    + indent + '    color "white"\n'
+                    + indent + '    image ' + picx + ', ' + picy + ', '
+                    + picscale + '%, ' + picscale + '%, "'
+                    + util.escape(pic) + '"\n';
+            }
+        }
     }
     return ddd;
 }
 
 
-function emitPictures(page, indent)
-// ----------------------------------------------------------------------------
-//   Emit for all pictures in page
-// ----------------------------------------------------------------------------
-{
-    var ddd = '';
-
-    // Emit code for all pictures
-    var pictures = util.filterJSON(page, '^picture');
-    pictures.forEach(function(picture) {
-        ddd += emitPicture(picture, indent);
-    });
-    return ddd;
-}
-
-
-module.exports = emitPictures;
+module.exports = emitPicture;

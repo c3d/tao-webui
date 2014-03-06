@@ -1,3 +1,8 @@
-var fields = require('../fields');
-module.exports = fields.property('movie_1', '{"movie_1":"http://www.youtube.com/watch?v=TbMKCN2-GPk","moviescalepercent_1":100,"moviex_1":0,"moviey_1":0}');
-    
+module.exports = require('../fields').property({
+    movie: {
+        url: "http://www.youtube.com/watch?v=TbMKCN2-GPk",
+        scale: 100,
+        x: 0,
+        y: 0
+    }
+});

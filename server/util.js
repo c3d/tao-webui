@@ -43,7 +43,7 @@ function decodeHTML(txt)
 }
 
 
-function filterJSON(json, filter)
+function filter(json, filter)
 // ----------------------------------------------------------------------------
 //   Filter JSON object according to a filter
 // ----------------------------------------------------------------------------
@@ -59,11 +59,13 @@ function filterJSON(json, filter)
 }
 
 
-function JSONitem(json, filter)
+function item(json, filter)
 // ----------------------------------------------------------------------------
 //   Filter JSON object according to a filter, get a single item
 // ----------------------------------------------------------------------------
 {
+    if (json.hasOwnProperty(filter))
+        return json[filter];
     for(var property in json)
         if (json.hasOwnProperty(property))
             if (property.match(filter))
@@ -142,12 +144,16 @@ function emitSlideElement(name)
 //   Return a function emitting a given page element
 // ----------------------------------------------------------------------------
 {
-    return function(page, indent)
+    return function(page, indent, id)
     {
         var ddd = '';
-        if (page[name] && page[name] != '')
-            ddd = indent + name + '\n'
-                + htmlToSlide(page[name], indent + indentString);
+        if (id)
+        {
+            var elem = page.properties[id];
+            if (elem && elem != '')
+                ddd = indent + name + '\n'
+                + htmlToSlide(elem, indent + indentString);
+        }
         return ddd;
     }
 }
@@ -533,8 +539,8 @@ module.exports =
 {
     escape: escape,
     decodeHTML: decodeHTML,
-    filterJSON: filterJSON,
-    JSONitem: JSONitem,
+    filter: filter,
+    item: item,
     htmlToSlide: htmlToSlide,
     emitSlideElement: emitSlideElement,
     theme: theme,

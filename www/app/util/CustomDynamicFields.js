@@ -1,4 +1,7 @@
 Ext.define('TE.util.CustomDynamicFields', {
+// ----------------------------------------------------------------------------
+//   A dynamic field holding all the properties for a slide
+// ----------------------------------------------------------------------------
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_customdynamicfields',
     requires: [
@@ -9,9 +12,6 @@ Ext.define('TE.util.CustomDynamicFields', {
     id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
-    text_idx:0,   // Current ID of text boxes
-    img_idx:0,    // Current ID of pictures
-    movie_idx: 0, // Current ID of movies
     items:
     [{
         xtype: 'hiddenfield',
@@ -21,7 +21,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         listeners: {
             change: function()
             {
-                // Parse json only when container is loaded
+                // Parse JSON only when container is loaded
                 // (i.e no other fields)
                 if(this.ownerCt.items.length == 1)
                     this.ownerCt.parseJSON(this.getValue());
@@ -33,16 +33,18 @@ Ext.define('TE.util.CustomDynamicFields', {
         remove: function(me, field) { this.removeField(field); }
     },
 
-    // Add new field to this container
+
     addField: function(type, label, value, collapse)
+    // ------------------------------------------------------------------------
+    //   Add new field to this container
+    // ------------------------------------------------------------------------
     {
         var field = this.createField(type, label);
         if(field)
         {
             this.add(field);
 
-            // Use setValue method
-            // to update all fields
+            // Use setValue method to update all fields
             field.setValue(value);
 
             // Add remove button
@@ -54,77 +56,92 @@ Ext.define('TE.util.CustomDynamicFields', {
         }
     },
 
-    // Create a field from given type
+
     createField: function(type, label)
+    // ------------------------------------------------------------------------
+    //   Create a field from given type
+    // ------------------------------------------------------------------------
     {
-        switch(type)
+        // Check if component already exists
+        var existing = null;
+        var name = type;
+        var index = 0;
+        var existing = this.componentExists(type);
+        while (existing)
         {
-            case 'title':
-            case 'subtitle':
-                return this.createCustomTextField(type, label);
-            case 'text':
-            case 'story':
-            case 'left_column':
-            case 'right_column':
-                return this.createCustomDisplayField(type, label);
-            case 'picture':
-                return this.createCustomPictureField(type, label);
-            case 'movie':
-                return this.createCustomMovieField(type, label);
-            case 'chart':
-                return this.createCustomChartEditor(type, label);
-            default:
-                return this.createCustomDisplayField('story', tr('Main text'));
+            // If this component kind should exist only once, don't add
+            if (!existing.multipleAllowed)
+                return null;
+
+            // Increment index and test new name
+            index++;
+            name = type + '_' + index;
+            existing = this.componentExists(name);
         }
+        console.log("Creating " + type + " with name " + name);
+
+        // Create new field with the given type and label
+        var field = Ext.create('TE.fields.' + type, {
+            title: label,
+            name: name,
+            width: '100%',
+            type:type,
+            defaults: {
+                listeners: {
+                    change: function() {
+                        // Save when all fields change
+                        // (except legend and datasets fields)
+                        Ext.getCmp("dynamic").saveDynamicFields();
+                    },
+                    render: function(f) {
+                        // Fire click to display field in the center pane
+                        var el = f.getEl();
+                        el.on('click',
+                              function() { this.fireEvent('click', f); }, f);
+                    }
+                }
+            }
+        });
+
+        return field;
     },
 
-    // Remove field from container
-    // and update all indexes
-    removeField: function(field)
-    {
-        // If removed field contains id, then
-        // update label/name of all others fields
-        // with same type
-        if(field.name.search(/_[0-9]+/g) != -1)
-        {
-            var items = this.items.items;
-            var index = 0;
-            Ext.each(items, function(item) {
-                if(item.xtype == field.xtype)
-                {
-                    // Update item index if
-                    // necessary
-                    index++;
-                    item.setIndex(index);
-                }
-            })
-        }
 
-        // Then resave fields
+    removeField: function(field)
+    // ------------------------------------------------------------------------
+    //   Remove field from container - Save new state to dynamic fields
+    // ------------------------------------------------------------------------
+    {
+        // Resave fields
         this.saveDynamicFields();
     },
 
-    // Check if a component with same name exists
-    componentExist: function(name)
+
+    componentExists: function(name)
+    // ------------------------------------------------------------------------
+    //    Check if a component with same name exists
+    // ------------------------------------------------------------------------
     {
         // Get all fields with same name
         var fields = Ext.ComponentQuery.query('[name='+ name +']')
 
         if(fields.length >= 1)
         {
-            // If there is already at least a
-            //  field defined, then focus it
+            // If there is already at least a field defined, then focus it
             fields[0].focus();
-            return true;
+            return fields[0];
         }
-        return false;
+        return null;
     },
 
 
-    // Add remove button to field legend
     addRemoveButton: function(field)
+    // ------------------------------------------------------------------------
+    //   Add remove button to field legend
+    // ------------------------------------------------------------------------
     {
-        if (!field.legend.closable) {
+        if (!field.legend.closable)
+        {
             field.legend.insert(0, Ext.widget('tool', {
                 type: 'close',
                 handler: function() {
@@ -138,20 +155,25 @@ Ext.define('TE.util.CustomDynamicFields', {
         }
     },
 
-    // Save all dynamic fields to hidden field
+
     saveDynamicFields: function()
+    // ------------------------------------------------------------------------
+    //   Save all dynamic fields to hidden field
+    // ------------------------------------------------------------------------
     {
         // Convert object to string
         var string = Ext.encode(this);
 
         // Save string in hidden field (as we can't serialize dynamic fields)
         var dynamic = Ext.getCmp('dynamicfields');
-
         dynamic.setValue(string);
     },
 
-    // Override toJSON method
+
     toJSON: function()
+    // ------------------------------------------------------------------------
+    //   Override toJSON method to save the fields
+    // ------------------------------------------------------------------------
     {
         var json = "{";
         var items = this.items.items;
@@ -168,10 +190,8 @@ Ext.define('TE.util.CustomDynamicFields', {
 
                     json += '"' + item.name + '":';
 
-                    // To encode complex objects, use implicitly
-                    // toJSON method if defined.
-                    // Otherwise encode directly value
-                    // (notably for simple objects like textfields).
+                    // To encode complex objects, use toJSON method if defined,
+                    // otherwise encode value directly (e.g. for textfields)
                     if(item.toJSON)
                         json += Ext.encode(item);
                     else
@@ -184,15 +204,22 @@ Ext.define('TE.util.CustomDynamicFields', {
         return json;
     },
 
-    // Override parseJSON method
+
     parseJSON: function(json)
+    // ------------------------------------------------------------------------
+    //   Override parseJSON method
+    // ------------------------------------------------------------------------
     {
         if(!json || json == '')
             return;
 
+        function defaultLabel(id)
+        {
+            return Ext.ComponentQuery.query('[id='+id+']')[0].text;
+        }
+
         // Decode JSON string
         var items = Ext.decode(json);
-
         for(var name in items)
         {
             var value = items[name];
@@ -200,19 +227,25 @@ Ext.define('TE.util.CustomDynamicFields', {
             {
                 // Get field type by removing id part (in the form 'TYPE_ID')
                 var type = name.replace(/_[0-9]+/g,'');
-                // // Get correct field label from 'Add...' menu
-                var label = Ext.ComponentQuery.query('[id='+ type +']')[0].text;
+
+                // Check if we have a label in the input value,
+                // otherwise get it from the label of the 'Add...' menu
+                var label = value.label || defaultLabel(type);
+
                 // // Add field
                 this.addField(type, label, value, true);
             }
         }
     },
 
-    // Create a textfield
+
     createCustomTextField: function(type, label)
+    // ------------------------------------------------------------------------
+    // Create a textfield
+    // ------------------------------------------------------------------------
     {
         // Check if field already exists
-        if(this.componentExist(type))
+        if(this.componentExists(type))
             return;
 
         var fieldLabel = label; // Use same label
@@ -221,18 +254,18 @@ Ext.define('TE.util.CustomDynamicFields', {
         var field = new TE.util.CustomTextField({
             title: fieldLabel,
             name: fieldName,
-            index:0,
             width: '100%',
             listeners: {
                 change: function() {
                     // Save when field change
                     Ext.getCmp("dynamic").saveDynamicFields();
-                },
+                }
             }
         });
 
         return field;
     },
+
 
     // Create a picture field
     createCustomPictureField: function(type, label)
@@ -248,7 +281,6 @@ Ext.define('TE.util.CustomDynamicFields', {
             name: fieldName,
             width: '100%',
             index:this.img_idx,
-            separator:'_',
             type:type,
             defaults: {
                 listeners: {
@@ -279,7 +311,6 @@ Ext.define('TE.util.CustomDynamicFields', {
             name: fieldName,
             width: '100%',
             index:this.movie_idx,
-            separator:'_',
             type:type,
             defaults: {
                 listeners: {
@@ -315,7 +346,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         else
         {
             // Check if component already exists
-            if(this.componentExist(type))
+            if(this.componentExists(type))
                 return;
 
             fieldLabel = label; // Use same label
@@ -348,7 +379,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     createCustomChartEditor: function(type, label)
     {
         // Check if field already exists
-        if(this.componentExist(type))
+        if(this.componentExists(type))
             return;
 
         var fieldLabel = label; // Use same label
@@ -358,7 +389,6 @@ Ext.define('TE.util.CustomDynamicFields', {
         var field = new TE.util.CustomChartEditor({
             name: fieldName,
             title: fieldLabel,
-            index:0,
             width: '100%',
             defaults: {
                 listeners: {

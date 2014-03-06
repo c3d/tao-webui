@@ -4,7 +4,6 @@ Ext.define('TE.util.CustomTextField', {
     alias: 'widget.te_textfield',
     collapsible: true,
     collapsed:true,
-    index:'',
     items: [{
         xtype:'textfield',
         anchor:'100%',
@@ -22,27 +21,30 @@ Ext.define('TE.util.CustomTextField', {
         },
     }],
 
-    // Update index of fieldset
-    setIndex: function(index)
-    {
-        this.index = index;
-    },
 
-    // Return textfield value in a json object
     getValue: function()
+    // ------------------------------------------------------------------------
+    //   Return textfield value in a json object
+    // ------------------------------------------------------------------------
     {
         return this.items.items[0].getValue();
     },
 
-    // Set textfield values according to a json object
+
     setValue: function(value)
+    // ------------------------------------------------------------------------
+    //   Set textfield values according to a json object
+    // ------------------------------------------------------------------------
     {
         this.items.items[0].setValue(value);
     },
 
-    // Override toJSON method to encode only textfield value.
+
     toJSON: function()
+    // ------------------------------------------------------------------------
+    //   Override toJSON method to encode only textfield value.
+    // ------------------------------------------------------------------------
     {
         return Ext.encode(this.getValue());
-    },
+    }
 });

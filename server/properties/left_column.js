@@ -1,2 +1,3 @@
-var fields = require('../fields');
-module.exports = fields.property('left_column', '"Insert left column"');
+module.exports = require('../fields').property({
+    left_column: "Insert left column"
+});

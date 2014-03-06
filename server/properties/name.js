@@ -1,1 +1,2 @@
-module.exports = function(page, indent) { return ''; }
+module.exports = function() { return ''; }
+

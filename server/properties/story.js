@@ -1,2 +1,3 @@
-var fields = require('../fields');
-module.exports = fields.property('story', '"Insert story"');
+module.exports = require('../fields').property({
+    story: "Insert story"
+});

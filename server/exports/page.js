@@ -21,25 +21,25 @@
 var util = require('../util');
 var fs = require('fs');
 
-function emitPage(page, indent)
+function emitPage(page, indent, id)
 // ----------------------------------------------------------------------------
 //   Emit the code for the page dynamic elements
 // ----------------------------------------------------------------------------
 {
     var ddd = '';
-    var dynamic = page.dynamicfields;
-    if(dynamic && dynamic != '')
+    var items = id ? page.properties[id] : page.properties;
+    if(items && items != '')
     {
-        // Decode JSON string
-        var items = JSON.parse(dynamic);
-
         // Loop on all elements in the object and emit them
         for (var item in items)
-            page[item] = items[item];
-        for (var item in items)
-            if (fs.existsSync(__dirname + '/' + item + '.js'))
-                ddd += require('./' + item) (page, indent);
+        {
+            var kind = item.replace(/_[0-9]+/, '');
+            if (fs.existsSync(__dirname + '/' + kind + '.js'))
+                ddd += require('./' + kind) (page, indent, item);
+        }
     }
+    if (ddd == '')
+        ddd = indent + 'nil';
     return ddd;
 }
 

@@ -1,4 +1,3 @@
-
 Ext.define('TE.util.CustomChartEditor', {
     extend:'Ext.form.FieldSet',
     alias: 'widget.customcharteditor',
@@ -11,13 +10,10 @@ Ext.define('TE.util.CustomChartEditor', {
     collapsed:true,
 
 
-    setIndex: function(index)
-    {
-        this.index = index;
-    },
-
-    // Return all values of chart in a json object
     getValue: function()
+    // ------------------------------------------------------------------------
+    //   Return all values of chart in a json object
+    // ------------------------------------------------------------------------
     {
         var result = '{';
         var items = this.items.items;
@@ -36,8 +32,11 @@ Ext.define('TE.util.CustomChartEditor', {
         return result;
     },
 
-    // Set all values of chart according to a json object
+
     setValue: function(json)
+    // ------------------------------------------------------------------------
+    //   Set all values of chart according to a json object
+    // ------------------------------------------------------------------------
     {
         if(!json || json == '')
             return;
@@ -55,14 +54,20 @@ Ext.define('TE.util.CustomChartEditor', {
         }
     },
 
-    // Override toJSON method
+
     toJSON: function()
+    // ------------------------------------------------------------------------
+    //  Override toJSON method
+    // ------------------------------------------------------------------------
     {
         return this.getValue();
     },
 
-     // Get all possible chart types
+
     getChartTypes: function()
+    // ------------------------------------------------------------------------
+    //   Return the possible chart types
+    // ------------------------------------------------------------------------
     {
         return [{abbr:"Area",   name:tr('Area', 'common'),},
                 {abbr:"Bar",   name:tr('Bar', 'common')},
@@ -70,45 +75,54 @@ Ext.define('TE.util.CustomChartEditor', {
                 {abbr:"Pie",    name:tr('Pie', 'common')}]
     },
 
-    // Get all possible chart styles according to
-    // given type
+
     getChartStyles: function(type)
+    // ------------------------------------------------------------------------
+    //   Return chart styles for the given chart type
+    // ------------------------------------------------------------------------
     {
         var data=[];
         switch(type){
-            case 'Area':
-                data=[{abbr:"Default",   name:tr('Default', 'common')},
-                      {abbr:"Stacked",   name:tr('Stacked', 'common')}];
-                break;
-
-            case 'Bar':
-                data=[{abbr:"Horizontal",   name:tr('Horizontal', 'common')},
-                      {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked', 'common')},
-                      {abbr:"Vertical",   name:tr('Vertical', 'common')},
-                      {abbr:"Vertical_stacked",   name:tr('Vertical stacked', 'common')}];
-                break;
-
-            case 'Line':
-                data=[{abbr:"Line",   name:tr('Line', 'common')},
-                      {abbr:"Line&Point",   name:tr('Line & Point', 'common')},
-                      {abbr:"Point",   name:tr('Point', 'common')}];
-                break;
-
-            case 'Pie':
-                data=[{abbr:"Default",   name:tr('Default', 'common')}];
-                break;
+        case 'Area':
+            data=[{abbr:"Default",   name:tr('Default', 'common')},
+                  {abbr:"Stacked",   name:tr('Stacked', 'common')}];
+            break;
+            
+        case 'Bar':
+            data=[{abbr:"Horizontal",   name:tr('Horizontal', 'common')},
+                  {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked', 'common')},
+                  {abbr:"Vertical",   name:tr('Vertical', 'common')},
+                  {abbr:"Vertical_stacked",   name:tr('Vertical stacked', 'common')}];
+            break;
+            
+        case 'Line':
+            data=[{abbr:"Line",   name:tr('Line', 'common')},
+                  {abbr:"Line&Point",   name:tr('Line & Point', 'common')},
+                  {abbr:"Point",   name:tr('Point', 'common')}];
+            break;
+            
+        case 'Pie':
+            data=[{abbr:"Default",   name:tr('Default', 'common')}];
+            break;
         }
-
+        
         return data;
     },
 
-    getChartFormats: function() {
+    getChartFormats: function()
+    // ------------------------------------------------------------------------
+    //   Return chart formats
+    // ------------------------------------------------------------------------
+    {
         return [{abbr:'2D',  name:tr('2D', 'common')},
                 {abbr:'3D',  name:tr('3D', 'common')}];
     },
 
-    // Update field with chart styles
+
     updateChartStyles: function()
+    // ------------------------------------------------------------------------
+    //   Update field with chart styles
+    // ------------------------------------------------------------------------
     {
         var types  = Ext.getCmp('charttype');
         var styles = Ext.getCmp('chartstyle');
@@ -118,7 +132,12 @@ Ext.define('TE.util.CustomChartEditor', {
         styles.setValue(data[0].abbr);
     },
 
-    initComponent: function () {
+
+    initComponent: function ()
+    // ------------------------------------------------------------------------
+    //   Initialize chart component
+    // ------------------------------------------------------------------------
+    {
         border: false,
         this.lastFocus = null,
 
