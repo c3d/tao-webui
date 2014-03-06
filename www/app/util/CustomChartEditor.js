@@ -7,7 +7,7 @@ Ext.define('TE.util.CustomChartEditor', {
     name:"chart",
     title:tr('Chart', 'common'),
     collapsible: true,
-    collapsed:true,
+    collapsed:false,
 
 
     getValue: function()

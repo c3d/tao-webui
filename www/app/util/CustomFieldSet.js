@@ -2,7 +2,7 @@ Ext.define('TE.util.CustomFieldSet', {
     extend:'Ext.form.FieldSet',
     alias: 'widget.te_customfieldset',
     collapsible: true,
-    collapsed:true,
+    collapsed:false,
 
     getValue: function()
     // ------------------------------------------------------------------------

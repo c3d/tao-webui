@@ -3,7 +3,7 @@ Ext.define('TE.util.CustomTextField', {
     requires:['Ext.form.field.Text'],
     alias: 'widget.te_textfield',
     collapsible: true,
-    collapsed:true,
+    collapsed:false,
     items: [{
         xtype:'textfield',
         anchor:'100%',

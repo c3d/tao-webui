@@ -16,10 +16,9 @@ Ext.define('TE.controller.PageControllerBase', {
         var view = Ext.create(vname);
         pp.add(view);
         pp.down('form').loadRecord(record);
-        if (this.timer === 0)
-            this.startSaveTimer();
-        else
-            console.log('Unexpected: timer !== 0');
+        if (this.timer !== 0)
+            this.endDisplay();
+        this.startSaveTimer();
     },
 
     endDisplay: function() {

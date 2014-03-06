@@ -2,7 +2,7 @@ Ext.define('TE.util.CustomMovieField', {
     extend:'TE.util.CustomFieldSet',
     alias: 'widget.te_custommoviefield',
     collapsible: true,
-    collapsed:true,
+    collapsed:false,
 
     initComponent: function()
     // ------------------------------------------------------------------------

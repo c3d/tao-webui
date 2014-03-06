@@ -5,7 +5,7 @@ Ext.define('TE.util.CustomDisplayField', {
     maxHeight:100,
     autoScroll:true,
     collapsible: true,
-    collapsed:true,
+    collapsed:false,
     items: [ {
         xtype:'displayfield',
         height:100,

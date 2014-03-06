@@ -32,6 +32,7 @@ Ext.define('TE.util.CustomDynamicFields', {
     {
         remove: function(me, field) { this.removeField(field); }
     },
+    disableSave: false,
 
 
     addField: function(type, label, value, collapse)
@@ -51,8 +52,13 @@ Ext.define('TE.util.CustomDynamicFields', {
             this.addRemoveButton(field);
 
             // Expand fieldset if needed (first add)
-            if(!collapse)
+            if(collapse)
+                field.collapse();
+            else
                 field.expand();
+
+            // Once we are done, save
+            this.saveDynamicFields();
         }
     },
 
@@ -78,15 +84,16 @@ Ext.define('TE.util.CustomDynamicFields', {
             name = type + '_' + index;
             existing = this.componentExists(name);
         }
-        console.log("Creating " + type + " with name " + name);
 
         // Create new field with the given type and label
-        var field = Ext.create('TE.fields.' + type, {
-            title: label,
-            name: name,
-            width: '100%',
-            type:type,
-            defaults: {
+        var field = null;
+        try
+        {
+            field = Ext.create('TE.fields.' + type, {
+                title: label,
+                name: name,
+                width: '100%',
+                type:type,
                 listeners: {
                     change: function() {
                         // Save when all fields change
@@ -100,8 +107,12 @@ Ext.define('TE.util.CustomDynamicFields', {
                               function() { this.fireEvent('click', f); }, f);
                     }
                 }
-            }
-        });
+            });
+        }
+        catch(e)
+        {
+            console.log("Unknown field kind: " + type);
+        }
 
         return field;
     },
@@ -161,12 +172,25 @@ Ext.define('TE.util.CustomDynamicFields', {
     //   Save all dynamic fields to hidden field
     // ------------------------------------------------------------------------
     {
-        // Convert object to string
-        var string = Ext.encode(this);
-
-        // Save string in hidden field (as we can't serialize dynamic fields)
-        var dynamic = Ext.getCmp('dynamicfields');
-        dynamic.setValue(string);
+        if (!this.disableSave)
+        {
+            // Convert object to string
+            var string = Ext.encode(this);
+            
+            // Compute the "collapsed" state
+            var items = this.items.items;
+            var collapsed = [];
+            Ext.each(items, function(item, index) {
+                if (item.collapsed)
+                    collapsed.push(item.name);
+            });
+            collapsed = '"_collapsed_":' + Ext.encode(collapsed);
+            string = string.replace(/^{/, '{' + collapsed + ',');
+            
+            // Save string in hidden field
+            var dynamic = Ext.getCmp('dynamicfields');
+            dynamic.setValue(string);
+        }
     },
 
 
@@ -185,9 +209,8 @@ Ext.define('TE.util.CustomDynamicFields', {
                 if(value && value != '')
                 {
                     // Add coma if not first item
-                    if(json != '{')
+                    if (json != "{")
                         json += ',';
-
                     json += '"' + item.name + '":';
 
                     // To encode complex objects, use toJSON method if defined,
@@ -215,26 +238,39 @@ Ext.define('TE.util.CustomDynamicFields', {
 
         function defaultLabel(id)
         {
-            return Ext.ComponentQuery.query('[id='+id+']')[0].text;
+            var component = Ext.ComponentQuery.query('[id='+id+']');
+            if (component && component.length == 1)
+                return component[0].text;
+            return 'Uknown field type ' + id;
         }
+
+        // Disable saves to hidden field while we are reading it
+        var saveDisabled = this.disableSave;
+        this.disableSave = true;
 
         // Decode JSON string
         var items = Ext.decode(json);
+        var collapsed = items._collapsed_;
         for(var name in items)
         {
-            var value = items[name];
-            if(value && value != '')
+            if (name != '_collapsed_')
             {
+                var value = items[name];
+
                 // Get field type by removing id part (in the form 'TYPE_ID')
                 var type = name.replace(/_[0-9]+/g,'');
 
                 // Check if we have a label in the input value,
                 // otherwise get it from the label of the 'Add...' menu
                 var label = value.label || defaultLabel(type);
-
-                // // Add field
-                this.addField(type, label, value, true);
+            
+                // Check if collapsed
+                var collapse = collapsed && collapsed.indexOf(name) >= 0;
+            
+                // Add field
+                this.addField(type, label, value, collapse);
             }
         }
+        this.disableSave = saveDisabled;
     }
 });
