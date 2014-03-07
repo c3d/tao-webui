@@ -3,8 +3,7 @@ Ext.define('TE.model.Page', {
     requires: [ 'TE.util.ServerErrors' ],
     fields: [
         'name',
-        'kind',
-        'path',
+        'model',
         { name: 'idx', type: 'int', defaultValue: -1 }
     ],
 
@@ -47,27 +46,6 @@ Ext.define('TE.model.Page', {
                 });
             }
         }
-    },
-
-    // NOTE: the following code has been largely obsoleted by the
-    // new template-based mechanism (.ddt files). As a result, we always
-    // work with a page.kind set to common.BaseSlide.
-    // The corresponding files are now under www/app/editor, with fixed names.
-    // The kind field will soon be suppressed.
-
-    // Example: if kind = vellum.TitleAndSubtitle, returns 'vellum'
-    theme: function()
-    {
-        var kind = this.get('kind');
-        var dot = kind.indexOf('.');
-        return kind.substring(0, dot);
-    },
-
-    template: function()
-    {
-        var kind = this.get('kind');
-        var dot = kind.indexOf('.');
-        return kind.substring(dot + 1);
     },
 
     getPageTemplateViewClass: function()

@@ -175,7 +175,7 @@ Ext.define('TE.controller.Editor', {
             return xmlHttp.responseText;
         }
 
-        function loadThemeFromPath(theme)
+        function loadThemeFromModel(theme)
         {
             var trans = TE.i18n.Translate;
             try
@@ -184,7 +184,7 @@ Ext.define('TE.controller.Editor', {
                 {
                     image: 'app/themes/' + theme.theme + '.theme.png',
                     caption: theme.theme.replace(/.*\//, ''),
-                    path: theme.theme,
+                    model: theme.theme,
                     pageTemplates: theme.templates
                 });
                 themePanel.add(panel);
@@ -197,7 +197,7 @@ Ext.define('TE.controller.Editor', {
         }
 
         var themeArray = JSON.parse(httpGet("/theme-list"));
-        Ext.each(themeArray, loadThemeFromPath, this);
+        Ext.each(themeArray, loadThemeFromModel, this);
 
     },
 

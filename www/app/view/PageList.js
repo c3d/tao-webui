@@ -21,8 +21,8 @@ Ext.define('TE.tree.PageList', {
         prepareData : function(data, recordIndex, record ){
             // Add image url to the diplayed data
             var img = '';
-            if (record.data.path)
-                img = 'app/themes/' + record.data.path + '.pt.png'
+            if (record.data.model)
+                img = 'app/themes/' + record.data.model + '.pt.png'
             else
                 img = Ext.create(record.getPageTemplateViewClass()).image;
             data['img'] = img;

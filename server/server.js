@@ -334,7 +334,7 @@ app.post('/pages', function (req, res)
         // Check if we can get the dynamic fields from the template
         if (page.dynamicfields === '')
         {
-            page.dynamicfields = loadPageFromTemplate(page, page.path);
+            page.dynamicfields = loadPageFromTemplate(page, page.model);
             req.body = page;
         }
 
@@ -1075,28 +1075,27 @@ function writeTaoDocument(pages, lang, callback, overwrite)
 
     function getTemplateExporter(page, callback)
     {
-        var kind = page.kind;
-        var path = page.path;
-        var key = kind + ':' + path;
+        var model = page.model;
+        var key = model;
         if (key in exporter)
             return callback(null, exporter[key]);
 
-        loadExporter(kind, path, function (err, obj) {
+        loadExporter(model, function (err, obj) {
             if (err)
                 return callback(err);
             exporter[key] = obj;
             callback(null, obj);
         });
 
-        function loadExporter(kind, path, callback)
+        function loadExporter(model, callback)
         {
             // First check if there is a specialized version
-            var template = ddtFilePath(path);
+            var template = ddtFilePath(model);
             if (!template)
-                return callback('Template file not found', path);
+                return callback('Template file not found', model);
 
             var exportsPath = __dirname + '/exports';
-            var obj = templates.processTemplatePath(template,path,exportsPath);
+            var obj = templates.processTemplatePath(template,model,exportsPath);
             verbose("Exported from template: " + template);
             callback(null, obj);
         }
@@ -1200,7 +1199,7 @@ function ddtFilePath(themePath)
     while (themePath != '')
     {
         var templateFile = __dirname + '/../themes/' + themePath + '.ddt';
-        console.log("Looking at " + templateFile + " for " + origPath);
+        verbose("Looking at " + templateFile + " for " + origPath);
         if (fs.existsSync(templateFile))
         {
             console.log("Selected " + templateFile + " for " + origPath);

@@ -3,4 +3,5 @@ import MovieCredits
 
 base_slide "[[name]]",
     [[page]]
-    [[text "Crawl text"]]
+    star_wars_crawl
+        [[rich_text "Crawl text"]]

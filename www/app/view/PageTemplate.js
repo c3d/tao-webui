@@ -19,9 +19,7 @@ Ext.define('TE.view.PageTemplate', {
         var model = this.getModelClassName();
         var path = this.fullPageTemplate || '';
         var page = Ext.create(model);
-        var kind = model.replace('TE.themes.','').replace('.model','');
-        page.set('path', path);
-        page.set('kind', kind);
+        page.set('model', path);
         return page;
     }
  });
