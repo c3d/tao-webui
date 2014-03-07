@@ -32,6 +32,7 @@ function property(object)
     return function(page, indent, id, value) {
 
         var label = null;
+        var obj = object;
         if (value)
         {
             for (field in value)
@@ -39,7 +40,7 @@ function property(object)
                 if (field == 'label')
                     label = value[field];
                 else
-                    object[field] = value[field];
+                    obj[field] = value[field];
             }
         }
 
@@ -48,12 +49,12 @@ function property(object)
         {
             var index = 0;
             var name = field;
-            while (object.hasOwnProperty(name))
+            while (obj.hasOwnProperty(name))
             {
                 index++;
                 name = field + '_' + index;
             }
-            result[name] = object[field];
+            result[name] = obj[field];
         }
 
         // If label is set, update labels
