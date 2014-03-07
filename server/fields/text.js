@@ -1,3 +1,3 @@
 module.exports = require('../fields').property({
-    text: "Insert text value here"
+    text: "Type your text here"
 });

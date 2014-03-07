@@ -1,3 +1,3 @@
 module.exports = require('../fields').property({
-    title: "Insert title"
+    title: "Type your title here"
 });

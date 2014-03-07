@@ -1,5 +1,5 @@
 module.exports = require('../fields').property({
-    title: 'Insert title',
-    subtitle: 'Insert subtitle',
-    story: 'Insert story'
+    title: 'Type your title here',
+    subtitle: 'Type your subtitle here',
+    story: 'Type your story here'
 });

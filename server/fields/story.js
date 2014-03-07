@@ -1,3 +1,3 @@
 module.exports = require('../fields').property({
-    story: "Insert story"
+    story: "Type your story here"
 });

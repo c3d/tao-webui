@@ -1,3 +1,3 @@
 module.exports = require('../fields').property({
-    right_column: "Insert right column"
+    right_column: "Type your right column text here"
 });

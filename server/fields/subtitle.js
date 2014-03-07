@@ -1,3 +1,3 @@
 module.exports = require('../fields').property({
-    subtitle: "Insert subtitle"
+    subtitle: "Type your subtitle here"
 });
