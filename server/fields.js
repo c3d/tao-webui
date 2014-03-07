@@ -29,7 +29,19 @@ function property(object)
 //   Add a property to the properties of the objec
 // ----------------------------------------------------------------------------
 {
-    return function(page, indent, id) {
+    return function(page, indent, id, value) {
+
+        var label = null;
+        if (value)
+        {
+            for (field in value)
+            {
+                if (field == 'label')
+                    label = value[field];
+                else
+                    object[field] = value[field];
+            }
+        }
 
         // Populate the 'result' object with fields, creating unique ones
         for (field in object)
@@ -43,6 +55,15 @@ function property(object)
             }
             result[name] = object[field];
         }
+
+        // If label is set, update labels
+        if (label)
+        {
+            if (!result._labels_)
+                result._labels_ = { }
+            result._labels_[name] = label;
+        }
+
         return '';
     }
 }

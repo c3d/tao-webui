@@ -3,3 +3,4 @@ import MovieCredits
 
 base_slide "[[name]]",
     [[page]]
+    [[text "Crawl text"]]

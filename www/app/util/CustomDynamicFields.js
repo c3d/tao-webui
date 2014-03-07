@@ -176,7 +176,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         {
             // Convert object to string
             var string = Ext.encode(this);
-            
+
             // Compute the "collapsed" state
             var items = this.items.items;
             var collapsed = [];
@@ -184,9 +184,11 @@ Ext.define('TE.util.CustomDynamicFields', {
                 if (item.collapsed)
                     collapsed.push(item.name);
             });
-            collapsed = '"_collapsed_":' + Ext.encode(collapsed);
-            string = string.replace(/^{/, '{' + collapsed + ',');
-            
+            var hdr = collapsed = '"_collapsed_":' + Ext.encode(collapsed);
+            if (this._labels_)
+                hdr += ',"_labels_":' + Ext.encode(this._labels_);;
+            string = string.replace(/^{/, '{' + hdr + ',');
+
             // Save string in hidden field
             var dynamic = Ext.getCmp('dynamicfields');
             dynamic.setValue(string);
@@ -251,9 +253,10 @@ Ext.define('TE.util.CustomDynamicFields', {
         // Decode JSON string
         var items = Ext.decode(json);
         var collapsed = items._collapsed_;
+        var labels = items._labels_ || { };
         for(var name in items)
         {
-            if (name != '_collapsed_')
+            if (name != '_collapsed_' && name != '_labels_')
             {
                 var value = items[name];
 
@@ -262,11 +265,11 @@ Ext.define('TE.util.CustomDynamicFields', {
 
                 // Check if we have a label in the input value,
                 // otherwise get it from the label of the 'Add...' menu
-                var label = value.label || defaultLabel(type);
-            
+                var label = labels[name] || defaultLabel(type);
+
                 // Check if collapsed
                 var collapse = collapsed && collapsed.indexOf(name) >= 0;
-            
+
                 // Add field
                 this.addField(type, label, value, collapse);
             }

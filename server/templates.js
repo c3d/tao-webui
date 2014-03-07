@@ -25,6 +25,10 @@ var fs = require('fs');
 // Regular expressions for elements in a template
 var importRe = /import\s+(\w+).*\n/g;
 var themeRe = /theme\s+(".*")/g;
+var indentedValRe = /^(\s*)\[\[\s*(\w+)\s*(\{.*\})\s*\]\]/gm;
+var templateValRe = /\[\[\s*(\w+)\s*(\{.*\})\s*\]\]/g;
+var indentedLblRe = /^(\s*)\[\[\s*(\w+)\s*(\".*\")\s*\]\]/gm;
+var templateLblRe = /\[\[\s*(\w+)\s*(\".*\")\s*\]\]/g;
 var indentedRe = /^(\s*)\[\[\s*(\w+)\s*\]\]/gm;
 var templateRe = /\[\[\s*(\w+)\s*\]\]/g;
 
@@ -103,6 +107,10 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
         var noImports = data
             .replace(importRe, '[[- importHeader(ctx, "$1") ]]')
             .replace(themeRe, '[[- theme(ctx, $1) ]]')
+            .replace(indentedLblRe, '[[- run(page, "$2", "$1", {label:$3}) ]]')
+            .replace(templateLblRe, '[[- run(page, "$1", "", {label:$2}) ]]')
+            .replace(indentedValRe, '[[- run(page, "$2", "$1", $3) ]]')
+            .replace(templateValRe, '[[- run(page, "$1", "", $2) ]]')
             .replace(indentedRe, '[[- run(page, "$2", "$1") ]]')
             .replace(templateRe, '[[- run(page, "$1", "") ]]');
         var result = ejs.render(noImports, options);
@@ -119,7 +127,7 @@ function processTemplatePath(template, themePath, path)
     var importCB = require(path + '/tao-import');
     var themeCB = require(path + '/tao-theme');
 
-    function primitiveCB(page, name, indent)
+    function primitiveCB(page, name, indent, value)
     {
         var modpath = path + '/' + name;
         var file = modpath + '.js';
@@ -131,7 +139,7 @@ function processTemplatePath(template, themePath, path)
         else
         {
             var module = require(modpath);
-            return module(page, indent);
+            return module(page, indent, null, value);
         }
     }
 
