@@ -1170,7 +1170,7 @@ function loadPageFromTemplate(page, template)
 //   Load page properties from a template
 // ----------------------------------------------------------------------------
 {
-    var path = __dirname + '/properties';
+    var path = __dirname + '/fields';
     var templateFile = ddtFilePath(template);
     var result = '';
     if (templateFile)
