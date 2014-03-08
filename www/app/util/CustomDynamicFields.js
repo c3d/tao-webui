@@ -240,7 +240,7 @@ Ext.define('TE.util.CustomDynamicFields', {
                 else
                     value = Ext.encode(item.getValue());
                 
-                // Add coma if not first item
+                // Add item to the JSON output
                 add('"' + item.name + '":' + value);
             }
         });

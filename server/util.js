@@ -36,8 +36,6 @@ function property(page, id, parms)
 {
     if (parms && parms.label)
     {
-        console.log("Looking for label ", parms.label, " in ", page);
-
         // Try to find it by label if the label is set
         var label = parms.label;
         var labels = page.properties._labels_;
