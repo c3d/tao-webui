@@ -29,7 +29,7 @@ function property(object)
 //   Add a property to the properties of the objec
 // ----------------------------------------------------------------------------
 {
-    return function(page, indent, id, value) {
+    return function(page, id, value) {
 
         var label = null;
         var obj = object;

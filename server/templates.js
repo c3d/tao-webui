@@ -76,12 +76,13 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
         updateDataIfNeeded();
 
         // Save template path name and short name
-        if (page.ctx)
+        var ctx = page.ctx;
+        if (ctx)
         {
             var re = /(.*\/)*([^\/]+)\/[^\/]+$/;
-            page.ctx.themePath = themePath;
-            page.ctx.themeName = themePath.replace(re,'$2');
-            page.ctx.themeShort = page.ctx.themeName.replace(/ /g, '')
+            ctx.themePath = themePath;
+            ctx.themeName = themePath.replace(re,'$2');
+            ctx.themeShort = ctx.themeName.replace(/ /g, '')
         }
 
         // Build execution context for EJS
@@ -90,9 +91,7 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
                 locals:
                 {
                     page: page,
-                    ctx: page.ctx,
-                    escape: util.escape,
-                    html: util.htmlToSlide,
+                    ctx: ctx,
                     run: primitiveCB,
                     theme: themeCB,
                     importHeader: importCB
@@ -103,7 +102,7 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
                 open: "[[",
                 close: "]]"
             };
-        
+
         var noImports = data
             .replace(importRe, '[[- importHeader(ctx, "$1") ]]')
             .replace(themeRe, '[[- theme(ctx, $1) ]]')
@@ -127,9 +126,10 @@ function processTemplatePath(template, themePath, path)
     var importCB = require(path + '/tao-import');
     var themeCB = require(path + '/tao-theme');
 
-    function primitiveCB(page, name, indent, value)
+    function primitiveCB(page, name, indent, parms)
     {
-        var modpath = path + '/' + name;
+        var kind = name.replace(/_[0-9]+/, '');
+        var modpath = path + '/' + kind;
         var file = modpath + '.js';
         if (!fs.existsSync(file))
         {
@@ -139,7 +139,7 @@ function processTemplatePath(template, themePath, path)
         else
         {
             var module = require(modpath);
-            return module(page, indent, null, value);
+            return util.indent(module(page, name, parms), indent);
         }
     }
 

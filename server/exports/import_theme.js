@@ -20,7 +20,7 @@
 
 var util = require('../util');
 
-function emitThemeImport(page, indent)
+function emitThemeImport(page, id, value)
 // ----------------------------------------------------------------------------
 //   Emit the theme and import statements for the current theme
 // ----------------------------------------------------------------------------

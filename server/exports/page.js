@@ -21,13 +21,13 @@
 var util = require('../util');
 var fs = require('fs');
 
-function emitPage(page, indent, id)
+function emitPage(page, id, parms)
 // ----------------------------------------------------------------------------
 //   Emit the code for the page dynamic elements
 // ----------------------------------------------------------------------------
 {
     var ddd = '';
-    var items = id ? page.properties[id] : page.properties;
+    var items = page.properties;
     if(items && items != '')
     {
         // Loop on all elements in the object and emit them
@@ -35,11 +35,11 @@ function emitPage(page, indent, id)
         {
             var kind = item.replace(/_[0-9]+/, '');
             if (fs.existsSync(__dirname + '/' + kind + '.js'))
-                ddd += require('./' + kind) (page, indent, item);
+                ddd += require('./' + kind) (page, item, parms);
         }
     }
     if (ddd == '')
-        ddd = indent + 'nil';
+        ddd = 'nil';
     return ddd;
 }
 

@@ -25,12 +25,69 @@ var ent = require('ent');
 var indentString = '    ';
 
 
+function property(page, id, parms)
+// ----------------------------------------------------------------------------
+//   Find a property in the page that should not be emitted in [[page]]
+// ----------------------------------------------------------------------------
+//   For example, if you have a field like [[rich_text "Toto"]], it should
+//   not be emitted in the part that says [[page]] if there is one.
+//   When called from 'page', parms is null, so we don't emit.
+//   When called directly from template.js, parms is set and gives label
+{
+    if (parms && parms.label)
+    {
+        console.log("Looking for label ", parms.label, " in ", page);
+
+        // Try to find it by label if the label is set
+        var label = parms.label;
+        var labels = page.properties._labels_;
+        for (lbl in labels)
+            if (labels[lbl] == label)
+                return page.properties[lbl];
+    }
+
+    // Called directly from [[page]], which does not have parms set
+    return null;
+}
+
+
+function page_property(page, id, parms)
+// ----------------------------------------------------------------------------
+//   Find a property in the page that should be emitted in [[page]]
+// ----------------------------------------------------------------------------
+//   For example, if you have a field like [[movie "Label"]], it should not
+//   be emitted as part of the page, but if there is a field like [[movie]],
+//   then it should be emitted as part of the [[page]] tag.
+{
+    var prop = property(page, id, parms);
+    if (prop)
+        return prop;
+
+    // Called directly from [[page]], which does not have parms set
+    return page.properties[id];
+}
+
+
 function escape(txt)
 // ----------------------------------------------------------------------------
 // Repeat double quotes so that result may be used in Tao double-quoted string
 // ----------------------------------------------------------------------------
 {
-    return txt.replace(/"/g, '""');
+    return txt.replace('"', '""').replace('\n', ' ');
+}
+
+
+function emitText(text)
+// ----------------------------------------------------------------------------
+//  Emit an XL text with the proper quotes
+// ----------------------------------------------------------------------------
+{
+    if (text.indexOf('\n') >= 0)
+    {
+        text = text.replace(/>>/, '>> & ">>" & <<');
+        return '<<' + text + '>>';
+    }
+    return '"' + text.replace('"', '""') + '"';
 }
 
 
@@ -144,16 +201,12 @@ function emitSlideElement(name)
 //   Return a function emitting a given page element
 // ----------------------------------------------------------------------------
 {
-    return function(page, indent, id)
+    return function(page, id, parms)
     {
         var ddd = '';
-        if (id)
-        {
-            var elem = page.properties[id];
-            if (elem && elem != '')
-                ddd = indent + name + '\n'
-                + htmlToSlide(elem, indent + indentString);
-        }
+        var elem = page_property(page, id, parms);
+        if (elem)
+            ddd = name + '\n' + htmlToSlide(elem, indentString);
         return ddd;
     }
 }
@@ -165,11 +218,10 @@ function indent(code, before)
 // ----------------------------------------------------------------------------
 {
     var array = code.split('\n');
-    var result = '';
-    array.forEach(function(line) {
-        result += before + line + '\n';
+    array.forEach(function(line, index) {
+        array[index] = before + line;
     });
-    return result;
+    return array.join('\n');
 }
 
 
@@ -537,7 +589,10 @@ function DomToSlideConverter(baseIndent)
 
 module.exports =
 {
+    property: property,
+    page_property: page_property,
     escape: escape,
+    emitText: emitText,
     decodeHTML: decodeHTML,
     filter: filter,
     item: item,

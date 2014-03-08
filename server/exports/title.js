@@ -20,7 +20,7 @@
 
 var util = require('../util');
 
-function emitTitle(page, indent, id)
+function emitTitle(page, id, parms)
 // ----------------------------------------------------------------------------
 //   Emit the code for the page title
 // ----------------------------------------------------------------------------
@@ -28,8 +28,8 @@ function emitTitle(page, indent, id)
     var ddd = '';
     var title = id ? page.properties[id] : page.properties.title;
     if (title && title != '')
-        ddd += indent + 'title\n'
-             + util.htmlToSlide(title, indent + util.indentString);
+        ddd += 'title\n'
+             + util.htmlToSlide(title, util.indentString);
     else
         ddd += indent + 'title text page_label\n';
     return ddd;

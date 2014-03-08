@@ -18,22 +18,15 @@
 //  (C) 2014 Taodyne SAS
 // ****************************************************************************
 
-function emitText(page, indent, id)
+function emitText(page, id, value)
 // ----------------------------------------------------------------------------
 //   Emit the name of the page
 // ----------------------------------------------------------------------------
 {
-    if (id)
-    {
-        var text = page.properties[id];
-        if (!text)
-            text = '';
-        
-        if (text.indexOf('\n') >= 0)
-            return indent + '<<' + text + '>>';
-        return indent + '"' + text + '"';
-    }
-    return '';
+    var text = util.property(page, id, value);
+    if (text === null)
+        return '';
+    return util.emitText(text);
 }
 
 

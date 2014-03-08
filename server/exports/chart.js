@@ -23,18 +23,18 @@
 
 var util = require('../util');
 
-function emitChart(page, indent, id)
+function emitChart(page, id, parms)
 // ----------------------------------------------------------------------------
 //   Emit the code for the chart
 // ----------------------------------------------------------------------------
 {
     var ddd = '';
     var name = id ? id : page.name;
-    var chart = id ? page.properties[id] : page.properties.chart;
+    var chart = page.properties[id];
 
     function emit (txt)
     {
-        ddd += indent + txt + '\n';
+        ddd += txt + '\n';
     }
 
     if (chart && chart != '')

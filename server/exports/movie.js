@@ -20,41 +20,38 @@
 
 var util = require('../util');
 
-function emitMovie(page, indent, id)
+function emitMovie(page, id, value)
 // ----------------------------------------------------------------------------
 //   Emit code for a single movie
 // ----------------------------------------------------------------------------
 {
     var ddd = '';
 
-    if (id)
+    var movie = util.page_property(page, id, value);
+    if (movie)
     {
-        var movie = page.properties[id];
-        if (movie)
+        // Get correct movie url (ignore id)
+        var mov = util.item(movie, 'url');
+        if (mov)
         {
-            // Get correct movie url (ignore id)
-            var mov = util.item(movie, 'url');
-            if (mov)
-            {
-                util.importHeader(page.ctx, 'VLCAudioVideo');
+            util.importHeader(page.ctx, 'VLCAudioVideo');
 
-                if (mov.indexOf('://') === -1)
-                    mov = 'videos/' + mov;
-
-                // Parse and get movie settings by ignoring id behind
-                // property name (for instance, {movx_1:30} returns 30).
-                var movx = util.item(movie, 'x');
-                var movy = util.item(movie, 'y');
-                var movscale = util.item(movie, 'scale');
-                ddd = indent + 'picture' + '\n'
-                    + indent + '    movie ' + movx + ', ' + movy + ', '
-                    + movscale + '%, ' + movscale + '%, "'
-                    + util.escape(mov) + '"\n';
-
-                // Add drop command on page exit
-                ddd +=  indent + '    on "pageexit",\n';
-                ddd +=  indent + '        movie_drop "' + mov + '"\n';
-            }
+            if (mov.indexOf('/') === -1)
+                mov = 'videos/' + mov;
+            
+            // Parse and get movie settings by ignoring id behind
+            // property name (for instance, {movx_1:30} returns 30).
+            var movx = util.item(movie, 'x');
+            var movy = util.item(movie, 'y');
+            var movscale = util.item(movie, 'scale');
+            ddd = 'picture' + '\n'
+                + '    movie ' + movx + ', ' + movy + ', '
+                + movscale + '%, ' + movscale + '%, "'
+                + util.escape(mov) + '"\n';
+            
+            // Add drop command on page exit
+            ddd +=  '    on "pageexit",\n';
+            ddd +=  '        movie_drop "' + mov + '"\n';
         }
     }
     return ddd;
