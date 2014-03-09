@@ -192,16 +192,30 @@ Ext.define('TE.util.CustomDynamicFields', {
         }
     },
 
+    
+    fieldDefaultLabels:
+    // ------------------------------------------------------------------------
+    //   Name of the various labels when not explicitly set by .ddt template
+    // ------------------------------------------------------------------------
+    {
+        'picture'       : tr('Picture'),
+        'movie'         : tr('Movie'),
+        'chart'         : tr('Chart'),
+        'title'         : tr('Title'),
+        'subtitle'      : tr('Subtitle'),
+        'story'         : tr('Story')
+    },
+
 
     defaultLabel: function(id)
     // ------------------------------------------------------------------------
     //   Return the default label for the given type id
     // ------------------------------------------------------------------------
     {
-        var component = Ext.ComponentQuery.query('[id='+id+']');
-            if (component && component.length == 1)
-                return component[0].text;
-        return 'Unknown field type ' + id;
+        var name = this.fieldDefaultLabels[id];
+        if (!name)
+            name = 'Unknown field type ' + id;
+        return name;
     },
 
 
