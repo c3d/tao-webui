@@ -2,7 +2,8 @@ Ext.define('TE.controller.PageControllerBase', {
     extend: 'Ext.app.Controller',
     refs: [
         { ref: 'centerpane', selector: '#centerpane' },
-        { ref: 'properties', selector: '#properties' }
+        { ref: 'properties', selector: '#properties' },
+        { ref: 'addMenu', selector: '#add_menu' }
     ],
 
     timer: 0, // !== 0 if timer is running
@@ -12,6 +13,8 @@ Ext.define('TE.controller.PageControllerBase', {
         cp.removeAll();
         var pp = this.getProperties();
         pp.removeAll();
+        var addMenu = this.getAddMenu();
+        addMenu.removeAll();
         var vname = record.getPropertiesViewClass();
         var view = Ext.create(vname);
         pp.add(view);

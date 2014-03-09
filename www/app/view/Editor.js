@@ -43,55 +43,8 @@ Ext.define('TE.view.Editor', {
                     menu:
                     {
                         xtype: 'menu',
-                        items : [
-                            {
-                                id:'left_column',
-                                text: tr('Left column text'),
-                                action: 'addField'
-                            },
-                            {
-                                id:'right_column',
-                                text: tr('Right column text'),
-                                action: 'addField'
-                            },
-                            {
-                                id:'text',
-                                text: tr('Text box'),
-                                action: 'addField'
-                            },
-                            '-',
-                            {
-                                id:'picture',
-                                text: tr('Picture'),
-                                action: 'addField'
-                            },
-                            {
-                                id:'movie',
-                                text: tr('Movie'),
-                                action: 'addField'
-                            },
-                            {
-                                id:'chart',
-                                text: tr('Chart'),
-                                action: 'addField'
-                            },
-                            '-',
-                            {
-                                id:'title',
-                                text: tr('Title'),
-                                action: 'addField'
-                            },
-                            {
-                                id:'subtitle',
-                                text: tr('Subtitle'),
-                                action: 'addField'
-                            },
-                            {
-                                id:'story',
-                                text: tr('Story text'),
-                                action: 'addField'
-                            }
-                        ]
+                        id: 'add_menu',
+                        items : []
                     }
                 },
                 {

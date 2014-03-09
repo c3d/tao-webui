@@ -332,12 +332,9 @@ app.post('/pages', function (req, res)
     getData('pages', function(err, pages) {
         var page = req.body;
 
-        // Check if we can get the dynamic fields from the template
+        // Pass the page through the template properties to set default fields
         if (page.dynamicfields === '')
-        {
             page.dynamicfields = loadPageFromTemplate(page, page.model);
-            req.body = page;
-        }
 
         page.id = allocateId(pages);
 
@@ -1177,7 +1174,7 @@ function loadPageFromTemplate(page, template)
     {
         fields.beginFields();
         var obj = templates.processTemplatePath(templateFile, template, path);
-        var empty = obj(page);
+        obj(page);              // Result of text processing ignored
         result = fields.endFields();
     }
     verbose('Initial value for template ' + template + ' is ' + result);

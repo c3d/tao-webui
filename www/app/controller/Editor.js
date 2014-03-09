@@ -26,6 +26,7 @@ Ext.define('TE.controller.Editor', {
         // this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
         { ref: 'properties', selector: '#properties' },
+        { ref: 'addMenu', selector: '#addMenu' },
         { ref: 'tools', selector: '#tools' },
         { ref: 'pagelist', selector: 'pagelist' },
         { ref: 'themePanel', selector: '#themepanel' },

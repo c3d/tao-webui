@@ -41,7 +41,14 @@ Ext.define('TE.util.CustomDynamicFields', {
     // ------------------------------------------------------------------------
     {
         var field = this.createField(type, label);
-        if(field)
+        if (type.indexOf('_menu') >= 0)
+        {
+            if (!field)
+                field = this.componentExists(type);
+            var menu = Ext.getCmp(type);
+            menu.add(field.menuItems);
+        }
+        else if(field)
         {
             this.add(field);
 
@@ -49,7 +56,8 @@ Ext.define('TE.util.CustomDynamicFields', {
             field.setValue(value);
 
             // Add remove button
-            this.addRemoveButton(field);
+            if (field.multipleAllowed)
+                this.addRemoveButton(field);
 
             // Expand fieldset if needed (first add)
             if(collapse)
@@ -193,7 +201,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         var component = Ext.ComponentQuery.query('[id='+id+']');
             if (component && component.length == 1)
                 return component[0].text;
-        return 'Uknown field type ' + id;
+        return 'Unknown field type ' + id;
     },
 
 
