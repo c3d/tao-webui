@@ -13,8 +13,8 @@ Ext.define('TE.view.PageTemplates', {
             Ext.Array.forEach(this.pageTemplates, function(name) {
                 var shortName = name.replace(/.*\//, '');
                 this.items.push(Ext.create('TE.view.PageTemplate', {
-                    image: 'app/themes/' + name + '.pt.png',
-                    fullPageTemplate: name,
+                    image: 'themes/' + name + '.pt.png',
+                    model: name,
                     caption: shortName,
                     pageTemplate: shortName
                 }));

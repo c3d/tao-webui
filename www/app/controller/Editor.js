@@ -164,17 +164,19 @@ Ext.define('TE.controller.Editor', {
         });
     },
 
+    // Loading modern themes
+    httpGet: function(theUrl)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false );
+        xmlHttp.send( null );
+        if (xmlHttp.status == 200 || xmlHttp.status == 0)
+            return xmlHttp.responseText;
+        return '';
+    },
+
     loadThemes: function() {
         var themePanel = this.getThemePanel();
-
-        // Loading modern themes
-        function httpGet(theUrl)
-        {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open( "GET", theUrl, false );
-            xmlHttp.send( null );
-            return xmlHttp.responseText;
-        }
 
         function loadThemeFromModel(theme)
         {
@@ -183,7 +185,7 @@ Ext.define('TE.controller.Editor', {
             {
                 var panel = Ext.create('TE.editor.view.Theme',
                 {
-                    image: 'app/themes/' + theme.theme + '.theme.png',
+                    image: 'themes/' + theme.theme + '.theme.png',
                     caption: theme.theme.replace(/.*\//, ''),
                     model: theme.theme,
                     pageTemplates: theme.templates
@@ -197,7 +199,7 @@ Ext.define('TE.controller.Editor', {
             }
         }
 
-        var themeArray = JSON.parse(httpGet("/theme-list"));
+        var themeArray = JSON.parse(this.httpGet("/theme-list"));
         Ext.each(themeArray, loadThemeFromModel, this);
 
     },
@@ -205,6 +207,17 @@ Ext.define('TE.controller.Editor', {
     onLaunch: function() {
         var dflt = this.getThemePanel().items.items[0];
         this.themeClicked(dflt);
+    },
+
+    setCenterPaneURL: function(url, defaultInfo) {
+        var themeInfo = this.httpGet(url);
+        var cp = this.getCenterpane();
+        cp.removeAll();
+        var display = Ext.create('Ext.form.field.Display');
+        cp.add(display);
+        if (themeInfo == '')
+            themeInfo = defaultInfo;
+        display.update(themeInfo);
     },
 
     themeClicked: function(theme) {
@@ -219,6 +232,10 @@ Ext.define('TE.controller.Editor', {
             child.toggleSelected(false);
         })
         this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
+
+        this.setCenterPaneURL('themes/' + theme.model + '.theme.html',
+                             '<h2>' + theme.caption + ' theme</h2>');
+;
     },
 
     pageTemplateClicked: function(pt) {
@@ -227,6 +244,9 @@ Ext.define('TE.controller.Editor', {
                  function(child) {
                      child.toggleSelected(child === pt);
                  });
+
+        this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
+                             '<h2>' + pt.caption + ' page template</h2>');
     },
 
     pageClicked: function(grid, record) {
@@ -256,6 +276,11 @@ Ext.define('TE.controller.Editor', {
         });
 
         this._updatePageButtons();
+
+        // Set a default center pane, overriden if clicksToEditing on a field
+        var pt = record.data;
+        this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
+                             '<h2>' + pt.name + '</h2>');
     },
 
     displayFieldClicked: function(displayField) {
@@ -283,11 +308,9 @@ Ext.define('TE.controller.Editor', {
         var cp = this.getCenterpane();
         var view = cp.items.items[0]; // Get view
         if(view)
-        {
             // Remove view from center pane if field has been deleted
             if(view.name == displayField.name)
                 cp.removeAll();
-        }
     },
 
     _updatePageButtons: function() {

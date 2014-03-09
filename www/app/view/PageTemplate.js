@@ -4,22 +4,21 @@ Ext.define('TE.view.PageTemplate', {
 
     image: '',
     caption: 'Caption not set',
+    model: '',
 
     initComponent: function() {
         this.callParent(arguments);
     },
 
-    getModelClassName: function()
+    getPageClassName: function()
     {
         return 'TE.editor.model.BaseSlide';
     },
 
     createPage: function()
     {
-        var model = this.getModelClassName();
-        var path = this.fullPageTemplate || '';
-        var page = Ext.create(model);
-        page.set('model', path);
+        var page = Ext.create(this.getModelClassName());
+        page.set('model', this.model || '');
         return page;
     }
  });

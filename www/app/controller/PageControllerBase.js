@@ -9,8 +9,8 @@ Ext.define('TE.controller.PageControllerBase', {
     timer: 0, // !== 0 if timer is running
 
     display: function(record) {
-        var cp = this.getCenterpane();
-        cp.removeAll();
+        // var cp = this.getCenterpane();
+        // cp.removeAll();
         var pp = this.getProperties();
         pp.removeAll();
         var addMenu = this.getAddMenu();
