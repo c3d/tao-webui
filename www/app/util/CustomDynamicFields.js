@@ -33,6 +33,7 @@ Ext.define('TE.util.CustomDynamicFields', {
         remove: function(me, field) { this.removeField(field); }
     },
     disableSave: false,
+    extraSaveData: {},
 
 
     addField: function(type, label, value, collapse)
@@ -47,6 +48,7 @@ Ext.define('TE.util.CustomDynamicFields', {
                 field = this.componentExists(type);
             var menu = Ext.getCmp(type);
             menu.add(field.menuItems);
+            this.extraSaveData[type] = value;
         }
         else if(field)
         {
@@ -250,6 +252,8 @@ Ext.define('TE.util.CustomDynamicFields', {
             add('"_collapsed_":' + JSON.stringify(collapsed));
         if (labels !== {})
             add('"_labels_":' + JSON.stringify(labels));
+        for (item in this.extraSaveData)
+            add('"' + item + '":' + JSON.stringify(this.extraSaveData[item]));
 
         // Re-encode the dyanmic fields including _collapsed_ and _labels_
         Ext.each(items, function(item, index) {
