@@ -96,34 +96,25 @@ Ext.define('TE.util.CustomDynamicFields', {
         }
 
         // Create new field with the given type and label
-        var field = null;
-        try
-        {
-            field = Ext.create('TE.fields.' + type, {
-                title: label,
-                name: name,
-                width: '100%',
-                type:type,
-                listeners: {
-                    change: function() {
-                        // Save when all fields change
-                        // (except legend and datasets fields)
-                        Ext.getCmp("dynamic").saveDynamicFields();
-                    },
-                    render: function(f) {
-                        // Fire click to display field in the center pane
-                        var el = f.getEl();
-                        el.on('click',
-                              function() { this.fireEvent('click', f); }, f);
-                    }
+        var field = Ext.create('TE.fields.' + type, {
+            title: label,
+            name: name,
+            width: '100%',
+            type:type,
+            listeners: {
+                change: function() {
+                    // Save when all fields change
+                    // (except legend and datasets fields)
+                    Ext.getCmp("dynamic").saveDynamicFields();
+                },
+                render: function(f) {
+                    // Fire click to display field in the center pane
+                    var el = f.getEl();
+                    el.on('click',
+                          function() { this.fireEvent('click', f); }, f);
                 }
-            });
-        }
-        catch(e)
-        {
-            console.log("Unknown field type: " + type);
-            console.log("Error: " + e);
-        }
+            }
+        });
 
         return field;
     },
