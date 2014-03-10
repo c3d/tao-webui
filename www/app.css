@@ -79,6 +79,12 @@ Chrome/Safari (it gives a empty zone below the page) */
 .slide-template
 {
     display: inline-block;
-    width: 100px;
+    width: 120px;
     text-align: center
+}
+
+.slide-template img
+{
+    width: 120px;
+    height: 80px;
 }
