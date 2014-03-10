@@ -19,7 +19,7 @@ Ext.define('TE.i18n.Translate', {
             if (me.lang == 'en')
                 return txt;
 
-            module = module || 'default';
+            module = module || 'common';
 
             if (me.translations.hasOwnProperty(module) &&
                 me.translations[module].hasOwnProperty(txt)) {
