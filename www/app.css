@@ -88,3 +88,10 @@ Chrome/Safari (it gives a empty zone below the page) */
     width: 120px;
     height: 80px;
 }
+
+img.screenshot
+{
+    display:block;
+    margin-left: auto;
+    margin-right:auto;
+}

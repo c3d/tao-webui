@@ -212,14 +212,34 @@ Ext.define('TE.controller.Editor', {
         themePanel.setStore(store);
     },
 
-    setCenterPaneURL: function(url, defaultInfo) {
+    setCenterPaneURL: function(path, text, url, defaultInfo) {
         var themeInfo = this.httpGet(url);
         var cp = this.getCenterpane();
         cp.removeAll();
         var display = Ext.create('Ext.form.field.Display');
         cp.add(display);
+        var theme = 'themes/' + path + '/';
         if (themeInfo == '')
+        {
             themeInfo = defaultInfo;
+        }
+        else
+        {
+            var includes = themeInfo.match(/\[\[include\s+\"(.*)\"\]\]/g);
+            var me = this;
+            if (includes)
+            {
+                includes.forEach(function(incl) {
+                    var file = incl.replace(/\[\[include\s+\"(.*)\"\]\]/, '$1');
+                    themeInfo = themeInfo.replace(incl, me.httpGet(file));
+                    console.log("file=", file, " ti=", themeInfo);
+                });
+            }
+            themeInfo = themeInfo
+                .replace(/\[\[theme\]\]/g, theme)
+                .replace(/\[\[caption\]\]/g, text);
+        }
+        
         display.update(themeInfo);
     },
 
@@ -227,10 +247,12 @@ Ext.define('TE.controller.Editor', {
         this.savePage();
         var pt = item.raw;
         if (pt.leaf)
-            this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
+            this.setCenterPaneURL(pt.model, pt.text,
+                                  'themes/' + pt.model + '.pt.html',
                                   '<h2>' + pt.text + ' page template</h2>');
         else
-            this.setCenterPaneURL('themes/'+pt.path+'/'+ pt.text+'.theme.html',
+            this.setCenterPaneURL(pt.path, pt.text,
+                                  'themes/'+pt.path+'/'+ pt.text+'.theme.html',
                                   '<h2>' + pt.text + ' theme</h2>');
     },
 
