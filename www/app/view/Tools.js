@@ -4,17 +4,16 @@ Ext.define('TE.view.Tools', {
 
     title: tr('Tools'),
 
-    layout: {
-    	type: 'accordion',
-    	multi: true
-    },
+    layout: { type: 'vbox', align: 'stretch' },
 
     items: [
         {
     	    title: tr('Themes'),
             xtype: 'treepanel',
             itemId: 'themepanel',
-            layout: 'vbox',
+            collapsible: true,
+            flex: 1,
+            autoScroll: true,
             rootVisible: false,
             singleExpand: true,
             lines: false,
@@ -39,7 +38,8 @@ Ext.define('TE.view.Tools', {
         {
             xtype: 'pagelist',
             autoScroll: true,
-            layout: 'vbox'
+            collapsible: true,
+            flex: 1
         }
     ]
  });

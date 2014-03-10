@@ -228,12 +228,8 @@ Ext.define('TE.controller.Editor', {
             this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
                                   '<h2>' + pt.text + ' page template</h2>');
         else
-        {
-            console.log("pt=", pt);
-            this.setCenterPaneURL('themes/' + pt.path + '/' + pt.text + '.theme.html',
+            this.setCenterPaneURL('themes/'+pt.path+'/'+ pt.text+'.theme.html',
                                   '<h2>' + pt.text + ' theme</h2>');
-}
-            
     },
 
     pageClicked: function(grid, record) {
