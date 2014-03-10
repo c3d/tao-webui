@@ -367,6 +367,12 @@ Ext.define('TE.controller.Editor', {
             store.add(page);
             store.sync();
             store.reload();
+
+            // Select the page that was just clicked
+            var pageListSelection = this.pagesList().getSelectionModel();
+            pageListSelection.select(page);
+            page.set('id', this.selectedPage().data.id);
+            this.pageClicked(null, page);
         }
     },
 
