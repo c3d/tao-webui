@@ -139,7 +139,10 @@ function processTemplatePath(template, themePath, path)
         else
         {
             var module = require(modpath);
-            return util.indent(module(page, name, parms), indent);
+            var code = module(page, name, parms);
+            if (indent != '')
+                code = util.indent(code, indent);
+            return code;
         }
     }
 
