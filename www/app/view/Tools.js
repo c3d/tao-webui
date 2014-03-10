@@ -9,37 +9,37 @@ Ext.define('TE.view.Tools', {
     	multi: true
     },
 
-    items: [{
-    	title: tr('Themes'),
-        xtype: 'panel',
-        itemId: 'themepanel',
-        autoScroll: true,
-        layout: {
-            type: 'vbox',
-            align: 'center',
-            defaultmargins: 5
+    items: [
+        {
+    	    title: tr('Themes'),
+            xtype: 'treepanel',
+            itemId: 'themepanel',
+            layout: 'vbox',
+            rootVisible: false,
+            singleExpand: true,
+            lines: false,
+            useArrows: true,
+            hideHeaders: true,
+            columns: [{
+                xtype : 'treecolumn',
+                dataIndex : 'text',
+                width: '100%',
+                renderer : function(value, record){
+                    var data = record.record.raw;
+                    if (data.leaf)
+                        return Ext.String.format('<div class="slide-template"><img src="themes/{0}.pt.png"/><br/>{1}</div>', data.model, value);
+                    return value;
+                }
+            }],
+
+            setStore: function (store) {
+                this.reconfigure(store);
+            }
         },
-        items: []
-    }, {
-        // Placeholder for the list of page templates in a theme
-        xtype: 'panel',
-        itemId: 'placeholder'
-    }, {
-        xtype: 'pagelist',
-        autoScroll: true,
-        layout: 'vbox'
-    }],
-
-    setPageTemplates: function(tmpl) {
-        var component = this.items.items[1];
-        var pageList = this.items.items[2];
-
-        // Placeholder may be deleted, not objects passed to this function (they are cached)
-        var del = typeof component.itemId !== 'undefined'
-            &&           component.itemId === 'placeholder';
-        this.remove(2, false);
-        this.remove(1, del);
-        this.add(tmpl);
-        this.add(pageList);
-    }
+        {
+            xtype: 'pagelist',
+            autoScroll: true,
+            layout: 'vbox'
+        }
+    ]
  });

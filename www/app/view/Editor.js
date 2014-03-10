@@ -2,6 +2,7 @@ Ext.define('TE.view.Editor', {
     extend: 'Ext.Container',
     layout: 'border',
     alias: 'widget.editor',
+    itemId: 'mainEditor',
 
     items:
     [

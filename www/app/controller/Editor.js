@@ -16,7 +16,6 @@ Ext.define('TE.controller.Editor', {
         'VideoPickerField',
         'PageList',
         'PageListContextMenu',
-        'PageTemplateContextMenu',
         'Properties',
         'ResourceLibrary',
         'Tools'
@@ -31,7 +30,6 @@ Ext.define('TE.controller.Editor', {
         { ref: 'pagelist', selector: 'pagelist' },
         { ref: 'themePanel', selector: '#themepanel' },
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
-        { ref: 'pageTemplateContextMenu', selector: 'pagetemplatecontextmenu', xtype: 'pagetemplatecontextmenu', autoCreate: true },
         { ref: 'pageMoveBeforeBtn', selector: 'pagelist button[action=pageBefore]' },
         { ref: 'pageMoveAfterBtn', selector: 'pagelist button[action=pageAfter]' },
         { ref: 'pageDeleteBtn', selector: 'pagelist button[action=pageDelete]' },
@@ -46,15 +44,9 @@ Ext.define('TE.controller.Editor', {
     init: function() {
         this.control({
             '#themepanel': {
-                render: this.loadThemes
-            },
-            'pagetemplate': {
-                click: this.pageTemplateClicked,
-                dblclick: this.newPageFromTemplate,
-                contextmenu: this.showPageTemplateContextMenu
-            },
-            'theme': {
-                click: this.themeClicked
+                render: this.loadThemes,
+                itemclick: this.pageTemplateClicked,
+                itemdblclick: this.newPageFromTemplate
             },
             'pagelist dataview': {
             	itemclick: this.pageClicked,
@@ -177,36 +169,43 @@ Ext.define('TE.controller.Editor', {
 
     loadThemes: function() {
         var themePanel = this.getThemePanel();
+        var dataRoot = { expanded: true, children: [] };
+
+        function add(data, path, templates)
+        {
+            var idx = path.indexOf('/');
+            var kids = data.children;
+            if (idx >= 0)
+            {
+                var dir = path.substr(0, idx);
+                var rest = path.substr(idx+1);
+                var len = kids.length;
+                if (len == 0 || kids[len-1].text != dir)
+                {
+                    kids.push({ text: dir, expanded: false, children: [] });
+                    len = kids.length;
+                }
+                return add(kids[len-1], rest, templates);
+            }
+            templates.forEach(function (pt) {
+                var last = pt.lastIndexOf('/');
+                var caption = pt.substr(last+1);
+                kids.push({ text: caption, leaf: true, iconCls: 'no-icon',
+                            model: pt });
+            });
+        }
+
 
         function loadThemeFromModel(theme)
         {
-            var trans = TE.i18n.Translate;
-            try
-            {
-                var panel = Ext.create('TE.editor.view.Theme',
-                {
-                    image: 'themes/' + theme.theme + '.theme.png',
-                    caption: theme.theme.replace(/.*\//, ''),
-                    model: theme.theme,
-                    pageTemplates: theme.templates
-                });
-                themePanel.add(panel);
-            }
-            catch(e)
-            {
-                console.log('Warning: unable to load theme: ' + theme);
-                console.log(e);
-            }
+            add(dataRoot, theme.theme, theme.templates);
         }
 
         var themeArray = JSON.parse(this.httpGet("/theme-list"));
         Ext.each(themeArray, loadThemeFromModel, this);
 
-    },
-
-    onLaunch: function() {
-        var dflt = this.getThemePanel().items.items[0];
-        this.themeClicked(dflt);
+        var store = Ext.create('Ext.data.TreeStore', { root: dataRoot });
+        themePanel.setStore(store);
     },
 
     setCenterPaneURL: function(url, defaultInfo) {
@@ -220,44 +219,23 @@ Ext.define('TE.controller.Editor', {
         display.update(themeInfo);
     },
 
-    themeClicked: function(theme) {
+    pageTemplateClicked: function(list, item) {
         this.savePage();
-        this.getTools().setPageTemplates(theme.getPageTemplatesPanel());
-
-        Ext.each(Ext.ComponentQuery.query('theme'), function(child) {
-            child.toggleCurrentTheme(child === theme);
-            child.toggleSelected(child === theme);
-        });
-        Ext.each(Ext.ComponentQuery.query('pagetemplate'), function(child) {
-            child.toggleSelected(false);
-        })
-        this.getThemePanel().collapse(Ext.Component.DIRECTION_TOP, true);
-
-        this.setCenterPaneURL('themes/' + theme.model + '.theme.html',
-                             '<h2>' + theme.caption + ' theme</h2>');
-;
-    },
-
-    pageTemplateClicked: function(pt) {
-        this.savePage();
-        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
-                 function(child) {
-                     child.toggleSelected(child === pt);
-                 });
-
-        this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
-                             '<h2>' + pt.caption + ' page template</h2>');
+        var pt = item.raw;
+        if (pt.leaf)
+            this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
+                                  '<h2>' + pt.text + ' page template</h2>');
+        else
+            this.setCenterPaneURL('themes/' + pt.model + '.theme.html',
+                                  '<h2>' + pt.text + ' theme</h2>');
+            
     },
 
     pageClicked: function(grid, record) {
         this.savePage();
-        Ext.each(Ext.ComponentQuery.query('theme, pagetemplate'),
-                 function(child) {
-                     child.toggleSelected(false);
-                 });
-
         if (this.pagectrl)
             this.pagectrl.endDisplay();
+
 
         // Make sure controller for the specific kind of page is loaded
         var ctrl = this.application.getController(record.getControllerName());
@@ -342,12 +320,6 @@ Ext.define('TE.controller.Editor', {
         menu.showAt(e.xy);
     },
 
-    showPageTemplateContextMenu: function(pt, t) {
-        var menu = this.getPageTemplateContextMenu();
-        menu.setPageTemplate(pt);
-        menu.showBy(t);
-    },
-
     deletePage: function() {
         var me = this;
         var store = this.getPagesStore();
@@ -366,36 +338,36 @@ Ext.define('TE.controller.Editor', {
                     });
     },
 
-    newPageMenuItemClicked: function() {
-        var pageTemplate = this.getPageTemplateContextMenu().getPageTemplate();
-        this.newPageFromTemplate(pageTemplate);
-    },
+    newPageFromTemplate: function(list, item) {
+        var pt = item.raw;
+        if (pt.leaf)
+        {
+            var selectedPage = this.selectedPage();
 
-    newPageFromTemplate: function(tmpl) {
-        var selectedPage = this.selectedPage();
-
-        var page = tmpl.createPage();
-        var store = this.getPagesStore();
-        function unusedPageName() {
-            var i = 1;
-            var stem = tr('Page');
-            while (true) {
-                var n = stem + ' ' + i++;
-                if (store.find('name', n) === -1)
-                    return n;
+            var page = Ext.create('TE.editor.model.BaseSlide');
+            page.set('model', pt.model);
+            var store = this.getPagesStore();
+            function unusedPageName() {
+                var i = 1;
+                var stem = tr('Page');
+                while (true) {
+                    var n = stem + ' ' + i++;
+                    if (store.find('name', n) === -1)
+                        return n;
+                }
             }
-        }
-        page.set('name', unusedPageName());
+            page.set('name', unusedPageName());
 
-        if (selectedPage) {
-            var pageId = selectedPage.get('id');
-            var rowIndex = this.getPagesStore().find('id', pageId);
-            page.set('idx', rowIndex + 1);
-        }
-        store.add(page);
-        store.sync();
-        if (selectedPage) {
-            store.reload();
+            if (selectedPage) {
+                var pageId = selectedPage.get('id');
+                var rowIndex = this.getPagesStore().find('id', pageId);
+                page.set('idx', rowIndex + 1);
+            }
+            store.add(page);
+            store.sync();
+            if (selectedPage) {
+                store.reload();
+            }
         }
     },
 
@@ -404,7 +376,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     pagesList: function() {
-    	return Ext.ComponentQuery.query('dataview')[0];
+    	return Ext.ComponentQuery.query('dataview')[1];
     },
 
     // delta = +/- 1

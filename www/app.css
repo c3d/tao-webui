@@ -67,3 +67,18 @@ Chrome/Safari (it gives a empty zone below the page) */
     background-size: 75% 75%;
     background-repeat: no-repeat;
 }
+
+/* Remove icon in tree view */
+.no-icon
+{
+    display : none;
+    background-image:url('ext/resources/images/default/s.gif') !important;
+}
+
+/* Show class template inline */
+.slide-template
+{
+    display: inline-block;
+    width: 100px;
+    text-align: center
+}

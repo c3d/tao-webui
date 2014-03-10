@@ -20,11 +20,7 @@ Ext.define('TE.tree.PageList', {
         itemSelector: '.taopage-container',
         prepareData : function(data, recordIndex, record ){
             // Add image url to the diplayed data
-            var img = '';
-            if (record.data.model)
-                img = 'app/themes/' + record.data.model + '.pt.png'
-            else
-                img = Ext.create(record.getPageTemplateViewClass()).image;
+            var img = 'themes/' + record.data.model + '.pt.png'
             data['img'] = img;
             return data;
         },
@@ -66,9 +62,9 @@ Ext.define('TE.tree.PageList', {
                 indicatorCls: 'grid-drop-indicator',
                 handleNodeDrop : function(data, record, position)
                 {
-                    var view = this.view,
-                    store = view.getStore(),
-                    index, records, i, len;
+                    var view = this.view;
+                    var store = view.getStore();
+                    var index, records, i, len;
                     data.view.store.remove(data.records, data.view === view);
                     index = store.indexOf(record);
                     if (position !== 'before') {
