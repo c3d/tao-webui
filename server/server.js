@@ -1200,7 +1200,6 @@ function ddtFilePath(themePath)
         verbose("Looking at " + templateFile + " for " + origPath);
         if (fs.existsSync(templateFile))
         {
-            console.log("Selected " + templateFile + " for " + origPath);
             ddtFileCache[origPath] = templateFile;
             return templateFile;
         }
