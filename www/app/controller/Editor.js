@@ -171,7 +171,7 @@ Ext.define('TE.controller.Editor', {
         var themePanel = this.getThemePanel();
         var dataRoot = { expanded: true, children: [] };
 
-        function add(data, path, templates)
+        function add(data, path, where, templates)
         {
             var idx = path.indexOf('/');
             var kids = data.children;
@@ -180,12 +180,14 @@ Ext.define('TE.controller.Editor', {
                 var dir = path.substr(0, idx);
                 var rest = path.substr(idx+1);
                 var len = kids.length;
+                var subdir = where == '' ? dir : where + '/' + dir;
                 if (len == 0 || kids[len-1].text != dir)
                 {
-                    kids.push({ text: dir, expanded: false, children: [] });
+                    kids.push({ text: dir, expanded: false,
+                                path: subdir, children: [] });
                     len = kids.length;
                 }
-                return add(kids[len-1], rest, templates);
+                return add(kids[len-1], rest, subdir, templates);
             }
             templates.forEach(function (pt) {
                 var last = pt.lastIndexOf('/');
@@ -198,7 +200,7 @@ Ext.define('TE.controller.Editor', {
 
         function loadThemeFromModel(theme)
         {
-            add(dataRoot, theme.theme, theme.templates);
+            add(dataRoot, theme.theme, '', theme.templates);
         }
 
         var themeArray = JSON.parse(this.httpGet("/theme-list"));
@@ -226,8 +228,11 @@ Ext.define('TE.controller.Editor', {
             this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
                                   '<h2>' + pt.text + ' page template</h2>');
         else
-            this.setCenterPaneURL('themes/' + pt.model + '.theme.html',
+        {
+            console.log("pt=", pt);
+            this.setCenterPaneURL('themes/' + pt.path + '/' + pt.text + '.theme.html',
                                   '<h2>' + pt.text + ' theme</h2>');
+}
             
     },
 
