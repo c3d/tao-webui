@@ -32,7 +32,8 @@ function property(object)
     return function(page, id, value) {
 
         var label = null;
-        var obj = object;
+        var obj = JSON.parse(JSON.stringify(object));
+
         if (value)
         {
             for (field in value)
@@ -49,7 +50,7 @@ function property(object)
         {
             var index = 0;
             var name = field;
-            while (obj.hasOwnProperty(name))
+            while (result.hasOwnProperty(name))
             {
                 index++;
                 name = field + '_' + index;

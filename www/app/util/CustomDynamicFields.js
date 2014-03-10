@@ -73,16 +73,16 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
 
-    createField: function(type, label)
+    createField: function(name, label)
     // ------------------------------------------------------------------------
     //   Create a field from given type
     // ------------------------------------------------------------------------
     {
         // Check if component already exists
         var existing = null;
-        var name = type;
+        var type = name.replace(/_[0-9]+/,'');
         var index = 0;
-        var existing = this.componentExists(type);
+        var existing = this.componentExists(name);
         while (existing)
         {
             // If this component kind should exist only once, don't add
@@ -300,18 +300,15 @@ Ext.define('TE.util.CustomDynamicFields', {
             {
                 var value = items[name];
 
-                // Get field type by removing id part (in the form 'TYPE_ID')
-                var type = name.replace(/_[0-9]+/g,'');
-
                 // Check if we have a label in the input value,
                 // otherwise get it from the label of the 'Add...' menu
-                var label = labels[name] || this.defaultLabel(type);
+                var label = labels[name] || this.defaultLabel(name);
 
                 // Check if collapsed
                 var collapse = collapsed && collapsed.indexOf(name) >= 0;
 
                 // Add field
-                this.addField(type, label, value, collapse);
+                this.addField(name, label, value, collapse);
             }
         }
         this.disableSave = saveDisabled;
