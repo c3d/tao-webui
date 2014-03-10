@@ -131,7 +131,8 @@ Ext.define('TE.controller.Editor', {
         });
 
         // Page name validator
-        // To use it: set "trackResetOnLoad: true" on form and "vtype: 'pagename'" on form field
+        // To use it: set "trackResetOnLoad: true" on form
+        // and "vtype: 'pagename'" on form field
         var store = this.getPagesStore();
         Ext.apply(Ext.form.field.VTypes, {
             pagename: function(val, field) {
@@ -145,8 +146,9 @@ Ext.define('TE.controller.Editor', {
         });
 
         // Install a global event handler for Ctrl-S.
-        // Note: the shortcut applies everywhere BUT in the HTML editor, which already catches
-        // Ctrl-S and thus has a special treatment (the view will fire 'savecurrentpage')
+        // Note: the shortcut applies everywhere BUT in the HTML editor,
+        // which already catches Ctrl-S and thus has a special treatment
+        // (the view will fire 'savecurrentpage')
         var me = this;
         Ext.getDoc().on('keydown', function(event, target) {
             if (event.ctrlKey && !event.shiftKey && event.getKey() == event.S) {
@@ -433,8 +435,8 @@ Ext.define('TE.controller.Editor', {
 
     addField: function(e) {
         var dynamic = Ext.getCmp('dynamic');
-        if(dynamic)
-            dynamic.addField(e.id, e.text);
+        if (dynamic)
+            dynamic.addField(e.itemId, e.text);
     },
 
 

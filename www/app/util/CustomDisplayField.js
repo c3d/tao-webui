@@ -21,6 +21,7 @@ Ext.define('TE.util.CustomDisplayField', {
             render: function(f) {
                 // Use same name that fieldset for form
                 f.name = f.ownerCt.name;
+                f.multipleAllowed = f.ownerCt.multipleAllowed;
             }
         },
     }

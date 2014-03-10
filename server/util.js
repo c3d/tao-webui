@@ -55,14 +55,14 @@ function page_property(page, id, parms)
 // ----------------------------------------------------------------------------
 //   For example, if you have a field like [[movie "Label"]], it should not
 //   be emitted as part of the page, but if there is a field like [[movie]],
-//   then it should be emitted as part of the [[page]] tag.
+//   then it should be emitted as part of the [[page]] tag (and only there)
 {
-    var prop = property(page, id, parms);
-    if (prop)
-        return prop;
+    // Check if called from 'page'
+    if (parms && parms.pageId)
+        return page.properties[parms.pageId];
 
-    // Called directly from [[page]], which does not have parms set
-    return page.properties[id];
+    // Checked if called with a label
+    return property(page, id, parms);
 }
 
 

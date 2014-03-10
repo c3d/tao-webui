@@ -35,7 +35,7 @@ function emitPage(page, id, parms)
         {
             var kind = item.replace(/_[0-9]+/, '');
             if (fs.existsSync(__dirname + '/' + kind + '.js'))
-                ddd += require('./' + kind) (page, item, parms);
+                ddd += require('./' + kind) (page, item, { pageId: item });
         }
     }
     if (ddd == '')
