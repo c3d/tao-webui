@@ -84,7 +84,6 @@ Ext.define('TE.util.CustomDynamicFields', {
         var type = name.replace(/_[0-9]+/,'');
         var index = 0;
         var existing = this.componentExists(name);
-        console.log('Creating: ', type, ' name: ', name, ' existing: ', existing);
         while (existing)
         {
             // If this component kind should exist only once, don't add

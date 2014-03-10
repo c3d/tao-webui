@@ -232,7 +232,6 @@ Ext.define('TE.controller.Editor', {
                 includes.forEach(function(incl) {
                     var file = incl.replace(/\[\[include\s+\"(.*)\"\]\]/, '$1');
                     themeInfo = themeInfo.replace(incl, me.httpGet(file));
-                    console.log("file=", file, " ti=", themeInfo);
                 });
             }
             themeInfo = themeInfo

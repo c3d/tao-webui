@@ -95,3 +95,10 @@ img.screenshot
     margin-left: auto;
     margin-right:auto;
 }
+
+iframe.screenshot
+{
+    display:block;
+    margin-left: auto;
+    margin-right:auto;
+}
