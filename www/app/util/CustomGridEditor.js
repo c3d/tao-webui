@@ -19,44 +19,45 @@ Ext.define('TE.util.CustomGridEditor', {
             }
         }
     })],
-    tbar: [{
-        scope: this.grid,
-        itemId: 'addRow',
-        text: tr('Add'),
-        handler : function() {
-            var grid  = this.ownerCt.ownerCt;
-            var cellEditing = grid.getPlugin('cellEditing');
-            var newRow = grid.store.getCount();
+    tbar: [
+        {
+            scope: this.grid,
+            itemId: 'addRow',
+            text: tr('Add'),
+            handler : function() {
+                var grid  = this.ownerCt.ownerCt;
+                var cellEditing = grid.getPlugin('cellEditing');
+                var newRow = grid.store.getCount();
 
-            cellEditing.cancelEdit();
-            grid.store.add({"a":"", "b":"", 'c':'', 'd':''})
-            cellEditing.startEdit(newRow, 0);
+                cellEditing.cancelEdit();
+                grid.store.add({'a':'', 'b':'', 'c':'', 'd':''})
+                cellEditing.startEdit(newRow, 0);
+            }
+        }, {
+            itemId: 'removeRow',
+            text: tr('Remove'),
+            handler: function() {
+                var grid  = this.ownerCt.ownerCt;
+                var cellEditing = grid.getPlugin('cellEditing');
+                var sm = grid.getSelectionModel();
+
+                cellEditing.cancelEdit();
+                var recs = sm.getSelection();
+                for(var i = 0; i < recs.length; i++)
+                    grid.store.remove(recs[i].position.record);
+
+                grid.updateData();
+            }
         }
-    }, {
-        itemId: 'removeRow',
-        text: tr('Remove'),
-        handler: function() {
-            var grid  = this.ownerCt.ownerCt;
-            var cellEditing = grid.getPlugin('cellEditing');
-            var sm = grid.getSelectionModel();
-
-            cellEditing.cancelEdit();
-            var recs = sm.getSelection();
-            for(var i = 0; i < recs.length; i++)
-                grid.store.remove(recs[i].position.record);
-
-            grid.updateData();
-        },
-    }],
-     listeners: {
+    ],
+    listeners: {
         viewready: function(grid) {
             this.createKeysMap(grid);
         }
     },
 
     createKeysMap: function(grid) {
-        var map = new Ext.KeyMap(grid.getEl(),
-            [
+        var map = new Ext.KeyMap(grid.getEl(), [
             {
                 key: [Ext.EventObject.ESC],
                 fn: function(keyCode, e) {
@@ -69,7 +70,6 @@ Ext.define('TE.util.CustomGridEditor', {
                     var recs = grid.getSelectionModel().getSelection();
                     for(var i = 0; i < recs.length; i++)
                         grid.store.remove(recs[i].position.record);
-
                     grid.updateData();
                 }
             },
@@ -84,46 +84,46 @@ Ext.define('TE.util.CustomGridEditor', {
 
                     if (recs && recs.length != 0) {
 
-                       var clipText = grid.getCsvDataFromRecs(recs);
+                        var clipText = grid.getCsvDataFromRecs(recs);
 
-                       var ta = document.createElement('textarea');
+                        var ta = document.createElement('textarea');
 
-                       ta.id = 'cliparea';
-                       ta.style.position = 'absolute';
-                       ta.style.left = '-1000px';
-                       ta.style.top = '-1000px';
-                       ta.value = clipText;
-                       document.body.appendChild(ta);
-                       document.designMode = 'off';
+                        ta.id = 'cliparea';
+                        ta.style.position = 'absolute';
+                        ta.style.left = '-1000px';
+                        ta.style.top = '-1000px';
+                        ta.value = clipText;
+                        document.body.appendChild(ta);
+                        document.designMode = 'off';
 
-                       ta.focus();
-                       ta.select();
+                        ta.focus();
+                        ta.select();
 
-                       setTimeout(function(){
+                        setTimeout(function(){
 
-                           document.body.removeChild(ta);
+                            document.body.removeChild(ta);
 
-                       }, 100);
+                        }, 100);
                     }
                 }
             },
             {
                 key: "v",
                 ctrl:true,
-                    fn: function() {
+                fn: function() {
 
-                        var ta = document.createElement('textarea');
-                        ta.id = 'cliparea';
+                    var ta = document.createElement('textarea');
+                    ta.id = 'cliparea';
 
-                        ta.style.position = 'absolute';
-                        ta.style.left = '-1000px';
-                        ta.style.top = '-1000px';
-                        ta.value = '';
+                    ta.style.position = 'absolute';
+                    ta.style.left = '-1000px';
+                    ta.style.top = '-1000px';
+                    ta.value = '';
 
-                        document.body.appendChild(ta);
-                        document.designMode = 'off';
+                    document.body.appendChild(ta);
+                    document.designMode = 'off';
 
-                        setTimeout(function(){
+                    setTimeout(function(){
 
                         grid.getRecsFromCsv(grid, ta);
 
@@ -151,7 +151,7 @@ Ext.define('TE.util.CustomGridEditor', {
 
             if (r === currRow) {
                 clipText = clipText.concat(val,"\t");
-             } else {
+            } else {
                 currRow = r;
                 clipText = clipText.concat("\n", val, "\t");
             }
@@ -174,8 +174,10 @@ Ext.define('TE.util.CustomGridEditor', {
         // Sort selected records by row and by column
         recs = this.sortSelectedRecords(recs);
 
-        // If only one cell in clipboard data, block fill process (i.e. copy a cell, then select a group of cells to paste)
-        if( rows[0].split("\t").length==1 && ( (rows.length==1) || (rows.length==2  && rows[1].trim()== "")))
+        // If only one cell in clipboard data, block fill process
+        // (i.e. copy a cell, then select a group of cells to paste)
+        if( rows[0].split("\t").length==1 &&
+            ( (rows.length==1) || (rows.length==2  && rows[1].trim()== "")))
         {
             for(var i = 0; i < recs.length; i++)
             {
@@ -197,9 +199,9 @@ Ext.define('TE.util.CustomGridEditor', {
                 columns = rows[rowIndex].split("\t");
 
                 /* Check there is a correct selected record.
-                *  If not, then get corresponding record in the store
-                *  or create it.
-                **/
+                 *  If not, then get corresponding record in the store
+                 *  or create it.
+                 **/
                 var selected = recs[nextIndex];
                 var isNotSelected = false;
                 var currentCol = 0;
@@ -225,8 +227,8 @@ Ext.define('TE.util.CustomGridEditor', {
                     if(! isNotSelected)
                     {
                         /* Check there is a correct selected record.
-                        *  If not, then get corresponding record in the store
-                        **/
+                         *  If not, then get corresponding record in the store
+                         **/
                         selected = recs[nextIndex];
                         if(! selected)
                         {
@@ -276,16 +278,16 @@ Ext.define('TE.util.CustomGridEditor', {
         var sortedRecs = recs;
         // Sort selected records by row and by column
         sortedRecs.sort(function(a,b) {
-                if(a.position.row > b.position.row)
-                    return 1;
-                else if(a.position.row < b.position.row)
-                    return -1;
-                else if(a.position.column > b.position.column)
-                    return 1;
-                else if(a.position.column < b.position.column)
-                    return -1;
-                else
-                    return 0;
+            if(a.position.row > b.position.row)
+                return 1;
+            else if(a.position.row < b.position.row)
+                return -1;
+            else if(a.position.column > b.position.column)
+                return 1;
+            else if(a.position.column < b.position.column)
+                return -1;
+            else
+                return 0;
         });
 
         return sortedRecs;

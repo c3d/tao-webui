@@ -30,7 +30,7 @@ function emitChart(page, id, parms)
 {
     var ddd = '';
     var name = id ? id : page.name;
-    var chart = page.properties[id];
+    var chart = util.page_property(page, id, parms);
 
     function emit (txt)
     {
@@ -39,8 +39,8 @@ function emitChart(page, id, parms)
 
     if (chart && chart != '')
     {
-        var chartdata = chart.chartdata;
-        if (chartdata && chartdata != '')
+        var data = chart.data;
+        if (data && data != '')
         {
             var dataIndexes = ['a', 'b', 'c', 'd'];
 
@@ -53,19 +53,16 @@ function emitChart(page, id, parms)
             emit('    once');
             emit('        chart_reset');
 
-            if(chart.charttitle && chart.charttitle != '')
-                emit('        chart_set_title "'
-                     + util.escape(chart.charttitle)+'"');
+            if(chart.title && chart.title != '')
+                emit('        chart_set_title "'+util.escape(chart.title)+'"');
 
-            if(chart.chartstyle && chart.chartstyle != '')
-                emit('        chart_set_style "'
-                     + chart.chartstyle.toLowerCase() + '"');
+            if(chart.style && chart.style != '')
+                emit('        chart_set_style "'+chart.style.toLowerCase()+'"');
 
-            if(chart.chartformat && chart.chartformat != '')
-                emit('        chart_set_format "' + chart.chartformat + '"');
+            if(chart.format && chart.format != '')
+                emit('        chart_set_format "' + chart.format + '"');
 
             // // Parse our chart data
-            var data = JSON.parse(chart.chartdata);
             for(var i = 0; i < data.length; i++)
             {
                 for(var j = 0; j < dataIndexes.length; j++)
@@ -77,21 +74,25 @@ function emitChart(page, id, parms)
                     if(value == parseFloat(value))
                         emit('        chart_push_data ' + (j + 1)
                              + ', ' + data[i][index]);
+                    else
+                        emit('        // chart_push_data ' + (j + 1)
+                             + ', ' + data[i][index] + '// Invalid number');
+
                 }
             }
         }
 
-        if(chart.chartxlabel && chart.chartxlabel != '')
+        if(chart.xlabel && chart.xlabel != '')
             emit ('        chart_set_xlabel "'
-                  + util.escape(chart.chartxlabel) + '"');
-        if(chart.chartylabel && chart.chartylabel != '')
+                  + util.escape(chart.xlabel) + '"');
+        if(chart.ylabel && chart.ylabel != '')
             emit ('        chart_set_ylabel "'
-                  + util.escape(chart.chartylabel) + '"');
+                  + util.escape(chart.ylabel) + '"');
         
-        if(chart.chartlegend && chart.chartlegend != '')
+        if(chart.legend && chart.legend != '')
         {
             // Parse chart legend indexes
-            var indexes = chart.chartlegend.split('$');
+            var indexes = chart.legend.split('$');
             for(var i = 1; i < indexes.length; i+=2)
             {
                 var col = indexes[i];
@@ -116,18 +117,18 @@ function emitChart(page, id, parms)
             }
         }
         
-        if(chart.charttype && chart.charttype)
+        if(chart.type && chart.type)
             emit('        chart_set_type "'
-                 + chart.charttype.toLowerCase() + '"');
+                 + chart.type.toLowerCase() + '"');
         
         // If user has given datasets, then draw it
         // Otherwise draw all datasets
-        if(chart.chartdatasets && chart.chartdatasets != '')
+        if(chart.datasets && chart.datasets != '')
         {
             // Parse datasets given by user and save it as
             // an XL array ({1,2,etc.})
             var datasets = '';
-            var datasetsIndexes = chart.chartdatasets.split(';');
+            var datasetsIndexes = chart.datasets.split(';');
             for(var i = 0; i < datasetsIndexes.length; i++)
             {
                 var idx = datasetsIndexes[i].toLowerCase();

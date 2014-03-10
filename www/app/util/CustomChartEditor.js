@@ -2,7 +2,7 @@ Ext.define('TE.util.CustomChartEditor', {
     extend:'Ext.form.FieldSet',
     alias: 'widget.customcharteditor',
     requires:['TE.util.CustomGridEditor'],
-    id:"chart_container",
+    itemId:"chart_container",
     index:'',
     name:"chart",
     title:tr('Chart', 'common'),
@@ -24,8 +24,9 @@ Ext.define('TE.util.CustomChartEditor', {
                 // Add coma if needed
                 if(result != '{')
                     result += ',';
-
-                result += '\"' + item.name + '\":' + Ext.encode(value) + '';
+                if (item.name != 'data')
+                    value = Ext.encode(value);
+                result += '\"' + item.name + '\":' +value + '';
             }
         });
         result+='}';
@@ -49,7 +50,11 @@ Ext.define('TE.util.CustomChartEditor', {
             {
                 var value = json[field.name];
                 if(value && value != '')
+                {
+                    if (field.name == 'data')
+                        value = JSON.stringify(value);
                     field.setValue(value);
+                }
             }
         }
     },
@@ -70,8 +75,8 @@ Ext.define('TE.util.CustomChartEditor', {
     // ------------------------------------------------------------------------
     {
         return [{abbr:"Area",   name:tr('Area', 'common'),},
-                {abbr:"Bar",   name:tr('Bar', 'common')},
-                {abbr:"Line",    name:tr('Line', 'common')},
+                {abbr:"Bar",    name:tr('Bar', 'common')},
+                {abbr:"Line",   name:tr('Line', 'common')},
                 {abbr:"Pie",    name:tr('Pie', 'common')}]
     },
 
@@ -84,30 +89,31 @@ Ext.define('TE.util.CustomChartEditor', {
         var data=[];
         switch(type){
         case 'Area':
-            data=[{abbr:"Default",   name:tr('Default', 'common')},
-                  {abbr:"Stacked",   name:tr('Stacked', 'common')}];
+            data=[{abbr:"Default",              name:tr('Default')},
+                  {abbr:"Stacked",              name:tr('Stacked')}];
             break;
             
         case 'Bar':
-            data=[{abbr:"Horizontal",   name:tr('Horizontal', 'common')},
-                  {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked', 'common')},
-                  {abbr:"Vertical",   name:tr('Vertical', 'common')},
-                  {abbr:"Vertical_stacked",   name:tr('Vertical stacked', 'common')}];
+            data=[{abbr:"Horizontal",           name:tr('Horizontal')},
+                  {abbr:"Horizontal_stacked",   name:tr('Horizontal stacked')},
+                  {abbr:"Vertical",             name:tr('Vertical')},
+                  {abbr:"Vertical_stacked",     name:tr('Vertical stacked')}];
             break;
             
         case 'Line':
-            data=[{abbr:"Line",   name:tr('Line', 'common')},
-                  {abbr:"Line&Point",   name:tr('Line & Point', 'common')},
-                  {abbr:"Point",   name:tr('Point', 'common')}];
+            data=[{abbr:"Line",                 name:tr('Line')},
+                  {abbr:"Line&Point",           name:tr('Line & Point')},
+                  {abbr:"Point",                name:tr('Point')}];
             break;
             
         case 'Pie':
-            data=[{abbr:"Default",   name:tr('Default', 'common')}];
+            data=[{abbr:"Default",              name:tr('Default')}];
             break;
         }
         
         return data;
     },
+
 
     getChartFormats: function()
     // ------------------------------------------------------------------------
@@ -124,8 +130,8 @@ Ext.define('TE.util.CustomChartEditor', {
     //   Update field with chart styles
     // ------------------------------------------------------------------------
     {
-        var types  = Ext.getCmp('charttype');
-        var styles = Ext.getCmp('chartstyle');
+        var types  = this.down('#charttype');
+        var styles = this.down('#chartstyle');
         var input  = types.getValue();
         var data   = this.getChartStyles(input);
         styles.store.loadData(this.getChartStyles(input));
@@ -138,14 +144,16 @@ Ext.define('TE.util.CustomChartEditor', {
     //   Initialize chart component
     // ------------------------------------------------------------------------
     {
-        border: false,
-        this.lastFocus = null,
+        var chartEditor = this;
+
+        this.border = false;
+        this.lastFocus = null;
 
         this.items = [
             {
                 fieldLabel: tr('Chart title', 'common'),
-                name: 'charttitle',
-                id:'charttitle',
+                name: 'title',
+                itemId:'charttitle',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 value:'chart',
@@ -166,15 +174,15 @@ Ext.define('TE.util.CustomChartEditor', {
                 valueField: 'abbr',
                 editable: false,
                 autoSelect: true,
-                name: 'charttype',
-                id:'charttype',
+                name: 'type',
+                itemId:'charttype',
                 anchor:'100%',
                 value:'Bar',
                 fieldLabel: tr('Chart type', 'common'),
                 labelAlign: 'top',
                 listeners: {
                     select: function(combo, record, index) {
-                        Ext.getCmp('chart_container').updateChartStyles();
+                        chartEditor.updateChartStyles();
                     },
                 },
             },
@@ -189,8 +197,8 @@ Ext.define('TE.util.CustomChartEditor', {
                 valueField: 'abbr',
                 editable: false,
                 autoSelect: true,
-                name: 'chartstyle',
-                id:'chartstyle',
+                name: 'style',
+                itemId:'chartstyle',
                 anchor:'100%',
                 value:'Vertical',
                 fieldLabel: tr('Chart style', 'common'),
@@ -207,8 +215,8 @@ Ext.define('TE.util.CustomChartEditor', {
                 valueField: 'abbr',
                 editable: false,
                 autoSelect: true,
-                name: 'chartformat',
-                id:'chartformat',
+                name: 'format',
+                itemId:'chartformat',
                 anchor:'100%',
                 value:'2D',
                 fieldLabel: tr('Chart format', 'common'),
@@ -216,8 +224,8 @@ Ext.define('TE.util.CustomChartEditor', {
             },
             {
                 fieldLabel: tr('Chart x-label', 'common'),
-                name: 'chartxlabel',
-                id: 'chartxlabel',
+                name: 'xlabel',
+                itemId: 'chartxlabel',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 anchor:'100%',
@@ -225,8 +233,8 @@ Ext.define('TE.util.CustomChartEditor', {
             },
             {
                 fieldLabel: tr('Chart y-label', 'common'),
-                name: 'chartylabel',
-                id:'chartylabel',
+                name: 'ylabel',
+                itemId:'chartylabel',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 anchor:'100%',
@@ -234,8 +242,8 @@ Ext.define('TE.util.CustomChartEditor', {
             },
             {
                 xtype: 'hiddenfield',
-                name: 'chartdata',
-                id:'chartdata'
+                name: 'data',
+                itemId:'chartdata'
             },
             {
                 xtype: 'label',
@@ -243,13 +251,12 @@ Ext.define('TE.util.CustomChartEditor', {
             },
             {
                 xtype: 'customgrideditor',
-                name:'chartgrid',
-                id:'chartgrid',
+                name:'grid',
+                itemId:'chartgrid',
                 anchor:'100%',
                 resizable: true,
                 width: 500,
                 maxHeight: 450,
-                minHeight: 450,
                 columns: [
                     {xtype: 'rownumberer'},
                     {header: 'A', width: 100, dataIndex: 'a', field: 'textfield', flex:1},
@@ -264,22 +271,18 @@ Ext.define('TE.util.CustomChartEditor', {
                         {name: 'c'},
                         {name: 'd'}
                     ],
-                    pageSize: 15,
                     autoLoad: true,
                     listeners: {
                         load: function() {
-                            var chartdata  = Ext.getCmp('chartdata');
-                            var grid  = Ext.getCmp('chartgrid');
-                            var jsonData = chartdata.getValue();
+                            var chartData = chartEditor.down('#chartdata');
+                            var chartGrid = chartEditor.down('#chartgrid');
+
+                            var jsonData = chartData.getValue();
                             if(jsonData != '')
                             {
                                 var data = Ext.decode(jsonData);
-                                grid.getStore().loadData(data);
+                                chartGrid.getStore().loadData(data);
                             }
-
-                            // Complete grid with empty rows
-                            for(var i = this.getCount(); i < this.pageSize; i++)
-                                grid.store.add({"a":"", "b":"", 'c':'', 'd':''});
                         }
                     }
                 }),
@@ -291,7 +294,7 @@ Ext.define('TE.util.CustomChartEditor', {
                         data.push(r.data);
                     });
                     var jsonData = Ext.encode(data);
-                    var chartdata  = Ext.getCmp('chartdata');
+                    var chartdata  = chartEditor.down('#chartdata');
                     chartdata.setValue(jsonData);
 
                     // Force grid refresh to update row numbers
@@ -325,7 +328,7 @@ Ext.define('TE.util.CustomChartEditor', {
                                 }
 
                                 // Update legend field
-                                Ext.getCmp('chartlegend').setValue(legend);
+                                this.down('#chartlegend').setValue(legend);
                             }
                             else if(lastFocus.name == 'chartdatasets') // Update legend if coresponding field is the last focus
                             {
@@ -338,12 +341,12 @@ Ext.define('TE.util.CustomChartEditor', {
                                 // Remove duplicate
                                 datasetsIndexes = Ext.Array.unique(datasetsIndexes);
 
-                                // Save it to an excell form (A;B;etc.)
+                                // Save it to an Excel form (A;B;etc.)
                                 for(var i = 0; i < datasetsIndexes.length; i++)
                                     datasets += datasetsIndexes[i] + ';';
 
                                 // Update field
-                                Ext.getCmp('chartdatasets').setValue(datasets);
+                                this.down('#chartdatasets').setValue(datasets);
                             }
                         }
                     }
@@ -351,8 +354,8 @@ Ext.define('TE.util.CustomChartEditor', {
             },
             {
                 fieldLabel: tr('Chart legend', 'common'),
-                name: 'chartlegend',
-                id:'chartlegend',
+                name: 'legend',
+                itemId:'chartlegend',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 anchor:'100%',
@@ -373,8 +376,8 @@ Ext.define('TE.util.CustomChartEditor', {
             },
             {
                 fieldLabel: tr('Chart series', 'common'),
-                name: 'chartdatasets',
-                id:'chartdatasets',
+                name: 'datasets',
+                itemId:'chartdatasets',
                 xtype: 'textfield',
                 labelAlign: 'top',
                 anchor:'100%',
@@ -399,8 +402,8 @@ Ext.define('TE.util.CustomChartEditor', {
         // mousedown event is outside the grid to
         // simulate it and unfocus all cells.
         Ext.getDoc().on("mousedown", function(e) {
-            var chartgrid  = Ext.getCmp('chartgrid');
-            var chart      = Ext.getCmp('chart_container');
+            var chartgrid  = chartEditor.down('#chartgrid');
+            var chart      = chartEditor;
             if(chart && chart.lastFocus && !e.within(chartgrid.getEl()))
             {
                 chart.lastFocus = null;
@@ -408,7 +411,7 @@ Ext.define('TE.util.CustomChartEditor', {
             }
         });
 
-        this.callParent(this);
+        this.callParent(arguments);
     },
 
 });
