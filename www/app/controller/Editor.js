@@ -329,7 +329,7 @@ Ext.define('TE.controller.Editor', {
 
         var box = Ext.create(Ext.window.MessageBox);
         box.confirm(tr('Delete page'),
-                    tr('Are you sure you want to delete this page?') + '[' + pageId + '] ' + page.get('name'),
+                    Ext.String.format(tr('Are you sure you want to delete page "{0}"?'), page.get('name')),
                     function(button) {
                         if (button === 'yes') {
                             store.remove(page);
@@ -366,9 +366,7 @@ Ext.define('TE.controller.Editor', {
             }
             store.add(page);
             store.sync();
-            if (selectedPage) {
-                store.reload();
-            }
+            store.reload();
         }
     },
 

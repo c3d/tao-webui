@@ -9,7 +9,7 @@ Ext.define('TE.i18n.fr', {
         'Add video file': 'Ajouter un fichier vidéo',
         'Add video from URL': 'Ajouter une vidéo (URL)',
         'Are you sure you want to delete this image?': 'Voulez-vous vraiment supprimer cette image&nbsp;?',
-        'Are you sure you want to delete this page?': 'Voulez-vous vraiment supprimer cette page&nbsp;?',
+        'Are you sure you want to delete page "{0}"?': 'Voulez-vous vraiment supprimer la page "{0}"&nbsp;?',
         'Are you sure you want to delete this video?': 'Voulez-vous vraiment supprimer cette vidéo&nbsp;?',
         'Browse...': 'Choisir...',
         'Cancel': 'Annuler',
