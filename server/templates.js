@@ -25,10 +25,10 @@ var fs = require('fs');
 // Regular expressions for elements in a template
 var importRe = /import\s+(\w+).*\n/g;
 var themeRe = /theme\s+(".*")/g;
-var indentedValRe = /^(\s*)\[\[\s*(\w+)\s*(\{.*\})\s*\]\]/gm;
-var templateValRe = /\[\[\s*(\w+)\s*(\{.*\})\s*\]\]/g;
-var indentedLblRe = /^(\s*)\[\[\s*(\w+)\s*(\".*\")\s*\]\]/gm;
-var templateLblRe = /\[\[\s*(\w+)\s*(\".*\")\s*\]\]/g;
+var indentedValRe = /^(\s*)\[\[\s*(\w+)\s*(\{[^\]]*\})\s*\]\]/gm;
+var templateValRe = /\[\[\s*(\w+)\s*(\{[^\]]*\})\s*\]\]/g;
+var indentedLblRe = /^(\s*)\[\[\s*(\w+)\s*(\"[^\]]*\")\s*\]\]/gm;
+var templateLblRe = /\[\[\s*(\w+)\s*(\"[^\]]*\")\s*\]\]/g;
 var indentedRe = /^(\s*)\[\[\s*(\w+)\s*\]\]/gm;
 var templateRe = /\[\[\s*(\w+)\s*\]\]/g;
 
@@ -60,7 +60,6 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
     {
         if (fs.statSync(template).mtime > dataMtime)
         {
-            verbose ('Reloading ' + template);
             data = fs.readFileSync(template, 'utf8');
             dataMtime = fs.statSync(template).mtime;
         }

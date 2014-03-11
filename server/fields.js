@@ -34,9 +34,39 @@ function property(object)
 {
     return function (page, id, value)
     {
-
         var label = null;
         var obj = JSON.parse(JSON.stringify(object));
+
+        // Check if we have a single entry in the input object.
+        // If so, value may be a shortcut for that value
+        // Turn something like { label: "Hello", min: 5, max: 3 }
+        // into something like { label: "Hello", real: { min: 5, max: 3 } }
+        if (value !== undefined)
+        {
+            var keys = Object.keys(obj);
+            if (keys.length == 1)
+            {
+                var id = keys[0];
+                if (value[id] === undefined)
+                {
+                    var label = value.label;
+                    var wrapped = { };
+                    if (label !== undefined)
+                    {
+                        wrapped.label = label;
+                        delete value.label;
+                    }
+                    if (value.init !== undefined)
+                    {
+                        value[id] = value.init;
+                        delete value.init;
+                    }
+                    wrapped[id] = value
+                    obj = wrapped;
+                    console.log("Wrapped=", wrapped);
+                }
+            }
+        }
 
         if (value)
         {

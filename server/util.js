@@ -522,6 +522,26 @@ function DomToSlideConverter(baseIndent)
         case 'tag':
             switch(dom.name)
             {
+            case 'h1':
+                output('paragraph\n');
+                indent();
+                output('style "title"\n');
+                convertAttribs(dom);
+                convertChildren(dom);
+                unindent();
+                break;
+            case 'h2':
+            case 'h3':
+            case 'h4':
+            case 'h5':
+            case 'h6':
+                output('paragraph\n');
+                indent();
+                output('style "subtitle"\n');
+                convertAttribs(dom);
+                convertChildren(dom);
+                unindent();
+                break;
             case 'p':
                 output('paragraph\n');
                 indent();
