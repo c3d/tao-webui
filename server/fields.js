@@ -26,10 +26,14 @@ function endFields()
 
 function property(object)
 // ----------------------------------------------------------------------------
-//   Add a property to the properties of the objec
+//   Add a property to the properties of the object
 // ----------------------------------------------------------------------------
+//   The object can have multiple fields
+//   If it has a single field, 'value' can define the content of that field,
+//   otherwise it defines the content of each field
 {
-    return function(page, id, value) {
+    return function (page, id, value)
+    {
 
         var label = null;
         var obj = JSON.parse(JSON.stringify(object));
@@ -55,15 +59,17 @@ function property(object)
                 index++;
                 name = field + '_' + index;
             }
-            result[name] = obj[field];
-        }
 
-        // If label is set, update labels
-        if (label)
-        {
-            if (!result._labels_)
-                result._labels_ = { }
-            result._labels_[name] = label;
+            // If label is set, update labels
+            if (label)
+            {
+                if (!result._labels_)
+                    result._labels_ = { }
+                result._labels_[name] = label;
+                label = null;
+            }
+
+            result[name] = obj[field];
         }
 
         return '';
