@@ -218,7 +218,8 @@ Ext.define('TE.controller.Editor', {
         cp.removeAll();
         var display = Ext.create('Ext.form.field.Display');
         cp.add(display);
-        var theme = 'themes/' + path + '/';
+        var theme = '/themes/' + path + '/';
+        var image = '/themes/' + path + '.pt.png';
         if (themeInfo == '')
         {
             themeInfo = defaultInfo;
@@ -236,6 +237,7 @@ Ext.define('TE.controller.Editor', {
             }
             themeInfo = themeInfo
                 .replace(/\[\[theme\]\]/g, theme)
+                .replace(/\[\[image\]\]/g, image)
                 .replace(/\[\[caption\]\]/g, text);
         }
         
@@ -248,7 +250,9 @@ Ext.define('TE.controller.Editor', {
         if (pt.leaf)
             this.setCenterPaneURL(pt.model, pt.text,
                                   'themes/' + pt.model + '.pt.html',
-                                  '<h2>' + pt.text + ' page template</h2>');
+                                  '<h2>' + pt.text + ' page template</h2>' +
+                                  '<img class="screenshot" src="/themes/' +
+                                  pt.model + '.pt.png"/>');
         else
             this.setCenterPaneURL(pt.path, pt.text,
                                   'themes/'+pt.path+'/'+ pt.text+'.theme.html',
@@ -281,8 +285,11 @@ Ext.define('TE.controller.Editor', {
 
         // Set a default center pane, overriden if clicksToEditing on a field
         var pt = record.data;
-        this.setCenterPaneURL('themes/' + pt.model + '.pt.html',
-                             '<h2>' + pt.name + '</h2>');
+        this.setCenterPaneURL(pt.model, pt.name,
+                              'themes/' + pt.model + '.pt.html',
+                              '<h2>' + pt.name + '</h2>' +
+                              '<img class="screenshot" src="/themes/' +
+                              pt.model + '.pt.png"/>');
     },
 
     displayFieldClicked: function(displayField) {
