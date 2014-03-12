@@ -6,8 +6,8 @@ page "[[name]]",
 // ----------------------------------------------------------------------------
 //    Display a screen showing the "On a computer screen nearby" message
 // ----------------------------------------------------------------------------
-    background 0,
-        mc_swc_background
+    page_duration [[real {label: "Page duration", max: 100, value: 15}]]
+    mc_swc_background
 
     contents 0,
         text_box 0, 0, 800, 600,

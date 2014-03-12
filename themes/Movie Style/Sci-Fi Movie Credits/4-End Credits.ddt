@@ -5,6 +5,8 @@ page "[[name]]",
 // ----------------------------------------------------------------------------
 //    Page showing the final credits
 // ----------------------------------------------------------------------------
+    page_duration [[real {label: "Page duration", max: 100, value: 30}]]
+
     mc_size 1200, 2800
     mc_swc_background
     adjust X:real ->

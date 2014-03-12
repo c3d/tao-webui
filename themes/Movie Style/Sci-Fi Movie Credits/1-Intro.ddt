@@ -6,10 +6,10 @@ page "[[name]]",
 // ----------------------------------------------------------------------------
 //    Show a text flying towards the viewer
 // ----------------------------------------------------------------------------
-    background 0,
-        mc_swc_background
+    page_duration [[real {label: "Page duration", max: 100, value: 15}]]
+    mc_swc_background
+
     contents 0,
-        page_duration [[real {label: "Page duration", max: 100, value: 30}]]
         translatez -5000 + 6000 * fade_in(page_time, [[real {label: "Fade-in Duration", value: 8.0, min:0.1, max:20.0}]])
         text_box 0, 0, 800, 600,
             align 0.5

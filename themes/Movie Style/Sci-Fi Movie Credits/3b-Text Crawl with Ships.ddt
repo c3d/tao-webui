@@ -1,0 +1,44 @@
+import Slides
+import Animate
+import MovieCredits
+
+page "[[name]]",
+// ----------------------------------------------------------------------------
+//    A page illustrating a Star-Wars style crawl
+// ----------------------------------------------------------------------------
+    page_duration [[real {label: "Page duration", max: 100, value: 30}]]
+    mc_size 1200, 2000
+
+    // This part displays the text
+    mc_star_wars_crawl [[real {label: "Crawl duration", value:25, min:1, max:100}]],
+        align_justify
+        [[rich_text {label: "Crawl text", init: '<p align="center">A NEW HOPE FOR PRESENTATIONS</p><p>The world of presentations is in chaos. The ancient power of bullet points is gone. Kids born with iPads in their hands don\'t believe in this old religion anymore.</p><p>But a glimmer of hope remains. Hidden in a remote place called Taodyne, three computer gurus versed in ancient computer science found a new way to jolt your audience.</p><p>The fight has just begun, a fight for the freedom to put some creativity back in presentations. To win this battle, Taodyne needs your help...</p>'}]]
+
+    // This part displays the  ship showing up after 28 seconds
+    mc_star_wars_crawl_ship [[real {label: "Delay before ship appears", value:28, min:1, max:100}]], [[real {label: "Ship speed", value:1500, min:300, max:3000}]],
+        locally
+            rotatex [[real {label: "Ship rotation speed", value:100, min:-200, max:200}]] * page_time
+            color "grey"
+            sphere 0, 0, 0, 400, 400, 100, 50, 50
+            color "white"
+            texture [[texture {label: "Ship pictogram", init: "http://www.taodyne.com/docs/AppIcon.png"}]]
+            translatez 55
+            circle 0, 0, 150
+
+        // Fire back with the Taodyne colors
+        fire N:integer ->
+            locally
+                light 0, false
+                rotatey 1 - 0.5 * N
+                translatez (page_time + sin (N * page_time)^2) mod 2 * 6000
+                rotatex 90
+                color tao_color N
+                scale 1, 2, 1
+                rounded_rectangle 0, 0, 50, 800, 50
+
+        tao_color 0 -> "#AA0022"
+        tao_color 1 -> "#DD3311"
+        tao_color 2 -> "#EEAA11"
+        tao_color 3 -> "#88BB00"
+        tao_color 4 -> "#229988"
+        fire with 0..4
