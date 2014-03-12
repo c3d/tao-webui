@@ -1,0 +1,42 @@
+import MovieCredits
+import Slides
+
+page "[[name]]",
+// ----------------------------------------------------------------------------
+//    Page showing the final credits
+// ----------------------------------------------------------------------------
+    mc_size 1200, 2800
+    mc_swc_background
+    adjust X:real ->
+        translatez 500
+        rotatey -45 * X
+        translatez -500
+    adjust 2*mouse_x / window_width
+    mc_credits [[real {label: "Duration", min:20, max:200, value:50}]], [[real {label: "Speed", min: 10, max: 400, value:100 }]],
+
+        // Cast section, 150 pixels high
+        mc_credits_section [[real {label: "Section 1 height", max:400, value:150}]],
+            font "Baskerville", "Times", 40
+            [[rich_text {label:"Section 1 text", init:"<p>CAST</p><p>In Order of Appearance</p>"}]]
+
+        // Credits for this contents
+        mc_credit [[text {label: "Role 1", init: "Director"}]], [[text {label: "Name 1", init: "Christophe"}]]
+        mc_credit [[text {label: "Role 2", init: "Screenplay"}]], [[text {label: "Name 2", init: "Catherine"}]]
+        mc_credit [[text {label: "Role 3", init: "Story"}]], [[text {label: "Name 3", init: "Laurent"}]]
+        mc_credit [[text {label: "Role 4", init: "Production"}]], [[text {label: "Name 4", init: "Jérôme"}]]
+        mc_credit [[text {label: "Role 5", init: "Special effects"}]], [[text {label: "Name 5", init: "Baptiste"}]]
+        mc_credit [[text {label: "Role 6", init: "Hair & Make-up"}]], [[text {label: "Name 6", init: "Claire"}]]
+
+        color "white"
+        mc_credits_section [[real { label: "Section 2 height", max: 400, value: 80}]],
+            [[rich_text {label: "Section 2 text", init: "Technical support"}]]
+
+
+        mc_credits_section [[real { label: "Section 3 height (logo)", max: 400, value: 250}]],
+            align 0.5
+            vertical_align 0.5
+            anchor
+               color "black", 0.6
+               rounded_rectangle 0, 0, 400, 190, 20
+               color "white"
+               [[picture {label: "Logo picture", url:"http://www.taodyne.com/presentation/images/Taodyne.png", x:0, y:120, scale:50}]]

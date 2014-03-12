@@ -1,0 +1,18 @@
+import Slides
+import Animate
+import MovieCredits
+
+page "[[name]]", 
+// ----------------------------------------------------------------------------
+//    Display a screen showing the "On a computer screen nearby" message
+// ----------------------------------------------------------------------------
+    background 0,
+        mc_swc_background
+
+    contents 0,
+        text_box 0, 0, 800, 600,
+            font "Arial", 50
+            vertical_align 0.5
+            color 60%, 80%, 95%, 70%
+            line_color 40%, 50%, 70%, 60%
+            [[rich_text {label: "Message", init: "<p>At this very moment</p><p>on a computer screen nearby</p>"}]]
