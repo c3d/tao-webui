@@ -39,6 +39,8 @@ var VERBOSE = false;
 var CONVERT_AND_EXIT = false;
 var token = null;
 
+var ddtFileCache = [];
+
 
 
 // ============================================================================
@@ -1182,7 +1184,6 @@ function loadPageFromTemplate(page, template)
 }
 
 
-var ddtFileCache = [];
 function ddtFilePath(themePath)
 // ----------------------------------------------------------------------------
 //   Return the DDT file given a theme path
