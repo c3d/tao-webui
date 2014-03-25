@@ -24,6 +24,7 @@ var fs = require('fs');
 
 // Regular expressions for elements in a template
 var importRe = /import\s+(\w+).*\n/g;
+var importLocalRe = /import\s+"(.*)".*\n/g;
 var themeRe = /theme\s+(".*")/g;
 var indentedValRe = /^(\s*)\[\[\s*(\w+)\s*(\{[^\]]*\})\s*\]\]/gm;
 var templateValRe = /\[\[\s*(\w+)\s*(\{[^\]]*\})\s*\]\]/g;
@@ -103,6 +104,7 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
             };
 
         var noImports = data
+            .replace(importLocalRe, '[[- importHeader(ctx, "\\"$1\\"") ]]')
             .replace(importRe, '[[- importHeader(ctx, "$1") ]]')
             .replace(themeRe, '[[- theme(ctx, $1) ]]')
             .replace(indentedLblRe, '[[- run(page, "$2", "$1", {label:$3}) ]]')

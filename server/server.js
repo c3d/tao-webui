@@ -136,12 +136,38 @@ var cached =
     dddmd5: null
 };
 
+
+fs.mkdirParent = function(dirPath, mode, callback)
+// ----------------------------------------------------------------------------
+//   Like mkdir, but with the intermediate paths created
+// ----------------------------------------------------------------------------
+{
+    // Call the standard fs.mkdir
+    fs.mkdir(dirPath, mode, function(error) {
+        // When it fail in this way, do the custom steps
+        if (error && error.errno === 34) {
+            // Create all the parents recursively
+            fs.mkdirParent(path.dirname(dirPath), mode, callback);
+            //And then the directory
+            fs.mkdirParent(dirPath, mode, callback);
+        }
+        //Manually run the callback since we used our own callback
+        callback && callback(error);
+    });
+};
+
+
 var exporter = [];
 var forceReload = true; // Do not reuse files from cache after restart
 
-function docPath() {
+function docPath()
+// ----------------------------------------------------------------------------
+//  Return the document path
+// ----------------------------------------------------------------------------
+{
     return DOC_DIR + '/' + DOC_FILENAME;
 }
+
 
 function jsonFilePath(name, saving)
 // ----------------------------------------------------------------------------
@@ -617,6 +643,16 @@ function fileUpload(dir)
         });
     }
 };
+
+
+function themeAsset(path)
+// ----------------------------------------------------------------------------
+//  Return a read stream for a given path under /themes
+// ----------------------------------------------------------------------------
+{
+    return fs.createReadStream(__dirname + '/../themes/' + path);
+}
+
 
 
 // ============================================================================
@@ -1105,7 +1141,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     if (!fs.existsSync(headerPath))
         headerPath = __dirname + '/exports/header-en.txt'
     var ddd = fs.readFileSync(headerPath, 'utf8');
-    var ctx = { header: '' };
+    var ctx = { header: '', docPath: docPath(), themeAsset: themeAsset };
     var body = '';
 
     convertToServerSide(pages);
