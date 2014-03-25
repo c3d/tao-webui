@@ -29,23 +29,30 @@ function property(object)
 //   Add a property to the properties of the object
 // ----------------------------------------------------------------------------
 //   The object can have multiple fields
-//   If it has a single field, 'value' can define the content of that field,
+//   If it has a single field, value can define the content of that field,
 //   otherwise it defines the content of each field
 {
     return function (page, id, value)
     {
-        var label = null;
+        // Clone the reference object so that we don't change it
         var obj = JSON.parse(JSON.stringify(object));
+        var label = null;
 
-        // Check if we have a single entry in the input object.
+        // Check if we have a single entry in the reference object.
         // If so, value may be a shortcut for that value
         // Turn something like { label: "Hello", min: 5, max: 3 }
         // into something like { label: "Hello", real: { min: 5, max: 3 } }
+        // If value contains 'init', we'll use that directly
         if (value !== undefined)
         {
+            // Check if the reference object contains a single entry,
+            // e.g. 'real' or 'texture', defined as real: 30,
+            // This excludes e.g. 'page', which has multiple fields.
             var keys = Object.keys(obj);
             if (keys.length == 1)
             {
+                // Get id for that object, e.g. 'texture' or 'real',
+                // If value does not define it, then it may define its fields
                 var id = keys[0];
                 if (value[id] === undefined)
                 {
@@ -61,9 +68,11 @@ function property(object)
                         value[id] = value.init;
                         delete value.init;
                     }
-                    wrapped[id] = value
-                    obj = wrapped;
-                    console.log("Wrapped=", wrapped);
+                    else if (Object.keys(value).length > 0)
+                    {
+                        wrapped[id] = value
+                        obj = wrapped;
+                    }
                 }
             }
         }
