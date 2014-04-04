@@ -4,7 +4,7 @@ import StereoDecoder
 import Animate
 import "product-shots.xl"
 
-[[attach "product-shots.xl"]]
+[[attach "product-shot.xl"]]
 [[attach "movies/D-LIVING.mp4"]]
 
 theme "WhiteOnBlack"
