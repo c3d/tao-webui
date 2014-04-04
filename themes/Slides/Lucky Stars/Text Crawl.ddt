@@ -5,6 +5,3 @@ base_slide "[[name]]",
     [[page]]
     star_wars_crawl
         [[rich_text "Crawl text"]]
-
-    other_crawl
-        [[rich_text "Blurg"]]
