@@ -1,0 +1,26 @@
+import VLCAudioVideo
+import BlackAndWhiteThemes
+import StereoDecoder
+import Animate
+import "product-shots.xl"
+
+[[attach "product-shots.xl"]]
+[[attach "movies/D-LIVING.mp4"]]
+
+theme "WhiteOnBlack"
+
+product_shot_slide "[[name]]",
+    product_shot_background 2, [[movie_url {label: "Background movie", init:"movies/D-LIVING.mp4"}]]
+    product_shot_picture 500, -50, [[real {label: "Product picture depth", value: 0}]], [[percent {label: "Product picture scale", value: 60, min:1, max:400}]]%, [[multiview_texture "Multiview product picture"]]
+
+    product_shot_title 450, 350, 200, 10, 16,
+        [[rich_text "Product info"]]
+    product_shot_subtitle 450, -400, 100, 11, 16, [[percent "Manufacturer logo scale"]]%, [[texture "Manufacturer logo"]]
+        [[rich_text "Product description"]]
+
+    product_shot_argument -250, 00, 100, 8, 8.5,
+         [[rich_text "Sales pitch 1"]]
+    product_shot_argument -250, -80, 100, 8.5, 9.0,
+         [[rich_text "Sales pitch 2"]]
+    product_shot_argument -250, -160, 100, 9.0, 9.5,
+         [[rich_text "Sales pitch 3"]]
