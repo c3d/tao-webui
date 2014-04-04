@@ -30,37 +30,34 @@ function emitAttachment(page, id, value)
 {
     var name = value.label;
     var ctx = page.ctx;
-    console.log("Attach: file ", name, " in ", ctx.docPath);
+    var verbose = page.ctx.verbose;
     var file = path.resolve(path.dirname(ctx.docPath), name);
-    console.log("Attach: file path ", file, "exists: ", fs.existsSync(file));
     var key = "FILE:" + file;
     if (!ctx.hasOwnProperty(key))
     {
-        if (!fs.existsSync(file))
-        {
-            var asset = path.dirname(ctx.themePath) + "/" + name;
-            var is = ctx.themeAsset(asset);
-            console.log("Reading asset from " + asset);
+        var asset = path.dirname(ctx.themePath) + "/" + name;
+        var is = ctx.themeAsset(asset);
+        verbose("Reading asset from " + asset);
 
-            // Create asset directory if necessary
-            var dir = path.dirname(file);
-            if (!fs.existsSync(dir))
-                fs.mkdirParent(dir);
+        // Create asset directory if necessary
+        var dir = path.dirname(file);
+        if (!fs.existsSync(dir))
+            fs.mkdirParent(dir);
 
-            console.log("Writing file: ", file);
-            var os = fs.createWriteStream(file);
-            is.pipe(os);
+        verbose("Writing file: ", file);
+        var os = fs.createWriteStream(file);
+        is.pipe(os);
 
-            is.on('end',function() {
-                console.log("Success reading file ", file);
-            });
-            is.on('error',function(err) {
-                console.log("Attach: Read error ", err);
-            });
-            os.on('error', function(err) {
-                console.log("Attach: Write error: ", err);
-            });
-        }
+        is.on('end',function() {
+            verbose("Attach: Copied file ", file);
+        });
+        is.on('error',function(err) {
+            verbose("Attach: Read error ", err);
+        });
+        os.on('error', function(err) {
+            verbose("Attach: Write error: ", err);
+        });
+
         ctx[key] = true;
     }
     return "";

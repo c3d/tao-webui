@@ -1141,7 +1141,13 @@ function writeTaoDocument(pages, lang, callback, overwrite)
     if (!fs.existsSync(headerPath))
         headerPath = __dirname + '/exports/header-en.txt'
     var ddd = fs.readFileSync(headerPath, 'utf8');
-    var ctx = { header: '', docPath: docPath(), themeAsset: themeAsset };
+    var ctx =
+        {
+            header: '',
+            docPath: docPath(),
+            themeAsset: themeAsset,
+            verbose: verbose
+        };
     var body = '';
 
     convertToServerSide(pages);
