@@ -2,7 +2,7 @@ import VLCAudioVideo
 import BlackAndWhiteThemes
 import StereoDecoder
 import Animate
-import "product-shots.xl"
+import "product-shot.xl"
 
 [[attach "product-shot.xl"]]
 [[attach "movies/D-LIVING.mp4"]]
@@ -15,7 +15,7 @@ product_shot_slide "[[name]]",
 
     product_shot_title 450, 350, 200, 10, 16,
         [[rich_text "Product info"]]
-    product_shot_subtitle 450, -400, 100, 11, 16, [[percent "Manufacturer logo scale"]]%, [[texture "Manufacturer logo"]]
+    product_shot_subtitle 450, -400, 100, 11, 16, [[percent {label: "Manufacturer logo scale", value:100, min:1, max:1000}]]%, [[texture "Manufacturer logo"]],
         [[rich_text "Product description"]]
 
     product_shot_argument -250, 00, 100, 8, 8.5,

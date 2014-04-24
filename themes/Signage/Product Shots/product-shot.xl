@@ -1,0 +1,150 @@
+// ****************************************************************************
+//  product-shot.xl                                                Tao project 
+// ****************************************************************************
+// 
+//   File Description:
+//
+//     Support file for the Product Shot template
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// ****************************************************************************
+//  (C) 2014 Christophe de Dinechin <christophe@taodyne.com>
+//  (C) 2014 Taodyne SAS
+// ****************************************************************************
+
+product_shot_mtime -> 0.0
+
+product_shot_slide Name, Body ->
+// ----------------------------------------------------------------------------
+//   Generate a product shot page
+// ----------------------------------------------------------------------------
+    base_slide Name,
+        color "white"
+        refresh 0
+        Body
+
+
+product_shot_background Scale, Movie ->
+// ----------------------------------------------------------------------------
+//    Draw the background movie
+// ----------------------------------------------------------------------------
+    background 0,
+        disable_depth_test
+        color "white"
+        scale Scale
+        multistream_movie Movie, 7, -1
+
+        on "pageexit",
+            movie_drop Movie
+        if movie_done Movie then
+            next_page
+
+        product_shot_mtime := movie_time Movie
+
+
+product_shot_picture X, Y, Z, Scale, Image ->
+// ----------------------------------------------------------------------------
+//    Draw the product shot picture
+// ----------------------------------------------------------------------------
+    product_shot_mtime in [7..16]
+        contents Z,
+            locally
+                translate X, Y, 0
+                scale Scale
+                product_shot_mtime in [7.0..7.5]
+                    translate_x -4000 * down_ratio
+                    scale 0.2
+                    locally
+                        translate_x -1000
+                        show 0.3
+                        multiview_image Image, 8, -1
+                product_shot_mtime in [7.5..8.0]
+                    scale 0.2 + 0.9 * smooth_ratio
+                product_shot_mtime in [8.0..16.0]
+                    translate -50 * ratio, 0, 500 * ratio
+                product_shot_mtime in [15.5..16]
+                    show down_ratio ^ 2
+                    locally
+                        translate_x 50 * ratio
+                        multiview_image Image, 8, -1
+                        translate_x -100 * ratio
+                        multiview_image Image, 8, -1
+                multiview_image Image, 8, -1
+
+
+product_shot_argument X, Y, Z, T1, T2, Arg ->
+// ----------------------------------------------------------------------------
+//    Draw the product shot picture
+// ----------------------------------------------------------------------------
+    product_shot_mtime in [T1..16]
+        contents Z,
+            translate X, Y, 0
+            locally
+                product_shot_mtime in [T1..T2]
+                    translate_x -1200 * smooth_down_ratio
+                text_frame -150, 0, 1100, 200,
+                    product_shot_small_style
+                    Arg
+
+
+product_shot_title X, Y, Z, T1, T2, Title ->
+// ----------------------------------------------------------------------------
+//   Draw the product shot title
+// ---------------------------------------------------------------------------
+    product_shot_mtime in [T1..T2]
+        contents Z,
+            translate X, Y, 0
+            text_frame 0, 0, 960, 250,
+                product_shot_title_style
+                Title
+
+product_shot_subtitle X, Y, Z, T1, T2, Scale, Logo, Subtitle ->
+// ----------------------------------------------------------------------------
+//    Draw the subtitle
+// ----------------------------------------------------------------------------
+    product_shot_mtime in [T1..T2]
+        contents Z,
+            translate X, Y, 0
+            text_frame 0, 0, 960, 250,
+                product_shot_subtitle_style
+                paragraph
+                    color "white"
+                    image 0, 0, Scale, Scale, Logo
+                Subtitle
+
+
+product_shot_small_style ->
+// ----------------------------------------------------------------------------
+//   Style for small text
+// ----------------------------------------------------------------------------
+    align 1.0
+    vertical_align 0.5
+    font "Arial", 40
+    color "#70370F"
+
+
+product_shot_title_style ->
+// ----------------------------------------------------------------------------
+//   Style for title text
+// ----------------------------------------------------------------------------
+    align 0.5
+    vertical_align 0.5
+    font "Arial", 50
+    color "#70370F"
+
+
+product_shot_subtitle_style ->
+// ----------------------------------------------------------------------------
+//   Style for subtitle text
+// ----------------------------------------------------------------------------
+    align 1.0
+    vertical_align 0.5
+    font "Arial", 45
+    color "#70370F"
+
