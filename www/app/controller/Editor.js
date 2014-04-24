@@ -5,7 +5,7 @@ Ext.define('TE.controller.Editor', {
         'TE.editor.controller.Controller'
     ],
 
-    stores: [ 'Pages', 'Images', 'Videos' ],
+    stores: [ 'Pages', 'Images', 'Videos', 'MultiviewImages' ],
     models: [ 'Page', 'ResourceFile' ],
     views:
     [
@@ -14,6 +14,7 @@ Ext.define('TE.controller.Editor', {
         'EditResourceURL',
         'ImagePickerField',
         'VideoPickerField',
+        'MultviewImagePickerField',
         'PageList',
         'PageListContextMenu',
         'Properties',
@@ -162,8 +163,8 @@ Ext.define('TE.controller.Editor', {
     httpGet: function(theUrl)
     {
         var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", theUrl, false );
-        xmlHttp.send( null );
+        xmlHttp.open("GET", theUrl, false);
+        xmlHttp.send(null);
         if (xmlHttp.status == 200 || xmlHttp.status == 0)
             return xmlHttp.responseText;
         return '';
@@ -491,6 +492,7 @@ Ext.define('TE.controller.Editor', {
     deleteResource: function() {
         var me = this;
         var resource = this.selectedResource();
+        var type = this.getResourceLibrary().type;
 
         var box = Ext.create(Ext.window.MessageBox);
         var thing = resource.get('type');
@@ -500,7 +502,7 @@ Ext.define('TE.controller.Editor', {
                     msg + '<br><br>' + resource.get('description'),
                     function(button) {
                         if (button === 'yes') {
-                            var store = me.getImagesStore();
+                            var store = me.getStoreForResource(type);
                             store.remove(resource);
                             store.sync();
                             me._updateresourcelibraryButtons();
@@ -537,7 +539,7 @@ Ext.define('TE.controller.Editor', {
     editResource: function() {
         var record = this.selectedResource();
         var isFile = (record.get('file').indexOf('://') === -1);
-        var view = Ext.widget(isFile ? 'teeditresourcefile' : 'teeditresourceurl',
+        var view = Ext.widget(isFile?'teeditresourcefile':'teeditresourceurl',
                               { type: record.get('type') });
         view.down('form').loadRecord(record);
     },
@@ -547,7 +549,8 @@ Ext.define('TE.controller.Editor', {
             form = win.down('form'),
             record = form.getRecord(),
             values = form.getValues(),
-            store = this.getImagesStore();
+            type = this.getResourceLibrary().type,
+            store = this.getStoreForResource(type);
         win.close();
 
         // Basic validation
@@ -563,6 +566,8 @@ Ext.define('TE.controller.Editor', {
         switch (type) {
             case 'image':
                 return this.getImagesStore();
+            case 'mvimage':
+                return this.getMultiviewImagesStore();
             case 'video':
                 return this.getVideosStore();
         }

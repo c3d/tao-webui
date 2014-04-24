@@ -597,6 +597,7 @@ app.delete('/resources/:id', function(req, res)
 
 
 app.post('/image-upload', fileUpload(IMAGES_DIR));
+app.post('/mvimage-upload', fileUpload(IMAGES_DIR));
 app.post('/video-upload', fileUpload(VIDEOS_DIR));
 
 

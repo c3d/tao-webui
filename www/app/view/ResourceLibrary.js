@@ -8,8 +8,8 @@ Ext.define('TE.view.ResourceLibrary', {
     modal: true,
     showChooseButton: false,
     targetField: null,
-    store: '',  // E.g., 'Images' or 'Videos'
-    type: '',   // E.g., 'image' or 'video'
+    store: '',  // E.g., 'Images' or 'Videos' or 'MultviewImages'
+    type: '',   // E.g., 'image' or 'video' or 'mvimage'
 
     initComponent: function() {
         this.items = [{
@@ -24,11 +24,13 @@ Ext.define('TE.view.ResourceLibrary', {
                 width: 100,
                 renderer: function(v, meta, rec, rowIndex) {
                     var type = rec.get('type') || '';
-                    if (type === 'image')
+                    if (type === 'image' || type === 'mvimage')
                     {
                         var imgsrc = file = rec.get('file');
                         if (file.indexOf('://') === -1)
                             imgsrc = '/library/images/' + file;
+                        if (type === 'mvimage')
+                            imgsrc = imgsrc.replace('#', '1');
                         return '<img src="' + imgsrc + '" width=\"80\" title=\"' + file + '\" />';
                     }
                     else
@@ -49,7 +51,7 @@ Ext.define('TE.view.ResourceLibrary', {
             },{
                 header: tr('Path/URL'),
                 dataIndex: 'file',
-                renderer: function(value, metaData, record, rowIdx, colIdx, store) {
+                renderer: function(value,metaData,record,rowIdx,colIdx,store) {
                     metaData.tdAttr = 'data-qtip="' + value + '"';
                     return value;
                 },
