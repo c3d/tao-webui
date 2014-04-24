@@ -28,7 +28,9 @@ function emitReal(page, id, value)
     var number = util.property(page, id, value);
     if (number === null)
         return '';
-    return parseFloat(number.value);
+    if (number.hasOwnProperty("value"))
+        number = number.value;
+    return parseFloat(number);
 }
 
 module.exports = emitReal;
