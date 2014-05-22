@@ -60,7 +60,7 @@ clean:
 	rm -rf "$(DEST)"
 
 npm-install:
-	cd server && npm install || rm -rf server/node_modules
+	cd server && npm install || npm install || npm install || rm -rf server/node_modules
 
 npm-uninstall:
 	rm -rf server/node_modules
