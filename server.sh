@@ -11,4 +11,4 @@ error() {
 [ -e "$SCRIPTPATH/www/ext-4" ] || error "ExtJS 4 not found under www/ext-4. Please install it from http://www.sencha.com/products/extjs/download."
 
 #export PORT=3000
-node "$SCRIPTPATH/server/server.js" $*
+node "$SCRIPTPATH/server/server.js" "$@"
