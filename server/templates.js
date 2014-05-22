@@ -23,6 +23,7 @@ var util = require('./util');
 var fs = require('fs');
 
 // Regular expressions for elements in a template
+var windowsCRLF = /(\r\n)/g;
 var importRe = /import\s+(\w+).*\n/g;
 var importLocalRe = /import\s+"(.*)".*\n/g;
 var themeRe = /theme\s+(".*")/g;
@@ -53,7 +54,8 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
     // Fetch data from the file
     var data = fs.readFileSync(template, 'utf8');
     var dataMtime = fs.statSync(template).mtime;
-    
+
+
     function updateDataIfNeeded()
     // ------------------------------------------------------------------------
     //    Re-load template file if it changed
@@ -99,11 +101,14 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
                 filename: template,
                 cached: false,
                 scope: this,
+                debug: true,
+                compileDebug: true,
                 open: "[[",
                 close: "]]"
             };
 
         var noImports = data
+            .replace(windowsCRLF, '\n')
             .replace(importLocalRe, '[[- importHeader(ctx, "\\"$1\\"") ]]')
             .replace(importRe, '[[- importHeader(ctx, "$1") ]]')
             .replace(themeRe, '[[- theme(ctx, $1) ]]')
