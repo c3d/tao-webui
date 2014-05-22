@@ -42,7 +42,6 @@ var token = null;
 var ddtFileCache = [];
 
 
-
 // ============================================================================
 // 
 //    Command line processing
@@ -195,7 +194,7 @@ if (CONVERT_AND_EXIT === true) {
         writeTaoDocument(pages, 'en', function(err, sum) {
             var status = 0;
             if (err) {
-                console.log(err);
+                console.error(err);
                 status = 1;
             } else {
                 savePagesJSON(pages, null);
@@ -277,7 +276,7 @@ app.use(function(req, res, next)
     if (token) {
         var tok = req.query.token || req.cookies.token || null;
         if (tok !== token) {
-            console.log('Unauthorized - missing/invalid security token', tok);
+            console.error('Unauthorized - missing/invalid security token', tok);
             return res.send(401);
         }
     }
@@ -309,6 +308,8 @@ app.get('/pages', function(req, res)
 {
     getData('pages', function(err, pages) {
         convertToClientSide(pages);
+        if (err)
+            console.error("Get page: error ", err);
         res.send(err ? 500 : pages);
     });
 });
@@ -344,8 +345,8 @@ app.get('/pages/:id', function(req, res)
         }
         else
         {
-            console.log("GOT 404 FROM GET /page/:id " + req.params.id
-                        + "\n" + stringify(found));
+            console.error("GOT 404 FROM GET /page/:id " + req.params.id
+                          + "\n" + stringify(found));
             res.send(404);
         }
     });
@@ -449,7 +450,7 @@ app.put('/pages/:id', function(req, res)
         }
         else
         {
-            console.log("GOT 404 FROM PUT /page/:id " + req.params.id);
+            console.error("GOT 404 FROM PUT /page/:id " + req.params.id);
             res.send(404);
         }
     });
@@ -483,7 +484,7 @@ app.delete('/pages/:id', function(req, res)
         }
         if (!found)
         {
-            console.log("GOT 404 FROM DELETE /page/:id " + req.params.id);
+            console.error("GOT 404 FROM DELETE /page/:id " + req.params.id);
             res.send(404);
         }
     });
@@ -496,6 +497,8 @@ app.get('/resources', function(req, res)
 // ----------------------------------------------------------------------------
 {
     getData('resources', function(err, resources) {
+        if (err)
+            console.error("Get /resources error: ", err);
         res.send(err ? 500 : resources);
     });
 });
@@ -546,6 +549,8 @@ app.put('/resources/:id', function(req, res)
             if (prevfile.indexOf('://') === -1 && prevfile !== found.file)
             {
                 deleteResourceFile(prevtype, prevfile, function (err) {
+                    if (err)
+                        console.error("Put: deleteResourceFile error: ", err);
                     res.send(err ? 500 : found);
                 });
             }
@@ -556,7 +561,7 @@ app.put('/resources/:id', function(req, res)
         }
         else
         {
-            console.log("GOT 404 FROM PUT /resources/:id " + req.params.id);
+            console.error("GOT 404 FROM PUT /resources/:id " + req.params.id);
             res.send(404);
         }
     });
@@ -584,12 +589,14 @@ app.delete('/resources/:id', function(req, res)
         if (found)
         {
             deleteResourceFile(found.type, found.file, function(err) {
+                if (err)
+                    console.error("Delete /resources error: ", err);
                 res.send(err ? 500 : { success: true })
             })
         }
         else
         {
-            console.log("GOT 404 FROM DELETE /resources/:id " + req.params.id);
+            console.error("GOT 404 FROM DELETE /resources/:id ", req.params.id);
             res.send(404);
         }
     });
@@ -755,7 +762,7 @@ app.get(/^\/+(index.*\.html|)$/, function(req, res)
         {
             if (err)
             {
-                console.log("GOT 404 FROM GET index " + req.params.id);
+                console.error("GOT 404 FROM GET index " + req.params.id);
                 return res.send(404);
             }
             var lang = req.query.lang || 'en';
@@ -902,7 +909,7 @@ function getData(name, callback)
         {
             if (!exists)
             {
-                console.log(file + ' does not exist');
+                console.error(file + ' does not exist');
                 cached[name] = [];
                 callback(null, []);
             }
@@ -912,7 +919,7 @@ function getData(name, callback)
                 {
                     if (err)
                     {
-                        console.log('File read error: ' + err);
+                        console.error('File read error: ' + err);
                         callback(err);
                     }
                     else
@@ -931,7 +938,7 @@ function getData(name, callback)
                             }
                             catch(e)
                             {
-                                console.log("ERROR PARSING DATA FILE:\n"+data);
+                                console.error("Error parsing data file:",data);
                                 cached[name] = { };
                             }
                         }
@@ -1044,7 +1051,7 @@ function deleteResourceFile(type, name, callback)
     case 'video': dir = VIDEOS_DIR; break;
     default:
         var msg = 'Error: unknown resource type ' + type;
-        console.log(msg);
+        console.error(msg);
         callback(msg)
         return;
     }
