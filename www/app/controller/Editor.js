@@ -82,8 +82,11 @@ Ext.define('TE.controller.Editor', {
             'editor [action=addField]': {
                  click: this.addField
              },
-            'button[action=showPicLibrary]': {
+            'button[action=showImageLibrary]': {
                 click: this.showImageLibrary
+            },
+            'button[action=showMvImageLibrary]': {
+                click: this.showMvImageLibrary
             },
             'button[action=showVidLibrary]': {
                 click: this.showVideoLibrary
@@ -474,6 +477,14 @@ Ext.define('TE.controller.Editor', {
             title: tr('Image library'),
             store: 'Images',
             type: 'image'
+        });
+    },
+
+    showMvImageLibrary: function() {
+        Ext.widget('teresourcelibrary', {
+            title: tr('Multiview Image library'),
+            store: 'MultiviewImages',
+            type: 'mvimage'
         });
     },
 

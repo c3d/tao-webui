@@ -2,7 +2,7 @@ Ext.define('TE.view.EditResourceFile', {
     extend: 'Ext.window.Window',
     alias: 'widget.teeditresourcefile',
 
-    type: '',   // 'image', 'video'
+    type: '',   // 'image', 'mvimage', 'video'
 
     title: '',
 
@@ -13,7 +13,13 @@ Ext.define('TE.view.EditResourceFile', {
     initComponent: function() {
         var me = this;
 
-        this.title = tr('Edit ' + this.type);
+        switch(this.type) {
+            case 'image'  : this.title = tr('Edit image'); break;
+            case 'mvimage': this.title = tr('Edit multiview image'); break;
+            case 'video'  : this.title = tr('Edit video'); break;
+            default       : this.title = tr('Edit unknown ' + this.type); break;
+        }
+
         this.items = [{
             xtype: 'form',
             border: false,
@@ -50,6 +56,7 @@ Ext.define('TE.view.EditResourceFile', {
                         var accept;
                         switch (me.type) {
                             case 'image':
+                            case 'mvimage':
                             case 'video':
                                 accept = me.type + '/*';
                                 break;

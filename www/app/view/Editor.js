@@ -52,7 +52,13 @@ Ext.define('TE.view.Editor', {
                     xtype: 'button',
                     text: tr('Image library') + '...',
                     icon: 'app/resources/images/image.png',
-                    action: 'showPicLibrary'
+                    action: 'showImageLibrary'
+                },
+                {
+                    xtype: 'button',
+                    text: tr('Multiview image library') + '...',
+                    icon: 'app/resources/images/mvimage.png',
+                    action: 'showMvImageLibrary'
                 },
                 {
                     xtype: 'button',
