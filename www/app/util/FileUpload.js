@@ -24,13 +24,34 @@ Ext.define('TE.util.FileUpload', {
  
         listeners: {
             afterrender: function () {
-                var dropTargetEl = this.getEl().dom;
+                var dropTarget = this.getEl();
+                var dropTargetEl = dropTarget.dom;
+                // var dropInnerZone = this.down('#upload_drop_zone');
                 var me = this;
+
+                function dragOver(event) {
+                    dropTarget.setStyle('background-color', '#ccc');
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    }
+                    return false;
+                }
  
+                function dragLeave(event) {
+                    dropTarget.setStyle('background-color', '#fff');
+                    return true;
+                }
+ 
+                // Cancel default behaviors to enable drag and drop
+                dropTargetEl.addEventListener('dragover', dragOver);
+                dropTargetEl.addEventListener('dragenter', dragOver);
+                dropTargetEl.addEventListener('dragleave', dragLeave);
+
                 // When the user drops files onto the drop zone,
                 // capture the file references and immediately upload
-                console.log("Adding event listener", dropTargetEl);
                 dropTargetEl.addEventListener('drop', function (evt) {
+                    dropTarget.setStyle('background-color', '#fff');
+
                     var files, datasetName;
  
                     // Stop the browser's default behavior when
