@@ -60,7 +60,7 @@ Chrome/Safari (it gives a empty zone below the page) */
 }
 
 /* iconCls property of the fieldset */
-.x-tool-close
+.cancel-icon, .x-tool-close
 {
     background-image: url('app/resources/images/delete.png') !important;
     background-position: 0 2px !important;
@@ -101,4 +101,26 @@ iframe.screenshot
     display:block;
     margin-left: auto;
     margin-right:auto;
+}
+
+#upload_drop_zone
+{
+    border: 2px dashed #BBB;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    padding: 15px 25px;
+    text-align: center;
+    font: 20pt bold 'Vollkorn';
+    color: #BBB;
+    margin: 1px;
+    background-color: #FFFAE9;
+}
+
+#file_upload_status
+{
+    padding: 5px;
+    text-align: center;
+    background-color: #EEF;
+    color: #335;
 }

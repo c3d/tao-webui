@@ -117,6 +117,7 @@ if (TEST_MODE) {
 
 var IMAGES_DIR = DOC_DIR + '/images';
 var VIDEOS_DIR = DOC_DIR + '/videos';
+var FILES_DIR = DOC_DIR + '/files';
 var preserve_files = [];
 if (TEST_MODE) {
     // DEBUG: to facilitate testing, these files (under IMAGES_DIR) can't be deleted
@@ -606,6 +607,7 @@ app.delete('/resources/:id', function(req, res)
 app.post('/image-upload', fileUpload(IMAGES_DIR));
 app.post('/mvimage-upload', fileUpload(IMAGES_DIR));
 app.post('/video-upload', fileUpload(VIDEOS_DIR));
+app.post('/file-upload', fileUpload(FILES_DIR));
 
 
 function fileUpload(dir)
@@ -613,6 +615,42 @@ function fileUpload(dir)
 //   Upload a file to the proper directory
 // ----------------------------------------------------------------------------
 {
+    function uploadFile(dir, file)
+    {
+        verbose('Uploading file ' + file.name + ' in ' + dir);
+        // Rename the input temporary file, overwriting target file
+        // Do not use fs.rename() due to possible EXDEV.
+        var is = fs.createReadStream(file.path);
+        var os = fs.createWriteStream(dir + '/' + file.name);
+        is.pipe(os);
+        is.on('end',function() {
+            fs.unlink(file.path);
+        });
+    }
+
+    function uploadAllFiles(req, res)
+    {
+       try
+        {
+            if (Array.isArray(req.files.file))
+            {
+                req.files.file.forEach(function(file) {
+                    uploadFile(dir, file);
+                });
+            }
+            else
+            {
+                uploadFile(dir, req.files.file);
+            }
+            res.send(JSON.stringify({ success: true }));
+        }
+        catch(e)
+        {
+            console.error('Uploading file error', e);
+            res.send(400);
+        }
+    }
+
     return function (req, res, next)
     {
         // req.files.<name of form field>
@@ -622,33 +660,20 @@ function fileUpload(dir)
             return;
         }
 
-        findUnusedFileName(dir, req.files.file.name, function(err, name) {
-            if (err)
-                throw err;
-
-            var rename = function() {
-                // Do not use fs.rename() due to possible EXDEV
-                var is = fs.createReadStream(req.files.file.path);
-                var os = fs.createWriteStream(dir + '/' + name);
-                is.pipe(os);
-                is.on('end',function() {
-                    fs.unlink(req.files.file.path);
-                    res.send(JSON.stringify({ success: true, file: name }));
+        // Check if we need to create the upload directory
+        fs.exists(dir, function(exists) {
+            if (exists) {
+                uploadAllFiles(req, res);
+            } else {
+                verbose('Creating ' + dir);
+                fs.mkdir(dir, function(err) {
+                    if (err)
+                        throw err;
+                    uploadAllFiles(req, res);
                 });
             }
-            fs.exists(dir, function(exists) {
-                if (exists) {
-                    rename();
-                } else {
-                    verbose('Creating ' + dir);
-                    fs.mkdir(dir, function(err) {
-                        if (err)
-                            throw err;
-                        rename();
-                    });
-                }
-            })
         });
+
     }
 };
 
@@ -1015,25 +1040,6 @@ function allocateId(arr)
     while (id in ids)
         id++;
     return id;
-}
-
-
-function findUnusedFileName(dir, name, callback)
-// ----------------------------------------------------------------------------
-//   Find a file name that does not exist in given directory
-// ----------------------------------------------------------------------------
-//   Callback prototype is callback(err, unused_name)
-{
-    fs.exists(dir + '/' + name, function(exists) {
-        if (exists) {
-            var dot = name.indexOf('.');
-            var left = name.substring(0, dot);
-            var right = name.substring(dot + 1);
-            findUnusedFileName(dir, left + '@.' + right, callback);
-        } else {
-            callback(undefined, name);
-        }
-    });
 }
 
 

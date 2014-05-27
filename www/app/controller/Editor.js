@@ -2,6 +2,7 @@ Ext.define('TE.controller.Editor', {
     extend: 'Ext.app.Controller',
     requires: [
         'Ext.window.MessageBox',
+        'TE.util.FileUpload',
         'TE.editor.controller.Controller'
     ],
 
@@ -158,6 +159,12 @@ Ext.define('TE.controller.Editor', {
             if (event.ctrlKey && !event.shiftKey && event.getKey() == event.S) {
                 event.stopEvent();
                 me.savePage();
+            }
+            if (event.ctrlKey && event.getKey() == event.U) {
+                console.log("Creating an upload window");
+                var uploadWin = Ext.create('TE.util.FileUpload',
+                                           { editor: me });
+                uploadWin.show();
             }
         });
     },
@@ -642,5 +649,44 @@ Ext.define('TE.controller.Editor', {
         if (!this.pagectrl)
             return;
         this.pagectrl.updatePage();
+    },
+
+    // Upload documents to the server using XHR
+    uploadFiles : function (datasetId, files, window) {
+        var URI, 
+        formData = new FormData(),
+        xhr = new XMLHttpRequest();
+        
+        // Append each file to the FormData() object
+        for (var i = 0; i < files.length; i++) {
+            formData.append('file', files[i]);
+        }
+        
+        
+        // Define the URI and method to which we are sending the files
+        URI = "/file-upload";
+        xhr.open('POST', URI);
+        
+        // Define any actions to take once the upload is complete
+        xhr.onloadend = function (evt) {
+            console.log(evt.target);
+            
+            // Show a message containing the result of the upload
+            if (evt.target.status === 200) {
+                // Tell the user somehow that the upload succeeded
+                window.signalUploadComplete('Upload successful');
+            
+            } else {
+                // Tell the user somehow that the upload failed
+                window.signalUploadComplete('Upload failed');
+            }
+            setTimeout(function() {
+                window.signalUploadComplete('Ready to upload again');
+            }, 1000);
+        };
+        
+        // Start the upload process
+        xhr.send(formData);
     }
+
 });
