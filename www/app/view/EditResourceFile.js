@@ -2,7 +2,7 @@ Ext.define('TE.view.EditResourceFile', {
     extend: 'Ext.window.Window',
     alias: 'widget.teeditresourcefile',
 
-    type: '',   // 'image', 'mvimage', 'movie'
+    type: '',   // 'image', 'mvimage', 'movie', 'model'
 
     title: '',
 
@@ -17,6 +17,7 @@ Ext.define('TE.view.EditResourceFile', {
             case 'image'  : this.title = tr('Edit image'); break;
             case 'mvimage': this.title = tr('Edit multiview image'); break;
             case 'movie'  : this.title = tr('Edit movie'); break;
+            case 'model'  : this.title = tr('Edit 3D model'); break;
             default       : this.title = tr('Edit unknown ' + this.type); break;
         }
 
@@ -59,6 +60,7 @@ Ext.define('TE.view.EditResourceFile', {
                             case 'image':
                             case 'mvimage':
                             case 'movie':
+                            case 'model':
                                 accept = me.type + '/*';
                                 break;
                             default:

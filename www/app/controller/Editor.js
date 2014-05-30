@@ -6,7 +6,7 @@ Ext.define('TE.controller.Editor', {
         'TE.editor.controller.Controller'
     ],
 
-    stores: [ 'Pages', 'Images', 'Movies', 'MultiviewImages' ],
+    stores: [ 'Pages', 'Images', 'Movies', 'MultiviewImages', 'Models' ],
     models: [ 'Page', 'ResourceFile' ],
     views:
     [
@@ -91,6 +91,9 @@ Ext.define('TE.controller.Editor', {
             },
             'button[action=showMovieLibrary]': {
                 click: this.showMovieLibrary
+            },
+            'button[action=showModelLibrary]': {
+                click: this.showModelLibrary
             },
             'teresourcelibrary gridpanel': {
                 select: this._updateresourcelibraryButtons,
@@ -484,7 +487,7 @@ Ext.define('TE.controller.Editor', {
 
     showMvImageLibrary: function() {
         Ext.widget('teresourcelibrary', {
-            title: tr('Multiview Image library'),
+            title: tr('3D Image library'),
             store: 'MultiviewImages',
             storeDB: this.getMultiviewImagesStore(),
             type: 'mvimage'
@@ -497,6 +500,15 @@ Ext.define('TE.controller.Editor', {
             store: 'Movies',
             storeDB: this.getMoviesStore(),
             type: 'movie'
+        });
+    },
+
+    showModelLibrary: function() {
+        Ext.widget('teresourcelibrary', {
+            title: tr('3D model library'),
+            store: 'Models',
+            storeDB: this.getModelsStore(),
+            type: 'model'
         });
     },
 
@@ -582,6 +594,7 @@ Ext.define('TE.controller.Editor', {
             case 'image':       return this.getImagesStore();
             case 'mvimage':     return this.getMultiviewImagesStore();
             case 'movie':       return this.getMoviesStore();
+            case 'model':       return this.getModelsStore();
         }
         return null;
     },

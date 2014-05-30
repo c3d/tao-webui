@@ -8,8 +8,8 @@ Ext.define('TE.view.ResourceLibrary', {
     modal: true,
     showChooseButton: false,
     targetField: null,
-    store: '',  // E.g., 'Images' or 'Movies' or 'MultviewImages'
-    type: '',   // E.g., 'image' or 'movie' or 'mvimage'
+    store: '',  // E.g., 'Images' or 'Movies' or 'MultviewImages' or 'Models'
+    type: '',   // E.g., 'image' or 'movie' or 'mvimage' or 'model'
 
     initComponent: function() {
         var me = this;
@@ -136,7 +136,8 @@ Ext.define('TE.view.ResourceLibrary', {
                 }, {
                     xtype: 'container',
                     id: 'upload_status',
-                    html: '<div>' + tr('Drop files in this window') + '</div>'
+                    style: { color: '#999' },
+                    html: '<div>' + tr('You can drop files in this window') + '</div>'
                 },
                 '->',
                 {
@@ -169,15 +170,16 @@ Ext.define('TE.view.ResourceLibrary', {
         xhr = new XMLHttpRequest();
 
         // Append each file to the FormData() object
-        var movies = /\.(mp[1-4]|avi|ogg|mov|3gp)$/;
-        var pictures = /\.(jpg|jpeg|png|bmp|tif|tiff|tga|gif)$/;
-        var filter = (me.type === 'movie') ? movies : pictures;
+        var movies = /\.(mp[1-4]|avi|ogg|mov|3gp)$/i;
+        var pictures = /\.(jpg|jpeg|png|bmp|tif|tiff|tga|gif)$/i;
+        var models = /\.(3ds|obj|mtl|dae)$/i;
+        var filter = (me.type === 'movie') ? movies
+                   : (me.type === 'model') ? models
+                   : pictures;
         var count = 0;
         for (var i = 0; i < files.length; i++) {
-            console.log("File=", files[i].name);
             if (filter.test(files[i].name)) {
                 formData.append('file', files[i]);
-                console.log("Passed=", files[i].name);
                 count++;
             }
         }

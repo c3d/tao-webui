@@ -1059,9 +1059,10 @@ function deleteResourceFile(type, name, callback)
     type = type || 'image';
     switch (type)
     {
+    case 'image':   dir = IMAGES_DIR; break;
     case 'mvimage': dir = IMAGES_DIR; break;
-    case 'image': dir = IMAGES_DIR; break;
-    case 'movie': dir = MOVIES_DIR; break;
+    case 'movie':   dir = MOVIES_DIR; break;
+    case 'model':   dir = MODELS_DIR; break;
     default:
         var msg = 'Error: unknown resource type ' + type;
         console.error(msg);
