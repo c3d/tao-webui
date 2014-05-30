@@ -634,15 +634,19 @@ function fileUpload(dir)
         {
             if (Array.isArray(req.files.file))
             {
+                var names = [];
                 req.files.file.forEach(function(file) {
                     uploadFile(dir, file);
+                    names.push(file.name);
                 });
+                res.send(JSON.stringify({ success: true, file: names }));
             }
             else
             {
+                var name = req.files.file.name;
                 uploadFile(dir, req.files.file);
+                res.send(JSON.stringify({ success: true, file: name }));
             }
-            res.send(JSON.stringify({ success: true }));
         }
         catch(e)
         {
