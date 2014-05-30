@@ -44,7 +44,8 @@ Ext.define('TE.view.EditResourceFile', {
                 listeners: {
 
                     change: function(f,v) {
-                        // Cosmetic - remove 'fakepath' string if present (Google Chrome), it's ugly
+                        // Cosmetic - remove 'fakepath' string if present
+                        // (Google Chrome), it's ugly
                         var node = Ext.DomQuery.selectNode('input[id='+f.getInputId()+']');
                         node.value = v.replace("C:\\fakepath\\","");
 
