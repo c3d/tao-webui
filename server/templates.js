@@ -101,8 +101,8 @@ function processTemplate(template, themePath, importCB, themeCB, primitiveCB)
                 filename: template,
                 cached: false,
                 scope: this,
-                debug: true,
-                compileDebug: true,
+                // debug: true,
+                // compileDebug: true,
                 open: "[[",
                 close: "]]"
             };
