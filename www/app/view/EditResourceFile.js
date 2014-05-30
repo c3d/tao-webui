@@ -2,7 +2,7 @@ Ext.define('TE.view.EditResourceFile', {
     extend: 'Ext.window.Window',
     alias: 'widget.teeditresourcefile',
 
-    type: '',   // 'image', 'mvimage', 'video'
+    type: '',   // 'image', 'mvimage', 'movie'
 
     title: '',
 
@@ -16,7 +16,7 @@ Ext.define('TE.view.EditResourceFile', {
         switch(this.type) {
             case 'image'  : this.title = tr('Edit image'); break;
             case 'mvimage': this.title = tr('Edit multiview image'); break;
-            case 'video'  : this.title = tr('Edit video'); break;
+            case 'movie'  : this.title = tr('Edit movie'); break;
             default       : this.title = tr('Edit unknown ' + this.type); break;
         }
 
@@ -58,16 +58,14 @@ Ext.define('TE.view.EditResourceFile', {
                         switch (me.type) {
                             case 'image':
                             case 'mvimage':
-                            case 'video':
+                            case 'movie':
                                 accept = me.type + '/*';
                                 break;
                             default:
                                 console.log('Unexpected type');
                                 return;
                         }
-                        cmp.fileInputEl.set({
-                            accept: accept
-                        });
+                        cmp.fileInputEl.set({ accept: accept });
                     }
                 }
             }]
@@ -83,5 +81,5 @@ Ext.define('TE.view.EditResourceFile', {
         }];
 
         this.callParent(arguments);
-    }
+    },
  });

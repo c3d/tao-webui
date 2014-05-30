@@ -4,7 +4,7 @@ Ext.define('TE.util.CustomMovieURLField', {
     collapsible: true,
     collapsed:false,
     items: [{
-        xtype:'tevideopickerfield',
+        xtype:'temoviepickerfield',
         anchor:'100%',
         allowBlank: false,
         listeners: {

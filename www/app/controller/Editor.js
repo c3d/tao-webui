@@ -6,7 +6,7 @@ Ext.define('TE.controller.Editor', {
         'TE.editor.controller.Controller'
     ],
 
-    stores: [ 'Pages', 'Images', 'Videos', 'MultiviewImages' ],
+    stores: [ 'Pages', 'Images', 'Movies', 'MultiviewImages' ],
     models: [ 'Page', 'ResourceFile' ],
     views:
     [
@@ -14,7 +14,7 @@ Ext.define('TE.controller.Editor', {
         'EditResourceFile',
         'EditResourceURL',
         'ImagePickerField',
-        'VideoPickerField',
+        'MoviePickerField',
         'MultviewImagePickerField',
         'PageList',
         'PageListContextMenu',
@@ -89,8 +89,8 @@ Ext.define('TE.controller.Editor', {
             'button[action=showMvImageLibrary]': {
                 click: this.showMvImageLibrary
             },
-            'button[action=showVidLibrary]': {
-                click: this.showVideoLibrary
+            'button[action=showMovieLibrary]': {
+                click: this.showMovieLibrary
             },
             'teresourcelibrary gridpanel': {
                 select: this._updateresourcelibraryButtons,
@@ -159,12 +159,6 @@ Ext.define('TE.controller.Editor', {
             if (event.ctrlKey && !event.shiftKey && event.getKey() == event.S) {
                 event.stopEvent();
                 me.savePage();
-            }
-            if (event.ctrlKey && event.getKey() == event.U) {
-                console.log("Creating an upload window");
-                var uploadWin = Ext.create('TE.util.FileUpload',
-                                           { editor: me });
-                uploadWin.show();
             }
         });
     },
@@ -483,6 +477,7 @@ Ext.define('TE.controller.Editor', {
         Ext.widget('teresourcelibrary', {
             title: tr('Image library'),
             store: 'Images',
+            storeDB: this.getImagesStore(),
             type: 'image'
         });
     },
@@ -491,15 +486,17 @@ Ext.define('TE.controller.Editor', {
         Ext.widget('teresourcelibrary', {
             title: tr('Multiview Image library'),
             store: 'MultiviewImages',
+            storeDB: this.getMultiviewImagesStore(),
             type: 'mvimage'
         });
     },
 
-    showVideoLibrary: function() {
+    showMovieLibrary: function() {
         Ext.widget('teresourcelibrary', {
-            title: tr('Video library'),
-            store: 'Videos',
-            type: 'video'
+            title: tr('Movie library'),
+            store: 'Movies',
+            storeDB: this.getMoviesStore(),
+            type: 'movie'
         });
     },
 
@@ -582,12 +579,9 @@ Ext.define('TE.controller.Editor', {
 
     getStoreForResource: function(type) {
         switch (type) {
-            case 'image':
-                return this.getImagesStore();
-            case 'mvimage':
-                return this.getMultiviewImagesStore();
-            case 'video':
-                return this.getVideosStore();
+            case 'image':       return this.getImagesStore();
+            case 'mvimage':     return this.getMultiviewImagesStore();
+            case 'movie':       return this.getMoviesStore();
         }
         return null;
     },
@@ -611,6 +605,8 @@ Ext.define('TE.controller.Editor', {
                     win.close();
                     record.set(values);
                     record.set('file', action.result.file);
+                    console.log("Record=", record);
+                    console.log("Action=", action);
                     if (record.get('id') === undefined)
                         store.add(record);
                     store.sync();
@@ -649,44 +645,5 @@ Ext.define('TE.controller.Editor', {
         if (!this.pagectrl)
             return;
         this.pagectrl.updatePage();
-    },
-
-    // Upload documents to the server using XHR
-    uploadFiles : function (datasetId, files, window) {
-        var URI, 
-        formData = new FormData(),
-        xhr = new XMLHttpRequest();
-        
-        // Append each file to the FormData() object
-        for (var i = 0; i < files.length; i++) {
-            formData.append('file', files[i]);
-        }
-        
-        
-        // Define the URI and method to which we are sending the files
-        URI = "/file-upload";
-        xhr.open('POST', URI);
-        
-        // Define any actions to take once the upload is complete
-        xhr.onloadend = function (evt) {
-            console.log(evt.target);
-            
-            // Show a message containing the result of the upload
-            if (evt.target.status === 200) {
-                // Tell the user somehow that the upload succeeded
-                window.signalUploadComplete('Upload successful');
-            
-            } else {
-                // Tell the user somehow that the upload failed
-                window.signalUploadComplete('Upload failed');
-            }
-            setTimeout(function() {
-                window.signalUploadComplete('Ready to upload again');
-            }, 1000);
-        };
-        
-        // Start the upload process
-        xhr.send(formData);
     }
-
 });

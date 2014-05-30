@@ -2,7 +2,7 @@ Ext.define('TE.view.EditResourceURL', {
     extend: 'Ext.window.Window',
     alias: 'widget.teeditresourceurl',
 
-    type: '',   // 'image', 'mvimage', 'video'
+    type: '',   // 'image', 'mvimage', 'movie'
 
     title: '',
 
@@ -28,7 +28,7 @@ Ext.define('TE.view.EditResourceURL', {
                 fieldLabel: tr('Description')
             },{
                 name: 'file',
-                fieldLabel: (this.type === 'video')   ? tr('Video URL')
+                fieldLabel: (this.type === 'movie')   ? tr('Movie URL')
                           : (this.type === 'mvimage') ? tr('Multiview image')
                           :                             tr('Image URL')
             }]

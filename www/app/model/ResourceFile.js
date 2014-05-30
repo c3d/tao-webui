@@ -9,7 +9,7 @@ Ext.define('TE.model.ResourceFile', {
             // or get a suitable image representation, depending on the type.
             'file',
 
-            // 'image' or 'video'
+            // 'image' or 'movie'
             { name: 'type', type:'string', defaultValue: 'image' },
             'description'
         ],

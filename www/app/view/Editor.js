@@ -62,9 +62,9 @@ Ext.define('TE.view.Editor', {
                 },
                 {
                     xtype: 'button',
-                    text: tr('Video library') + '...',
-                    icon: 'app/resources/images/video.png',
-                    action: 'showVidLibrary'
+                    text: tr('Movie library') + '...',
+                    icon: 'app/resources/images/movie.png',
+                    action: 'showMovieLibrary'
                 },
                 '->',
                 {

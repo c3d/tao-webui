@@ -1,4 +1,4 @@
-Ext.define('TE.store.Videos', {
+Ext.define('TE.store.Movies', {
 	extend: 'Ext.data.Store',
 
     autoLoad: true,
@@ -6,7 +6,7 @@ Ext.define('TE.store.Videos', {
 
     filters: [
         function(item) {
-            return item.get('type') === 'video';
+            return item.get('type') === 'movie';
         }
     ]
 })

@@ -37,7 +37,7 @@ function emitMovie(page, id, value)
             util.importHeader(page.ctx, 'VLCAudioVideo');
 
             if (mov.indexOf('/') === -1)
-                mov = 'videos/' + mov;
+                mov = 'movies/' + mov;
             
             // Parse and get movie settings by ignoring id behind
             // property name (for instance, {movx_1:30} returns 30).

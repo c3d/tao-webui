@@ -16,7 +16,7 @@ Ext.define('TE.util.CustomMovieField', {
 
         Ext.apply(me, {
             items: [{
-                xtype: 'tevideopickerfield',
+                xtype: 'temoviepickerfield',
                 name: 'url' + index,
                 labelAlign:'top',
                 fieldLabel: tr('Movie', 'common'),

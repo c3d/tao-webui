@@ -8,15 +8,60 @@ Ext.define('TE.view.ResourceLibrary', {
     modal: true,
     showChooseButton: false,
     targetField: null,
-    store: '',  // E.g., 'Images' or 'Videos' or 'MultviewImages'
-    type: '',   // E.g., 'image' or 'video' or 'mvimage'
+    store: '',  // E.g., 'Images' or 'Movies' or 'MultviewImages'
+    type: '',   // E.g., 'image' or 'movie' or 'mvimage'
 
     initComponent: function() {
+        var me = this;
+
         this.items = [{
             xtype: 'gridpanel',
             width: 600,
             height: 600,
             store: this.store,
+
+            listeners: {
+                afterrender: function () {
+                    var dropTarget = this.getEl();
+                    var dropTargetEl = dropTarget.dom;
+
+                    function dragOver(event) {
+                        dropTarget.setStyle('background-color', '#ccc');
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                        return false;
+                    }
+
+                    function dragLeave(event) {
+                        dropTarget.setStyle('background-color', '#fff');
+                        return true;
+                    }
+
+                    // Cancel default behaviors to enable drag and drop
+                    dropTargetEl.addEventListener('dragover', dragOver);
+                    dropTargetEl.addEventListener('dragenter', dragOver);
+                    dropTargetEl.addEventListener('dragleave', dragLeave);
+
+                    // When the user drops files onto the drop zone,
+                    // capture the file references and immediately upload
+                    dropTargetEl.addEventListener('drop', function (evt) {
+                        dropTarget.setStyle('background-color', '#fff');
+
+                        // Stop the browser's default behavior when
+                        // dropping files in the viewable area
+                        evt.stopPropagation();
+                        evt.preventDefault();
+
+                        // A reference to the files selected
+                        var files = evt.dataTransfer.files;
+
+                        // Upload files
+                        me.uploadFiles('/' + me.type + '-upload', files, me);
+
+                    }, false);
+                }
+            },
 
             columns: [{
                 header: tr('Preview'),
@@ -88,6 +133,10 @@ Ext.define('TE.view.ResourceLibrary', {
                     text: tr('Add file...'),
                     icon: 'app/resources/images/add.png',
                     action: 'addFile'
+                }, {
+                    xtype: 'container',
+                    id: 'upload_status',
+                    html: '<div>' + tr('Drop files in this window') + '</div>'
                 },
                 '->',
                 {
@@ -99,8 +148,93 @@ Ext.define('TE.view.ResourceLibrary', {
                     action: 'choose'
                 }]
             }]
+        },{
+            id: 'FilesDropZone',
+            xtype: 'container',
+            height: 100,
+            border: false,
+            html: '<div id="upload_drop_zone" style="padding:26px 40px;">Drop files here</div>',
+            ddGroup: 'filesDDGroup',
+
+            style: { backgroundColor: '#fff', padding: '5px' },
+
         }];
 
         this.callParent(arguments);
+    },
+
+    // Upload documents to the server using XHR
+    uploadFiles : function (URI, files, me) {
+        formData = new FormData(),
+        xhr = new XMLHttpRequest();
+
+        // Append each file to the FormData() object
+        var movies = /\.(mp[1-4]|avi|ogg|mov|3gp)$/;
+        var pictures = /\.(jpg|jpeg|png|bmp|tif|tiff|tga|gif)$/;
+        var filter = (me.type === 'movie') ? movies : pictures;
+        var count = 0;
+        for (var i = 0; i < files.length; i++) {
+            console.log("File=", files[i].name);
+            if (filter.test(files[i].name)) {
+                formData.append('file', files[i]);
+                console.log("Passed=", files[i].name);
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            // Define the URI and method to which we are sending the files
+            xhr.open('POST', URI);
+
+            // Define any actions to take once the upload is complete
+            xhr.onloadend = function (evt) {
+                // Show a message containing the result of the upload
+                if (evt.target.status === 200) {
+                    // Tell the user somehow that the upload succeeded
+                    me.info('Upload successful');
+
+                    // Update the store
+                    var store = me.storeDB;
+
+                    function addResource(file)
+                    {
+                        var record = { file: file,
+                                       type: me.type,
+                                       description: "" };
+                        store.add(record);
+                    }
+
+                    // Update the resources library
+                    var response = JSON.parse(evt.target.response);
+                    if (response.success) {
+                        if (Array.isArray(response.file))
+                        {
+                            for (var i = 0; i < response.file.length; i++) {
+                                addResource(response.file[i]);
+                            }
+                        } else {
+                            addResource(response.file);
+                        }
+                        store.sync();
+                    }
+
+                } else {
+                    // Tell the user somehow that the upload failed
+                    me.info('Upload failed');
+                }
+                setTimeout(function() {
+                    me.info('Ready to upload again');
+                }, 1000);
+            }
+
+            // Start the upload process
+            xhr.send(formData);
+        }
+    },
+
+    // Update label with function
+    info: function(lbl) {
+        var uploadStatus = this.down('#upload_status');
+        uploadStatus.update('<div>' + lbl + '</div>');
     }
 });

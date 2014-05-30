@@ -116,7 +116,8 @@ if (TEST_MODE) {
 }
 
 var IMAGES_DIR = DOC_DIR + '/images';
-var VIDEOS_DIR = DOC_DIR + '/videos';
+var MOVIES_DIR = DOC_DIR + '/movies';
+var MODELS_DIR = DOC_DIR + '/models';
 var FILES_DIR = DOC_DIR + '/files';
 var preserve_files = [];
 if (TEST_MODE) {
@@ -606,7 +607,8 @@ app.delete('/resources/:id', function(req, res)
 
 app.post('/image-upload', fileUpload(IMAGES_DIR));
 app.post('/mvimage-upload', fileUpload(IMAGES_DIR));
-app.post('/video-upload', fileUpload(VIDEOS_DIR));
+app.post('/movie-upload', fileUpload(MOVIES_DIR));
+app.post('/model-upload', fileUpload(MODELS_DIR));
 app.post('/file-upload', fileUpload(FILES_DIR));
 
 
@@ -1051,14 +1053,15 @@ function deleteResourceFile(type, name, callback)
 // ----------------------------------------------------------------------------
 //    Delete resource file unless in the 'preserve' list.
 // ----------------------------------------------------------------------------
-//    Depending on 'type', IMAGES_DIR or VIDEOS_DIR is searched for the file
+//    Depending on 'type', IMAGES_DIR or MOVIES_DIR is searched for the file
 {
     var dir;
     type = type || 'image';
     switch (type)
     {
+    case 'mvimage': dir = IMAGES_DIR; break;
     case 'image': dir = IMAGES_DIR; break;
-    case 'video': dir = VIDEOS_DIR; break;
+    case 'movie': dir = MOVIES_DIR; break;
     default:
         var msg = 'Error: unknown resource type ' + type;
         console.error(msg);
