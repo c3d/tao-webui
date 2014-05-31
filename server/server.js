@@ -134,6 +134,7 @@ var cached =
 {
     pages: null,
     resources: null,
+    sources: {},
     dddmd5: null
 };
 
@@ -352,6 +353,24 @@ app.get('/pages/:id', function(req, res)
             res.send(404);
         }
     });
+});
+
+
+app.get('/source/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//   Get the source for a specific page
+// ----------------------------------------------------------------------------
+{
+    var id = req.params.id;
+    var sources = cached.sources;
+    if (!sources)
+        res.send(404);
+
+    var idSource = sources[id];
+    if (!idSource)
+        res.send(404);
+
+    res.send(idSource);
 });
 
 
@@ -1180,7 +1199,9 @@ function writeTaoDocument(pages, lang, callback, overwrite)
                 if (err)
                     return cb(err);
                 page.ctx = ctx;
-                body += tmpl(page);
+                var pageBody = tmpl(page);
+                body += pageBody;
+                cached.sources[page.id] = pageBody;
                 delete page.ctx;
                 cb(null);
             })

@@ -2,6 +2,7 @@ Ext.define('TE.controller.PageControllerBase', {
     extend: 'Ext.app.Controller',
     refs: [
         { ref: 'centerpane', selector: '#centerpane' },
+        { ref: 'sourcepane', selector: '#sourcecode' },
         { ref: 'properties', selector: '#properties' },
         { ref: 'addMenu', selector: '#add_menu' }
     ],
@@ -60,6 +61,7 @@ Ext.define('TE.controller.PageControllerBase', {
                     record.generic_record.commit();
                     me.startSaveTimer();
                     me.getCenterpane().fireEvent('saved');
+                    me.getSourcepane().fireEvent('loadSource');
                 }
                 // Note: failure is handled at the proxy level (model/Pages.js)
             });

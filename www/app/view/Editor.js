@@ -12,17 +12,34 @@ Ext.define('TE.view.Editor', {
             region: 'west',
             width: 185,
             collapsible: true,
-            split: true, // enable resizing
-            margins: '3 0 0 3'
+            split: true
         },
         {
             xtype: 'panel',
-            itemId: 'centerpane',
-            layout: 'fit',
-            title: tr('Editor'),
+            layout: { type: 'vbox', align: 'stretch' },
             region: 'center',
-            autoScroll: true,
-            margins: '3 3 0 0'
+
+            items: [{
+                xtype: 'panel',
+                itemId: 'centerpane',
+                layout: 'fit',
+                title: tr('Editor'),
+                autoScroll: true,
+                collapsible: true,
+                split: true,
+                flex: true,
+                minSize: 250
+            },{
+                xtype: 'panel',
+                itemId: 'sourcecode',
+                layout: 'fit',
+                title: tr('Source code'),
+                autoScroll: true,
+                collapsible: true,
+                split: true,
+                flex: true,
+                minSize: 250
+            }]
         },
         {
             xtype: 'properties',
@@ -31,8 +48,7 @@ Ext.define('TE.view.Editor', {
             autoScroll: true,
             width: 350,
             collapsible: true,
-            split: true, // enable resizing
-            margins: '3 0 0 3'
+            split: true
         },
         {
             xtype: 'toolbar',

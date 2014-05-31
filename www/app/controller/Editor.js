@@ -26,6 +26,7 @@ Ext.define('TE.controller.Editor', {
         // Make components accessible through
         // this.getCenterpane(), this.getTools(), etc.
         { ref: 'centerpane', selector: '#centerpane' },
+        { ref: 'sourcepane', selector: '#sourcecode' },
         { ref: 'properties', selector: '#properties' },
         { ref: 'addMenu', selector: '#addMenu' },
         { ref: 'tools', selector: '#tools' },
@@ -134,6 +135,20 @@ Ext.define('TE.controller.Editor', {
             'customhtmleditor': {
                 savecurrentpage: function() {
                     this.savePage();
+                }
+            },
+            '#sourcecode': {
+                loadSource: function() {
+                    var selectedPage = this.selectedPage();
+                    if (selectedPage) {
+                        var pageId = selectedPage.get('id');
+                        var source = this.httpGet('/source/' + pageId);
+                        var sourcePane = this.getSourcepane();
+                        sourcePane.update('<pre><code class="xl">' +
+                                          source + 
+                                          '</code></pre>');
+                        hljs.highlightBlock(sourcePane.body.dom);
+                    }
                 }
             }
         });
