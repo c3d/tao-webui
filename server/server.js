@@ -1198,10 +1198,13 @@ function writeTaoDocument(pages, lang, callback, overwrite)
             getTemplateExporter(page, function(err, tmpl) {
                 if (err)
                     return cb(err);
+                var header = ctx.header;
+                ctx.header = '';
                 page.ctx = ctx;
                 var pageBody = tmpl(page);
                 body += pageBody;
-                cached.sources[page.id] = pageBody;
+                cached.sources[page.id] = ctx.header + pageBody;
+                ctx.header = header + ctx.header;
                 delete page.ctx;
                 cb(null);
             })
