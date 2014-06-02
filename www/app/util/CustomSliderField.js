@@ -46,7 +46,6 @@ Ext.define('TE.util.CustomSliderField', {
                     this.ownerCt.fireEvent('change', this.ownerCt);
 
                     // Update the position of the slider to match
-                    console.log("F=", f);
                     var slider = this.up().down('slider');
                     var step = slider.step || 1;
                     slider.setValue(f.value / step);
