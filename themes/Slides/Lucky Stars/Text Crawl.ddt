@@ -3,5 +3,5 @@ import MovieCredits
 
 base_slide "[[name]]",
     [[page]]
-    star_wars_crawl
+    mc_star_wars_crawl [[real {label: "Crawl duration",min:3,max:40,value:5}]],
         [[rich_text "Crawl text"]]
