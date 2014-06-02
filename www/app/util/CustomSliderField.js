@@ -21,7 +21,7 @@ Ext.define('TE.util.CustomSliderField', {
 
                     // Update the text field with the value
                     var textfield = this.up().down('textfield');
-                    var step = this.step;
+                    var step = this.step || 1;
                     var prec = -Math.floor(Math.log(step) / Math.LN10);
                     var value = this.getValue();
                     var asText = parseFloat((value * step).toFixed(prec));
