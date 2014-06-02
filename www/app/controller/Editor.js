@@ -228,7 +228,7 @@ Ext.define('TE.controller.Editor', {
             add(dataRoot, theme.theme, '', theme.templates);
         }
 
-        var themeArray = JSON.parse(this.httpGet("/list/pt"));
+        var themeArray = JSON.parse(this.httpGet("/list/page"));
         Ext.each(themeArray, loadThemeFromModel, this);
 
         var store = Ext.create('Ext.data.TreeStore', { root: dataRoot });
@@ -242,7 +242,7 @@ Ext.define('TE.controller.Editor', {
         var display = Ext.create('Ext.form.field.Display');
         cp.add(display);
         var theme = '/themes/' + path + '/';
-        var image = '/themes/' + path + '.pt.png';
+        var image = '/themes/' + path + '.page.png';
         if (themeInfo == '')
         {
             themeInfo = defaultInfo;
@@ -275,7 +275,7 @@ Ext.define('TE.controller.Editor', {
                                   'themes/' + pt.model + '.pt.html',
                                   '<h2>' + pt.text + ' page template</h2>' +
                                   '<img class="screenshot" src="/themes/' +
-                                  pt.model + '.pt.png"/>');
+                                  pt.model + '.page.png"/>');
         else
             this.setCenterPaneURL(pt.path, pt.text,
                                   'themes/'+pt.path+'/'+ pt.text+'.theme.html',
@@ -312,7 +312,7 @@ Ext.define('TE.controller.Editor', {
                               'themes/' + pt.model + '.pt.html',
                               '<h2>' + pt.name + '</h2>' +
                               '<img class="screenshot" src="/themes/' +
-                              pt.model + '.pt.png"/>');
+                              pt.model + '.page.png"/>');
     },
 
     displayFieldClicked: function(displayField) {
