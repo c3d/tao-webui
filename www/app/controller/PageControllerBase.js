@@ -76,6 +76,6 @@ Ext.define('TE.controller.PageControllerBase', {
         this.timer = Ext.defer(function() {
             this.timer = 0;
             this.updatePage();
-        }, 10000, this);
+        }, 2880, this);
     }
 });
