@@ -731,7 +731,7 @@ app.use('/library/images', express.static(IMAGES_DIR));
 
 app.use('/app/themes', express.static(__dirname + '/../themes/'));
 app.use('/themes', express.static(__dirname + '/../themes/'));
-app.get('/theme-list', function(req, res)
+app.get('/list/:kind', function(req, res)
 // ----------------------------------------------------------------------------
 //   Return the list of themes and page templates
 // ----------------------------------------------------------------------------
@@ -739,6 +739,10 @@ app.get('/theme-list', function(req, res)
     var filelist = [];
     var rootPath = __dirname + "/../themes";
     var rootPathSlash = rootPath + '/';
+    var kind = req.params.kind;
+    var templates = [];
+    var templateRE = new RegExp('\.' + kind + '\.png$');
+    var themeRE = /\.theme\.png$/;
 
     function strip(name, pattern)
     {
@@ -748,17 +752,17 @@ app.get('/theme-list', function(req, res)
     function getFiles(dir)
     {
         var files = fs.readdirSync(dir);
-        var pageTemplates = [];
+        var oldLength = templates.length;
 
-        // First find the page template files (can be shared across themes)
+        // First find the template files (can be shared across themes)
         for(var i in files)
         {
             if (!files.hasOwnProperty(i))
                 continue;
             var name = dir + '/' + files[i];
             if (!fs.statSync(name).isDirectory())
-                if (/\.pt.png$/.test(name))
-                    pageTemplates.push(strip(name, /.pt.png/));
+                if (templateRE.test(name))
+                    templates.push(strip(name, templateRE));
         }
         // Then find all themes
         for(var i in files)
@@ -768,12 +772,15 @@ app.get('/theme-list', function(req, res)
             var name = dir + '/' + files[i];
             if (fs.statSync(name).isDirectory())
                 getFiles(name);
-            else if (/\.theme.png$/.test(name))
+            else if (themeRE.test(name))
                 filelist.push(new Object({
-                    theme: strip(name, /.theme.png/),
-                    templates: pageTemplates
+                    theme: strip(name, themeRE),
+                    templates: templates
                 }));
         }
+
+        // Restore the old templates to previous state
+        templates = templates.slice(0, oldLength);
     }
 
     getFiles(rootPath);

@@ -228,7 +228,7 @@ Ext.define('TE.controller.Editor', {
             add(dataRoot, theme.theme, '', theme.templates);
         }
 
-        var themeArray = JSON.parse(this.httpGet("/theme-list"));
+        var themeArray = JSON.parse(this.httpGet("/list/pt"));
         Ext.each(themeArray, loadThemeFromModel, this);
 
         var store = Ext.create('Ext.data.TreeStore', { root: dataRoot });
