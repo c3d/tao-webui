@@ -144,6 +144,7 @@ Ext.define('TE.controller.Editor', {
                         var pageId = selectedPage.get('id');
                         var source = this.httpGet('/source/' + pageId);
                         var sourcePane = this.getSourcepane();
+                        sourcePane.expand(true);
                         sourcePane.update('<pre><code class="xl">' +
                                           source + 
                                           '</code></pre>');

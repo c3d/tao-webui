@@ -27,7 +27,7 @@ Ext.define('TE.view.Editor', {
                 autoScroll: true,
                 collapsible: true,
                 split: true,
-                flex: true,
+                flex: 4,
                 minSize: 250
             },{
                 xtype: 'panel',
@@ -36,9 +36,10 @@ Ext.define('TE.view.Editor', {
                 title: tr('Source code'),
                 autoScroll: true,
                 collapsible: true,
+                collapsed: true,
                 split: true,
-                flex: true,
-                minSize: 250
+                flex: 3,
+                minSize: 150
             }]
         },
         {
