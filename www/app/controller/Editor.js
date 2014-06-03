@@ -273,7 +273,7 @@ Ext.define('TE.controller.Editor', {
         var pt = item.raw;
         if (pt.leaf)
             this.setCenterPaneURL(pt.model, pt.text,
-                                  'themes/' + pt.model + '.pt.html',
+                                  'themes/' + pt.model + '.page.html',
                                   '<h2>' + pt.text + ' page template</h2>' +
                                   '<img class="screenshot" src="/themes/' +
                                   pt.model + '.page.png"/>');
@@ -310,7 +310,7 @@ Ext.define('TE.controller.Editor', {
         // Set a default center pane, overriden if clicksToEditing on a field
         var pt = record.data;
         this.setCenterPaneURL(pt.model, pt.name,
-                              'themes/' + pt.model + '.pt.html',
+                              'themes/' + pt.model + '.page.html',
                               '<h2>' + pt.name + '</h2>' +
                               '<img class="screenshot" src="/themes/' +
                               pt.model + '.page.png"/>');
