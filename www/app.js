@@ -6,7 +6,10 @@ Ext.Loader.setPath('Ext.ux.form.field', 'ext-tinymce/ux/form/field');
 Ext.application(
 {
     name: 'TE',  // 'Tao Editor'
-    requires: ['Ext.container.Viewport', 'TE.i18n.Translate' ],
+    requires: [
+        'Ext.container.Viewport',
+        'TE.i18n.Translate'
+    ],
 
     appFolder: 'app',
 
@@ -29,7 +32,7 @@ Ext.application(
             layout: 'fit',
             items: [
                 {
-                    xtype: 'editor'
+                    xtype: 'te_editor'
                 }
             ]
         });

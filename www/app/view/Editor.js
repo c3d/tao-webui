@@ -1,7 +1,7 @@
 Ext.define('TE.view.Editor', {
     extend: 'Ext.Container',
     layout: 'border',
-    alias: 'widget.editor',
+    alias: 'widget.te_editor',
     itemId: 'mainEditor',
 
     items:
