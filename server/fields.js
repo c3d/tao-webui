@@ -116,8 +116,26 @@ function property(object)
 }
 
 
+function body(object)
+// ----------------------------------------------------------------------------
+//   A body refers to a recursive .DDT model
+// ----------------------------------------------------------------------------
+{
+    return function (page, id, value)
+    {
+        var name = value.label;
+        if (!result.bodies)
+            result.bodies = name;
+        else
+            result.bodies += ' ' + name;
+        return '';
+    }
+}
+
+
 module.exports = {
     beginFields:        beginFields,
     endFields:          endFields,
-    property:           property
+    property:           property,
+    body:               body
 }

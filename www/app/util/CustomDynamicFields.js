@@ -4,18 +4,10 @@ Ext.define('TE.util.CustomDynamicFields', {
 // ----------------------------------------------------------------------------
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_customdynamicfields',
-    requires: [
-        "TE.util.CustomPictureField",
-        "TE.util.CustomMovieField",
-        "TE.util.CustomTextField"
-    ],
-    id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
-    items:
-    [{
+    items: [{
         xtype: 'hiddenfield',
-        id:'dynamicfields',
         name:'dynamicfields',
         flex: 1,
         listeners: {
@@ -24,7 +16,10 @@ Ext.define('TE.util.CustomDynamicFields', {
                 // Parse JSON only when container is loaded
                 // (i.e no other fields)
                 if(this.ownerCt.items.length == 1)
+                {
+                    console.log('parseJSON: ', this.getValue());
                     this.ownerCt.parseJSON(this.getValue());
+                }
             }
         }
     }],
@@ -180,8 +175,10 @@ Ext.define('TE.util.CustomDynamicFields', {
             // Convert object to string
             var string = Ext.encode(this);
 
+            console.log('Encoded as ', string);
+
             // Save string in hidden field
-            var dynamic = Ext.getCmp('dynamicfields');
+            var dynamic = this.down('hiddenfield');
             dynamic.setValue(string);
         }
     },
@@ -268,9 +265,9 @@ Ext.define('TE.util.CustomDynamicFields', {
     },
 
 
-    parseJSON: function(json)
+    setValue: function(json)
     // ------------------------------------------------------------------------
-    //   Override parseJSON method
+    //   Set the value of the field
     // ------------------------------------------------------------------------
     {
         if(!json || json == '')
@@ -304,5 +301,14 @@ Ext.define('TE.util.CustomDynamicFields', {
             }
         }
         this.disableSave = saveDisabled;
+    },
+
+
+    parseJSON: function(json)
+    // ------------------------------------------------------------------------
+    //   Override parseJSON method
+    // ------------------------------------------------------------------------
+    {
+        this.setValue(json);
     }
 });

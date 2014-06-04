@@ -32,6 +32,7 @@ Ext.define('TE.controller.Editor', {
         { ref: 'tools', selector: '#tools' },
         { ref: 'pagelist', selector: 'pagelist' },
         { ref: 'themePanel', selector: '#themepanel' },
+        { ref: 'itemPanel', selector: '#itempanel' },
         { ref: 'pageContextMenu', selector: 'pagelistcontextmenu', xtype: 'pagelistcontextmenu', autoCreate: true },
         { ref: 'pageMoveBeforeBtn', selector: 'pagelist button[action=pageBefore]' },
         { ref: 'pageMoveAfterBtn', selector: 'pagelist button[action=pageAfter]' },
@@ -142,7 +143,7 @@ Ext.define('TE.controller.Editor', {
                     var selectedPage = this.selectedPage();
                     if (selectedPage) {
                         var pageId = selectedPage.get('id');
-                        var source = this.httpGet('/source/' + pageId);
+                        var source = httpGet('/source/' + pageId);
                         var sourcePane = this.getSourcepane();
                         sourcePane.expand(true);
                         sourcePane.update('<pre><code class="xl">' +
@@ -182,17 +183,6 @@ Ext.define('TE.controller.Editor', {
         });
     },
 
-    // Loading modern themes
-    httpGet: function(theUrl)
-    {
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", theUrl, false);
-        xmlHttp.send(null);
-        if (xmlHttp.status == 200 || xmlHttp.status == 0)
-            return xmlHttp.responseText;
-        return '';
-    },
-
     loadThemes: function() {
         var themePanel = this.getThemePanel();
         var dataRoot = { expanded: true, children: [] };
@@ -229,7 +219,7 @@ Ext.define('TE.controller.Editor', {
             add(dataRoot, theme.theme, '', theme.templates);
         }
 
-        var themeArray = JSON.parse(this.httpGet("/list/page"));
+        var themeArray = JSON.parse(httpGet("/list/page"));
         Ext.each(themeArray, loadThemeFromModel, this);
 
         var store = Ext.create('Ext.data.TreeStore', { root: dataRoot });
@@ -237,7 +227,7 @@ Ext.define('TE.controller.Editor', {
     },
 
     setCenterPaneURL: function(path, text, url, defaultInfo) {
-        var themeInfo = this.httpGet(url);
+        var themeInfo = httpGet(url);
         var cp = this.getCenterpane();
         cp.removeAll();
         var display = Ext.create('Ext.form.field.Display');
@@ -256,7 +246,7 @@ Ext.define('TE.controller.Editor', {
             {
                 includes.forEach(function(incl) {
                     var file = incl.replace(/\[\[include\s+\"(.*)\"\]\]/, '$1');
-                    themeInfo = themeInfo.replace(incl, me.httpGet(file));
+                    themeInfo = themeInfo.replace(incl, httpGet(file));
                 });
             }
             themeInfo = themeInfo

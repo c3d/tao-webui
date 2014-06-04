@@ -89,6 +89,20 @@ Chrome/Safari (it gives a empty zone below the page) */
     height: 80px;
 }
 
+/* Show item template inline */
+.item-template
+{
+    display: inline-block;
+    width: 40px;
+    text-align: center
+}
+
+.item-template img
+{
+    width: 40px;
+    height: 30px;
+}
+
 img.screenshot
 {
     display:block;

@@ -772,7 +772,7 @@ app.get('/list/:kind', function(req, res)
             var name = dir + '/' + files[i];
             if (fs.statSync(name).isDirectory())
                 getFiles(name);
-            else if (themeRE.test(name))
+            else if (themeRE.test(name) && templates.length > 0)
                 filelist.push(new Object({
                     theme: strip(name, themeRE),
                     templates: templates
@@ -1259,6 +1259,29 @@ function writeDDD(ddd, warn, callback)
 }
 
 
+app.get('/init/:template', function(req, res)
+// ----------------------------------------------------------------------------
+//   Debug access to loadPageFromTemplate
+// ----------------------------------------------------------------------------
+{
+    var path = __dirname + '/fields';
+    var template = req.params.template;
+    var templateFile = ddtFilePath(template);
+    var result = '';
+    var page = {};
+    console.log("Template:", template);
+    console.log("Template File:", templateFile);
+    if (templateFile)
+    {
+        fields.beginFields();
+        var obj = templates.processTemplatePath(templateFile, template, path);
+        obj(page);              // Result of text processing ignored
+        result = fields.endFields();
+    }
+    res.send(result);
+});
+
+
 function loadPageFromTemplate(page, template)
 // ----------------------------------------------------------------------------
 //   Load page properties from a template
@@ -1317,7 +1340,9 @@ function convertToClientSide(pages)
     pages.forEach(function(page) {
         if (page.properties)
         {
+            console.log("ToClient ", page.properties);
             page.dynamicfields = JSON.stringify(page.properties);
+            console.log("ToClient=", page.dynamicfields);
             delete page.properties;
         }
     });
@@ -1332,7 +1357,9 @@ function convertToServerSide(pages)
     pages.forEach(function(page) {
         if (page.dynamicfields)
         {
+            console.log("ToServer ", page.dynamicfields);
             page.properties = JSON.parse(page.dynamicfields);
+            console.log("ToServer=", page.properties);
             delete page.dynamicfields;
         }
     });

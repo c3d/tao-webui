@@ -31,6 +31,7 @@ Ext.define('TE.editor.view.properties.BaseSlide', {
                     },
                     {
                         xtype: 'te_customdynamicfields',
+                        id: 'dynamic',
                         name: 'dynamicfields'
                     }
                 ])

@@ -105,5 +105,5 @@ Ext.define('TE.tree.PageList', {
         });
 
         this.callParent(arguments);
-    },
+    }
 });

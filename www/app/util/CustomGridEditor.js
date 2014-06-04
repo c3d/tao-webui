@@ -1,7 +1,9 @@
 Ext.define('TE.util.CustomGridEditor', {
     extend:'Ext.grid.Panel',
+    requires: [
+        'TE.util.MultiCellSelectionModel'
+    ],
     alias: 'widget.customgrideditor',
-    requires: ["TE.util.MultiCellSelectionModel"],
     border: false,
     verticalScrollerType: 'paginggridscroller',
     invalidateScrollerOnRefresh: false,
@@ -10,15 +12,16 @@ Ext.define('TE.util.CustomGridEditor', {
     },
     selType: 'multiplecellmodel',
     multiSelect : true,
-    plugins: [Ext.create('Ext.grid.plugin.CellEditing', {
-        clicksToEdit: 2,
-        pluginId: 'cellEditing',
-        listeners: {
-            edit: function() {
-                this.grid.updateData();
+    plugins: [
+        Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 2,
+            pluginId: 'cellEditing',
+            listeners: {
+                edit: function() {
+                    this.grid.updateData();
+                }
             }
-        }
-    })],
+        })],
     tbar: [
         {
             scope: this.grid,

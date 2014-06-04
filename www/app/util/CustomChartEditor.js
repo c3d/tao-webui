@@ -412,6 +412,6 @@ Ext.define('TE.util.CustomChartEditor', {
         });
 
         this.callParent(arguments);
-    },
+    }
 
 });
