@@ -8,7 +8,7 @@ Ext.define('TE.view.ResourceLibrary', {
     modal: true,
     showChooseButton: false,
     targetField: null,
-    store: '',  // E.g., 'Images' or 'Movies' or 'MultviewImages' or 'Models'
+    store: '',  // E.g., 'Images' or 'Movies' or 'MultiviewImages' or 'Models'
     type: '',   // E.g., 'image' or 'movie' or 'mvimage' or 'model'
 
     initComponent: function() {

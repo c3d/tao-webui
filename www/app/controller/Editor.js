@@ -15,7 +15,7 @@ Ext.define('TE.controller.Editor', {
         'EditResourceURL',
         'ImagePickerField',
         'MoviePickerField',
-        'MultviewImagePickerField',
+        'MultiviewImagePickerField',
         'PageList',
         'PageListContextMenu',
         'Properties',
