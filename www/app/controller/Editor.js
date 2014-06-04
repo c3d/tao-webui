@@ -393,6 +393,10 @@ Ext.define('TE.controller.Editor', {
                     });
     },
 
+    newPageMenuItemClicked: function() {
+        console.log("Not implemented yet");
+    },
+
     newPageFromTemplate: function(list, item) {
         var pt = item.raw;
         if (pt.leaf)
