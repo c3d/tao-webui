@@ -24,7 +24,6 @@ Ext.define('TE.util.Items', {
 //   A dynamic field holding all the properties for a slide
 // ----------------------------------------------------------------------------
     extend: 'Ext.form.FieldSet',
-    requires:['Ext.slider.Single'],
     alias: 'widget.te_items',
     layout: 'vbox',
     item_kinds: '',
@@ -65,6 +64,17 @@ Ext.define('TE.util.Items', {
                 return value;
             }
         }],
+
+        listeners: {
+            itemdblclick : function(view,rec,item,indexa,eventObj,eventOpts) {
+                var model = rec.raw.model;
+                var init = httpGet('/init/' + model);
+                if (init) {
+                    var initObj = JSON.parse(init);
+                    console.log("Init", model, "=", initObj);
+                }
+            }
+        },
         
         setStore: function (store) {
             this.reconfigure(store);
@@ -102,10 +112,12 @@ Ext.define('TE.util.Items', {
             templates.forEach(function (pt) {
                 var last = pt.lastIndexOf('/');
                 var caption = pt.substr(last+1);
-                var pview = '/themes/' + pt + '.' + currentKind + '.png';
+                var fullName = pt + '.' + currentKind;
+                var pview = '/themes/' + fullName + '.png';
                 kids.push({ text: caption, leaf: true,
                             iconCls: 'no-icon',
                             model: pt,
+                            fullName: fullName,
                             preview: pview });
             });
         }

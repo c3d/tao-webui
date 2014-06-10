@@ -1319,18 +1319,17 @@ function writeDDD(ddd, warn, callback)
 }
 
 
-app.get('/init/:template', function(req, res)
+app.get(/^\/init\/(.*)$/, function(req, res)
 // ----------------------------------------------------------------------------
 //   Debug access to loadPageFromTemplate
 // ----------------------------------------------------------------------------
 {
     var path = __dirname + '/fields';
-    var template = req.params.template;
+    var template = req.params[0];
+    console.log('init:', template);
     var templateFile = ddtFilePath(template);
     var result = '';
     var page = {};
-    console.log("Template:", template);
-    console.log("Template File:", templateFile);
     if (templateFile)
     {
         fields.beginFields();
@@ -1400,9 +1399,7 @@ function convertToClientSide(pages)
     pages.forEach(function(page) {
         if (page.properties)
         {
-            console.log("ToClient ", page.properties);
             page.dynamicfields = JSON.stringify(page.properties);
-            console.log("ToClient=", page.dynamicfields);
             delete page.properties;
         }
     });
@@ -1417,9 +1414,7 @@ function convertToServerSide(pages)
     pages.forEach(function(page) {
         if (page.dynamicfields)
         {
-            console.log("ToServer ", page.dynamicfields);
             page.properties = JSON.parse(page.dynamicfields);
-            console.log("ToServer=", page.properties);
             delete page.dynamicfields;
         }
     });

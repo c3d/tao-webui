@@ -225,7 +225,6 @@ Ext.define('TE.util.DynamicFields', {
             json += txt;
         }
 
-
         var items = this.items.items;
 
         // Compute the "collapsed" and "labels" states
