@@ -1,4 +1,4 @@
 Ext.define('TE.fields.chart', {
-    extend: 'TE.util.CustomChartEditor',
+    extend: 'TE.util.ChartEditor',
     multipleAllowed: true
 });

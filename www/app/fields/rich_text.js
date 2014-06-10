@@ -1,4 +1,4 @@
 Ext.define('TE.fields.rich_text', {
-    extend: 'TE.util.CustomDisplayField',
+    extend: 'TE.util.DisplayField',
     mutipleAllowed: true
 });

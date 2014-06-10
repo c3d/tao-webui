@@ -1,10 +1,10 @@
 Ext.define('TE.editor.view.properties.BaseSlide', {
-    requires: ['TE.util.CustomHtmlEditor',
-               'TE.util.CustomDisplayField',
-               'TE.util.CustomChartEditor',
-               'TE.util.CustomDynamicFields',
-               'TE.util.CustomPictureField',
-               'TE.util.CustomTextField' ],
+    requires: ['TE.util.HtmlEditor',
+               'TE.util.DisplayField',
+               'TE.util.ChartEditor',
+               'TE.util.DynamicFields',
+               'TE.util.PictureField',
+               'TE.util.TextField' ],
     extend: 'Ext.Container',
 
     initComponent: function(itemsBefore) {
@@ -30,7 +30,7 @@ Ext.define('TE.editor.view.properties.BaseSlide', {
                         title: tr('Page name', 'common')
                     },
                     {
-                        xtype: 'te_customdynamicfields',
+                        xtype: 'te_dynamicfields',
                         id: 'dynamic',
                         name: 'dynamicfields'
                     }

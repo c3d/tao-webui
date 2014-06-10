@@ -1,6 +1,6 @@
-Ext.define('TE.util.CustomHtmlEditor', {
+Ext.define('TE.util.HtmlEditor', {
     extend: 'Ext.ux.form.field.TinyMCE',
-    alias: 'widget.customhtmleditor',
+    alias: 'widget.htmleditor',
 
     config: {
         layout: 'fit'

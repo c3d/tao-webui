@@ -1,9 +1,9 @@
-Ext.define('TE.util.CustomGridEditor', {
+Ext.define('TE.util.GridEditor', {
     extend:'Ext.grid.Panel',
     requires: [
         'TE.util.MultiCellSelectionModel'
     ],
-    alias: 'widget.customgrideditor',
+    alias: 'widget.grideditor',
     border: false,
     verticalScrollerType: 'paginggridscroller',
     invalidateScrollerOnRefresh: false,

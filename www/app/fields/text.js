@@ -1,4 +1,4 @@
 Ext.define('TE.fields.text', {
-    extend: 'TE.util.CustomTextField',
+    extend: 'TE.util.TextField',
     multipleAllowed: true
 });

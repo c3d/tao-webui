@@ -1,4 +1,4 @@
 Ext.define('TE.fields.multiview_texture', {
-    extend: 'TE.util.CustomMultiviewTextureField',
+    extend: 'TE.util.MultiviewTextureField',
     multipleAllowed: true
 });

@@ -1,3 +1,3 @@
 Ext.define('TE.fields.subtitle', {
-    extend: 'TE.util.CustomDisplayField'
+    extend: 'TE.util.DisplayField'
 });

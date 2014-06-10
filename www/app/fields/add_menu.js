@@ -1,5 +1,5 @@
 Ext.define('TE.fields.add_menu', {
-    extend: 'TE.util.CustomPageMenu',
+    extend: 'TE.util.PageMenu',
 
     menuItems: [
         {

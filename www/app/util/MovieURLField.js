@@ -1,11 +1,10 @@
-Ext.define('TE.util.CustomMultiviewTextureField', {
+Ext.define('TE.util.MovieURLField', {
     extend: 'Ext.form.FieldSet',
-    requires: [ 'TE.view.MultiviewImagePickerField' ],
-    alias: 'widget.temvtexture',
+    alias: 'widget.te_movieurlfield',
     collapsible: true,
     collapsed:false,
     items: [{
-        xtype:'temvimagepickerfield',
+        xtype:'temoviepickerfield',
         anchor:'100%',
         allowBlank: false,
         listeners: {

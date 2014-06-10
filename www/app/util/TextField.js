@@ -1,44 +1,30 @@
-Ext.define('TE.util.CustomDisplayField', {
+Ext.define('TE.util.TextField', {
     extend: 'Ext.form.FieldSet',
-    requires:['Ext.form.field.Display'],
-    alias: 'widget.te_displayfield',
-    maxHeight:100,
-    autoScroll:true,
+    requires:['Ext.form.field.Text'],
+    alias: 'widget.te_textfield',
     collapsible: true,
     collapsed:false,
-    items: [ {
-        xtype:'displayfield',
-        height:100,
-
-        initComponent: function() {
-            this.callParent(arguments);
-            this.submitValue = true;
-        },
+    items: [{
+        xtype:'textfield',
+        anchor:'100%',
+        allowBlank: false,
+        msgTarget: 'under',
         listeners: {
             change: function(f) {
+                // Fire change event to fieldset
                 this.ownerCt.fireEvent('change', this.ownerCt);
             },
             render: function(f) {
                 // Use same name that fieldset for form
                 f.name = f.ownerCt.name;
-                f.multipleAllowed = f.ownerCt.multipleAllowed;
             }
         },
-    }
-    ],
-    listeners: {
-        render: function(f) {
-            f.getEl().on('click',
-                         function() { this.fireEvent('click', f); }, f);
+    }],
 
-            f.getEl().on('removed',
-                         function() { this.fireEvent('removed', f); }, f);
-        }
-    },
 
     getValue: function()
     // ------------------------------------------------------------------------
-    //  Return displayfield value in a json object
+    //   Return textfield value in a json object
     // ------------------------------------------------------------------------
     {
         return this.items.items[0].getValue();
@@ -47,7 +33,7 @@ Ext.define('TE.util.CustomDisplayField', {
 
     setValue: function(value)
     // ------------------------------------------------------------------------
-    // Set displayfield according to a json object
+    //   Set textfield values according to a json object
     // ------------------------------------------------------------------------
     {
         this.items.items[0].setValue(value);
@@ -56,7 +42,7 @@ Ext.define('TE.util.CustomDisplayField', {
 
     toJSON: function()
     // ------------------------------------------------------------------------
-    // Override toJSON method
+    //   Override toJSON method to encode only textfield value.
     // ------------------------------------------------------------------------
     {
         return Ext.encode(this.getValue());

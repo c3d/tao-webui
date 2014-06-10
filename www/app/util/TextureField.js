@@ -1,14 +1,12 @@
-Ext.define('TE.util.CustomTextField', {
+Ext.define('TE.util.TextureField', {
     extend: 'Ext.form.FieldSet',
-    requires:['Ext.form.field.Text'],
-    alias: 'widget.te_textfield',
+    alias: 'widget.te_texturefield',
     collapsible: true,
     collapsed:false,
     items: [{
-        xtype:'textfield',
+        xtype:'teimagepickerfield',
         anchor:'100%',
         allowBlank: false,
-        msgTarget: 'under',
         listeners: {
             change: function(f) {
                 // Fire change event to fieldset

@@ -1,11 +1,11 @@
-Ext.define('TE.util.CustomModelField', {
+Ext.define('TE.util.MultiviewTextureField', {
     extend: 'Ext.form.FieldSet',
-    requires: [ 'TE.view.ModelPickerField' ],
-    alias: 'widget.temodel',
+    requires: [ 'TE.view.MultiviewImagePickerField' ],
+    alias: 'widget.temvtexture',
     collapsible: true,
     collapsed:false,
     items: [{
-        xtype:'temodelpickerfield',
+        xtype:'temvimagepickerfield',
         anchor:'100%',
         allowBlank: false,
         listeners: {

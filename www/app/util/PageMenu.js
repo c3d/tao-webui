@@ -1,4 +1,4 @@
-Ext.define('TE.util.CustomPageMenu', {
+Ext.define('TE.util.PageMenu', {
     extend: 'Ext.menu.Menu',
     activated: 'all',
 

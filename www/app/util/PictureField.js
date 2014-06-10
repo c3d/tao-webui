@@ -1,6 +1,6 @@
-Ext.define('TE.util.CustomPictureField', {
-    extend:'TE.util.CustomFieldSet',
-    alias: 'widget.te_custompicturefield',
+Ext.define('TE.util.PictureField', {
+    extend:'TE.util.FieldSet',
+    alias: 'widget.te_picturefield',
 
     initComponent: function()
     // ------------------------------------------------------------------------

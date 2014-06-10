@@ -1,4 +1,4 @@
-// Custom form field thats uses ImageLibrary to enable the user to select an image
+// Form field thats uses ImageLibrary to enable the user to select an image
 Ext.define('TE.view.MultiviewImagePickerField', {
     extend: 'Ext.form.field.Trigger',
     alias: 'widget.temvimagepickerfield',

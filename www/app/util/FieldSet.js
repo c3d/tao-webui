@@ -1,6 +1,6 @@
-Ext.define('TE.util.CustomFieldSet', {
+Ext.define('TE.util.FieldSet', {
     extend:'Ext.form.FieldSet',
-    alias: 'widget.te_customfieldset',
+    alias: 'widget.te_fieldset',
     collapsible: true,
     collapsed:false,
 

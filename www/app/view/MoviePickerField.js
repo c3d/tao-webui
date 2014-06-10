@@ -1,4 +1,4 @@
-// Custom form field thats uses ImageLibrary to enable the user to select an image
+// form field thats uses ImageLibrary to enable the user to select an image
 Ext.define('TE.view.MoviePickerField', {
     extend: 'Ext.form.field.Trigger',
     alias: 'widget.temoviepickerfield',

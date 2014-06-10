@@ -1,4 +1,4 @@
-Ext.define('TE.util.CustomSliderField', {
+Ext.define('TE.util.SliderField', {
     extend: 'Ext.form.FieldSet',
     requires:['Ext.slider.Single'],
     alias: 'widget.te_slider',

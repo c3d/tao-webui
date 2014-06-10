@@ -1,9 +1,9 @@
-Ext.define('TE.util.CustomDynamicFields', {
+Ext.define('TE.util.DynamicFields', {
 // ----------------------------------------------------------------------------
 //   A dynamic field holding all the properties for a slide
 // ----------------------------------------------------------------------------
     extend:'Ext.form.FieldContainer',
-    alias: 'widget.te_customdynamicfields',
+    alias: 'widget.te_dynamicfields',
     name:"dynamic",
     layout: 'vbox',
     items: [{

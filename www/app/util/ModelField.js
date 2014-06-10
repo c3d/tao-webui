@@ -1,10 +1,11 @@
-Ext.define('TE.util.CustomMovieURLField', {
+Ext.define('TE.util.ModelField', {
     extend: 'Ext.form.FieldSet',
-    alias: 'widget.te_custommovieurlfield',
+    requires: [ 'TE.view.ModelPickerField' ],
+    alias: 'widget.temodel',
     collapsible: true,
     collapsed:false,
     items: [{
-        xtype:'temoviepickerfield',
+        xtype:'temodelpickerfield',
         anchor:'100%',
         allowBlank: false,
         listeners: {

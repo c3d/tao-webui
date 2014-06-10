@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  CustomBodies.js                                                Tao project 
+//  Bodies.js                                                      Tao project 
 // ****************************************************************************
 // 
 //   File Description:
 // 
-//     Custom bodies for the optional elements in a template
+//     Additional entries for the optional elements in a template
 //     (elements marked with '[[body "toto"]]' in the .DDT file
 // 
 // 
@@ -19,13 +19,13 @@
 //  (C) 2014 Taodyne SAS
 // ****************************************************************************
 
-Ext.define('TE.util.CustomBodies', {
+Ext.define('TE.util.Bodies', {
 // ----------------------------------------------------------------------------
 //   A dynamic field holding all the properties for a slide
 // ----------------------------------------------------------------------------
     extend: 'Ext.form.FieldSet',
     requires:['Ext.slider.Single'],
-    alias: 'widget.te_custombodies',
+    alias: 'widget.te_bodies',
     layout: 'vbox',
     bodies: '',
 

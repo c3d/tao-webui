@@ -1,7 +1,7 @@
-Ext.define('TE.util.CustomChartEditor', {
+Ext.define('TE.util.ChartEditor', {
     extend:'Ext.form.FieldSet',
-    alias: 'widget.customcharteditor',
-    requires:['TE.util.CustomGridEditor'],
+    alias: 'widget.charteditor',
+    requires:['TE.util.GridEditor'],
     itemId:"chart_container",
     index:'',
     name:"chart",
@@ -250,7 +250,7 @@ Ext.define('TE.util.CustomChartEditor', {
                 text: tr('Chart data:', 'common'),
             },
             {
-                xtype: 'customgrideditor',
+                xtype: 'grideditor',
                 name:'grid',
                 itemId:'chartgrid',
                 anchor:'100%',
@@ -305,7 +305,7 @@ Ext.define('TE.util.CustomChartEditor', {
                     {
                         // Need to redefine viewReady events as it is overrided by
                         // listeners declaration
-                        TE.util.CustomGridEditor.prototype.createKeysMap(grid);
+                        TE.util.GridEditor.prototype.createKeysMap(grid);
                     },
                     itemmousedown: function()
                     {

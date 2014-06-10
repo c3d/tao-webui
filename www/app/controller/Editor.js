@@ -133,7 +133,7 @@ Ext.define('TE.controller.Editor', {
                     this.setStatus(tr('Saved'));
                 }
             },
-            'customhtmleditor': {
+            'htmleditor': {
                 savecurrentpage: function() {
                     this.savePage();
                 }
@@ -310,7 +310,7 @@ Ext.define('TE.controller.Editor', {
     displayFieldClicked: function(displayField) {
         var cp = this.getCenterpane();
         cp.removeAll();
-        var view = Ext.create('TE.util.CustomHtmlEditor', {
+        var view = Ext.create('TE.util.HtmlEditor', {
             name: displayField.name,
             value: displayField.getValue(),
             layout: 'fit',

@@ -1,6 +1,6 @@
-Ext.define('TE.util.CustomMovieField', {
-    extend:'TE.util.CustomFieldSet',
-    alias: 'widget.te_custommoviefield',
+Ext.define('TE.util.MovieField', {
+    extend:'TE.util.FieldSet',
+    alias: 'widget.te_moviefield',
     collapsible: true,
     collapsed:false,
 
