@@ -23,10 +23,12 @@ Ext.define('TE.util.CustomBodies', {
 // ----------------------------------------------------------------------------
 //   A dynamic field holding all the properties for a slide
 // ----------------------------------------------------------------------------
-    extend:'Ext.form.FieldContainer',
+    extend: 'Ext.form.FieldSet',
+    requires:['Ext.slider.Single'],
     alias: 'widget.te_custombodies',
-    name:"bodies",
     layout: 'vbox',
+    bodies: '',
+
     items: [{
         xtype: 'hiddenfield',
         name:'bodies',
@@ -38,23 +40,20 @@ Ext.define('TE.util.CustomBodies', {
                 // (i.e no other fields)
                 if(this.ownerCt.items.length == 1)
                 {
-                    console.log('parseJSON: ', this.getValue());
                     this.ownerCt.parseJSON(this.getValue());
                 }
             }
         }
     }, {
-    	title: tr('Items'),
         xtype: 'treepanel',
-        itemId: 'itemspanel',
-        collapsible: true,
-        flex: 1,
-        autoScroll: true,
         rootVisible: false,
         singleExpand: true,
         lines: false,
         useArrows: true,
         hideHeaders: true,
+        width: '100%',
+        height: 100,
+        padding: '0 0 10 0',
         columns: [{
             xtype : 'treecolumn',
             dataIndex : 'text',
@@ -62,7 +61,7 @@ Ext.define('TE.util.CustomBodies', {
             renderer : function(value, record){
                 var data = record.record.raw;
                 if (data.leaf)
-                    return Ext.String.format('<div class="item-template"><img src="/preview/{0}"/><br/>{1}</div>', data.id, value);
+                    return Ext.String.format('<div class="item-template"><img src="{0}"/>{1}</div>', data.preview, value);
                 return value;
             }
         }],
@@ -71,21 +70,16 @@ Ext.define('TE.util.CustomBodies', {
             this.reconfigure(store);
         }
     }],
-    listeners:
-    {
-        remove: function(me, field) { this.removeField(field); }
-    },
-    disableSave: false,
-    extraSaveData: {},
 
 
-    render: function()
+    loadItems: function(f)
     // ------------------------------------------------------------------------
     //   When rendering, load the possible choices from the server
     // ------------------------------------------------------------------------
     {
         var itemsPanel = this.down('treepanel');
         var dataRoot = { expanded: true, children: [] };
+        var currentKind = undefined;
 
         function add(data, path, where, templates)
         {
@@ -108,8 +102,11 @@ Ext.define('TE.util.CustomBodies', {
             templates.forEach(function (pt) {
                 var last = pt.lastIndexOf('/');
                 var caption = pt.substr(last+1);
-                kids.push({ text: caption, leaf: true, iconCls: 'no-icon',
-                            model: pt });
+                var pview = '/themes/' + pt + '.' + currentKind + '.png';
+                kids.push({ text: caption, leaf: true,
+                            iconCls: 'no-icon',
+                            model: pt,
+                            preview: pview });
             });
         }
         
@@ -121,12 +118,13 @@ Ext.define('TE.util.CustomBodies', {
         var kindsArray = this.getValue().split(' ');
         var me = this;
         kindsArray.forEach(function(itemKind) {
-            var itemsArray = JSON.parse(Tao.httpGet("/list/" + itemKind));
-            Ext.each(themeArray, loadThemeFromModel, this);
+            var itemsArray = JSON.parse(httpGet("/list/" + itemKind));
+            currentKind = itemKind;
+            Ext.each(itemsArray, loadThemeFromModel, this);
         });
                            
         var store = Ext.create('Ext.data.TreeStore', { root: dataRoot });
-        themePanel.setStore(store);
+        itemsPanel.setStore(store);
     },
 
 
@@ -135,8 +133,7 @@ Ext.define('TE.util.CustomBodies', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        console.log("CustomBodies::toJSON");
-        return '{}';
+        return this.bodies;
     },
 
 
@@ -145,24 +142,25 @@ Ext.define('TE.util.CustomBodies', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        console.log("CustomBodies::fromJSON", json);
+        this.bodies = json;
+        this.loadItems();
     },
+
 
     setValue: function(json)
     // ------------------------------------------------------------------------
     //   Set the value of the field
     // ------------------------------------------------------------------------
     {
-        console.log('Bodies::setValue ', json);
         return this.fromJSON(json);
     },
+
 
     getValue: function()
     // ------------------------------------------------------------------------
     //   Set the value of the field
     // ------------------------------------------------------------------------
     {
-        console.log('Bodies::setValue ', json);
         return this.toJSON();
     }
 });

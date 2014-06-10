@@ -33,7 +33,7 @@ Ext.define('TE.util.CustomDisplayField', {
 
             f.getEl().on('removed',
                          function() { this.fireEvent('removed', f); }, f);
-        },
+        }
     },
 
     getValue: function()
