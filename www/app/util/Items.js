@@ -1,5 +1,5 @@
 // ****************************************************************************
-//  Bodies.js                                                      Tao project 
+//  Items.js                                                      Tao project 
 // ****************************************************************************
 // 
 //   File Description:
@@ -19,19 +19,19 @@
 //  (C) 2014 Taodyne SAS
 // ****************************************************************************
 
-Ext.define('TE.util.Bodies', {
+Ext.define('TE.util.Items', {
 // ----------------------------------------------------------------------------
 //   A dynamic field holding all the properties for a slide
 // ----------------------------------------------------------------------------
     extend: 'Ext.form.FieldSet',
     requires:['Ext.slider.Single'],
-    alias: 'widget.te_bodies',
+    alias: 'widget.te_items',
     layout: 'vbox',
-    bodies: '',
+    item_kinds: '',
 
     items: [{
         xtype: 'hiddenfield',
-        name:'bodies',
+        name:'items',
         flex: 1,
         listeners: {
             change: function()
@@ -133,7 +133,7 @@ Ext.define('TE.util.Bodies', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        return this.bodies;
+        return this.item_kinds;
     },
 
 
@@ -142,7 +142,7 @@ Ext.define('TE.util.Bodies', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        this.bodies = json;
+        this.item_kinds = json;
         this.loadItems();
     },
 

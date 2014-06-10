@@ -195,7 +195,7 @@ Ext.define('TE.util.DynamicFields', {
         'title'         : tr('Title'),
         'subtitle'      : tr('Subtitle'),
         'story'         : tr('Story'),
-        'bodies'        : tr('Bodies')
+        'item_kinds'    : tr('Items')
     },
 
 
