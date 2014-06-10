@@ -171,6 +171,15 @@ function docPath()
 }
 
 
+function previewPath(pageId)
+// ----------------------------------------------------------------------------
+//   Return the path for the preview file
+// ----------------------------------------------------------------------------
+{
+    return docPath()+"-preview-"+pageId+".png";
+}
+
+
 function jsonFilePath(name, saving)
 // ----------------------------------------------------------------------------
 //   Return the file path for the JSON document
@@ -488,6 +497,7 @@ app.delete('/pages/:id', function(req, res)
         for (var i = 0; i < pages.length; i++) {
             if (pages[i].id == req.params.id) {
                 verbose('Page ' + req.params.id + ' deleted (index ' + i + ')');
+                fs.unlink(previewPath(req.params.id), function() {});
                 pages.splice(i, 1);
                 save(pages, req, function(err) {
                     var rsp = {};
@@ -630,9 +640,9 @@ app.get('/preview/:id', function(req, res)
 // ----------------------------------------------------------------------------
 {
     var pageId = req.params.id;
-    var previewPath = docPath()+"-preview-"+pageId+".png";
+    var imagePath = previewPath(pageId);
 
-    fs.readFile(previewPath, function (err, data) {
+    fs.readFile(imagePath, function (err, data) {
         if (!err) {
             res.set('Content-Type', 'image/png');
             res.send(data);
