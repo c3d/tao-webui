@@ -630,16 +630,44 @@ app.get('/preview/:id', function(req, res)
 // ----------------------------------------------------------------------------
 {
     var pageId = req.params.id;
+    var previewPath = docPath()+"-preview-"+pageId+".png";
 
-    fs.readFile(docPath()+"-preview-"+pageId+".png", function (err, data) {
-        if (err) {
-            console.error('File read error: ' + err);
-            res.send(500);
+    fs.readFile(previewPath, function (err, data) {
+        if (!err) {
+            res.set('Content-Type', 'image/png');
+            res.send(data);
         }
         else
         {
-            res.set('Content-Type', 'image/png');
-            res.send(data);
+            getData('pages', function(pagesErr, pages) {
+                if (pagesErr) {
+                    console.error('File read error: ' + err);
+                    res.send(404);
+                }
+                else
+                {
+                    var found = false;
+                    for (var i = 0; i < pages.length; i++) {
+                        var page = pages[i];
+                        if (page.id == req.params.id) {
+                            var model = page.model;
+                            var path = __dirname + '/../themes/' + model;
+                            var file = path + ".page.png";
+                            fs.readFile(file, function(err, data) {
+                                if (!err) {
+                                    res.set('Content-Type', 'image/png');
+                                    res.send(data);
+                                }
+                                else
+                                {
+                                    console.error('Model read error: ' + err);
+                                    res.send(404);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
         }
     });
 });
