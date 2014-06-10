@@ -337,7 +337,7 @@ app.get('/pages/:id', function(req, res)
         if (pageIndex >= 0)
         {
             fs.writeFileSync(docPath() + '.tao-instrs',
-                             'page ' + pageIndex);
+                             'page ' + pageIndex + ' id ' + req.params.id);
             var now = new Date();
             fs.utimesSync(docPath(), now, now);
         }
@@ -622,6 +622,28 @@ app.delete('/resources/:id', function(req, res)
         }
     });
 });
+
+
+app.get('/preview/:id', function(req, res)
+// ----------------------------------------------------------------------------
+//   Return the preview for the current file
+// ----------------------------------------------------------------------------
+{
+    var pageId = req.params.id;
+
+    fs.readFile(docPath()+"-preview-"+pageId+".png", function (err, data) {
+        if (err) {
+            console.error('File read error: ' + err);
+            res.send(500);
+        }
+        else
+        {
+            res.set('Content-Type', 'image/png');
+            res.send(data);
+        }
+    });
+});
+        
 
 
 app.post('/image-upload', fileUpload(IMAGES_DIR));

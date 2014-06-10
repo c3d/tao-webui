@@ -226,14 +226,15 @@ Ext.define('TE.controller.Editor', {
         themePanel.setStore(store);
     },
 
-    setCenterPaneURL: function(path, text, url, defaultInfo) {
+    setCenterPaneURL: function(path, text, url, defaultInfo, previewImage) {
         var themeInfo = httpGet(url);
         var cp = this.getCenterpane();
         cp.removeAll();
         var display = Ext.create('Ext.form.field.Display');
         cp.add(display);
         var theme = '/themes/' + path + '/';
-        var image = '/themes/' + path + '.page.png';
+        var defaultImage = '/themes/' + path + '.page.png';
+        var image = previewImage || defaultImage;
         if (themeInfo == '')
         {
             themeInfo = defaultInfo;
@@ -249,11 +250,11 @@ Ext.define('TE.controller.Editor', {
                     themeInfo = themeInfo.replace(incl, httpGet(file));
                 });
             }
-            themeInfo = themeInfo
-                .replace(/\[\[theme\]\]/g, theme)
-                .replace(/\[\[image\]\]/g, image)
-                .replace(/\[\[caption\]\]/g, text);
         }
+        themeInfo = themeInfo
+            .replace(/\[\[theme\]\]/g, theme)
+            .replace(/\[\[image\]\]/g, image)
+            .replace(/\[\[caption\]\]/g, text);
         
         display.update(themeInfo);
     },
@@ -302,8 +303,8 @@ Ext.define('TE.controller.Editor', {
         this.setCenterPaneURL(pt.model, pt.name,
                               'themes/' + pt.model + '.page.html',
                               '<h2>' + pt.name + '</h2>' +
-                              '<img class="screenshot" src="/themes/' +
-                              pt.model + '.page.png"/>');
+                              '<img class="screenshot" width="100%"' +
+                              'src="[[image]]"/>', '/preview/' + pt.id);
     },
 
     displayFieldClicked: function(displayField) {

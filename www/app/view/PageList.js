@@ -20,20 +20,21 @@ Ext.define('TE.tree.PageList', {
         itemSelector: '.taopage-container',
         prepareData : function(data, recordIndex, record ){
             // Add image url to the diplayed data
-            var img = 'themes/' + record.data.model + '.page.png'
+            // var img = 'themes/' + record.data.model + '.page.png'
+            var img = '/preview/' + record.data.id;
             data['img'] = img;
             return data;
         },
         tpl: [
             '<div class="taopage-wrap">',
-            '<tpl for=".">',
-            '<div class="taopage-container">',
-            '<div class="taopage">',
-            '<div class="taopage-img"><img src="{img}"/></div>',
-            '<div class="taopage-named">{[xindex]} - {name}</div>',
-            '</div>',
-            '</div>',
-            '</tpl>',
+            ' <tpl for=".">',
+            '  <div class="taopage-container">',
+            '   <div class="taopage">',
+            '    <div class="taopage-img"><img src="{img}"/></div>',
+            '    <div class="taopage-named">{[xindex]} - {name}</div>',
+            '   </div>',
+            '  </div>',
+            ' </tpl>',
             '</div>'
         ],
         listeners: {

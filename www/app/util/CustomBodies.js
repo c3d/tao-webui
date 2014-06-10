@@ -62,7 +62,7 @@ Ext.define('TE.util.CustomBodies', {
             renderer : function(value, record){
                 var data = record.record.raw;
                 if (data.leaf)
-                    return Ext.String.format('<div class="item-template"><img src="themes/{0}.page.png"/><br/>{1}</div>', data.model, value);
+                    return Ext.String.format('<div class="item-template"><img src="/preview/{0}"/><br/>{1}</div>', data.id, value);
                 return value;
             }
         }],
