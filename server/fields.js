@@ -116,7 +116,7 @@ function property(object)
 }
 
 
-function item(object)
+function items(object)
 // ----------------------------------------------------------------------------
 //   A body refers to a recursive .DDT model
 // ----------------------------------------------------------------------------
@@ -124,10 +124,10 @@ function item(object)
     return function (page, id, value)
     {
         var name = value.label;
-        if (!result.item_kinds)
-            result.item_kinds = name;
+        if (!result.items)
+            result.items = name;
         else
-            result.item_kinds += ' ' + name;
+            result.items += ' ' + name;
         return '';
     }
 }
@@ -137,5 +137,5 @@ module.exports = {
     beginFields:        beginFields,
     endFields:          endFields,
     property:           property,
-    item:               item
+    items:              items
 }

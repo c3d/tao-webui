@@ -71,7 +71,9 @@ Ext.define('TE.util.Items', {
                 var init = httpGet('/init/' + model);
                 if (init) {
                     var initObj = JSON.parse(init);
-                    console.log("Init", model, "=", initObj);
+                    var dynamic = Ext.getCmp('dynamic');
+                    console.log("Init", model, "=", initObj,
+                                'dynamic=', dynamic);
                 }
             }
         },

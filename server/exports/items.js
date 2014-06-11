@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  page.js                                                        Tao project
+//  items.js                                                        Tao project
 // ****************************************************************************
 //
 //   File Description:
 //
-//     Emit the dynamic elements of a page
+//     Emit the dynamic elements of an item list
 //
 //
 //
@@ -21,7 +21,7 @@
 var util = require('../util');
 var fs = require('fs');
 
-function emitBody(page, id, parms)
+function emitItems(page, id, parms)
 // ----------------------------------------------------------------------------
 //   Emit the code for a body
 // ----------------------------------------------------------------------------
@@ -31,7 +31,7 @@ function emitBody(page, id, parms)
     console.log('Parms=', parms);
 
     var ddd = '';
-    var items = page.properties;
+    var items = page.items;
     if(items && items != '')
     {
         // Loop on all elements in the object and emit them
@@ -47,4 +47,4 @@ function emitBody(page, id, parms)
     return ddd;
 }
 
-module.exports = emitBody;
+module.exports = emitItems;
