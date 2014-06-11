@@ -176,8 +176,6 @@ Ext.define('TE.util.DynamicFields', {
             // Convert object to string
             var string = Ext.encode(this);
 
-            console.log('Encoded as ', string);
-
             // Save string in hidden field
             var dynamic = this.down('hiddenfield');
             dynamic.setValue(string);

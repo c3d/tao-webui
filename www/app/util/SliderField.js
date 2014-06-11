@@ -25,7 +25,8 @@ Ext.define('TE.util.SliderField', {
                     var prec = -Math.floor(Math.log(step) / Math.LN10);
                     var value = this.getValue();
                     var asText = parseFloat((value * step).toFixed(prec));
-                    textfield.setValue(asText);
+                    if (!isNaN(asText))
+                        textfield.setValue(asText);
                 }
             },
             tipText: function(thumb)
@@ -48,12 +49,26 @@ Ext.define('TE.util.SliderField', {
                     // Update the position of the slider to match
                     var slider = this.up().down('slider');
                     var step = slider.step || 1;
-                    slider.setValue(f.value / step);
+                    var slideValue = f.value / step;
+                    if (!isNaN(slideValue))
+                        slider.setValue(slideValue);
                 }
             }
         }
     ],
 
+
+    listeners:
+    // ------------------------------------------------------------------------
+    //   Make sure we propagate changes up
+    // ------------------------------------------------------------------------
+    {
+        change: function(f)
+        {
+            // Fire change event to fieldset
+            this.ownerCt.fireEvent('change', this.ownerCt);
+        }
+    },
 
     getValue: function()
     // ------------------------------------------------------------------------

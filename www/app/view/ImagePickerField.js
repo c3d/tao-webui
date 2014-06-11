@@ -11,5 +11,17 @@ Ext.define('TE.view.ImagePickerField', {
             type: 'image',
             store: 'Images'
         });
+    },
+
+    listeners:
+    // ------------------------------------------------------------------------
+    //   Make sure we propagate changes up
+    // ------------------------------------------------------------------------
+    {
+        change: function(f)
+        {
+            // Fire change event to fieldset
+            this.ownerCt.fireEvent('change', this.ownerCt);
+        }
     }
 });
