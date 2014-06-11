@@ -82,7 +82,7 @@ Ext.define('TE.controller.Editor', {
             'pagelist button[action=pageDelete]': {
                 click: this.deletePage
             },
-            'editor [action=addField]': {
+            'te_editor [action=addField]': {
                  click: this.addField
              },
             'button[action=showImageLibrary]': {
@@ -133,7 +133,7 @@ Ext.define('TE.controller.Editor', {
                     this.setStatus(tr('Saved'));
                 }
             },
-            'htmleditor': {
+            'te_htmleditor': {
                 savecurrentpage: function() {
                     this.savePage();
                 }
