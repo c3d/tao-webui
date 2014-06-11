@@ -18,7 +18,6 @@ Ext.define('TE.util.DynamicFields', {
                 // (i.e no other fields)
                 if(this.ownerCt.items.length == 1)
                 {
-                    console.log('parseJSON: ', this.getValue());
                     this.ownerCt.parseJSON(this.getValue());
                 }
             }
