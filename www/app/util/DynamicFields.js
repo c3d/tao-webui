@@ -4,9 +4,9 @@ Ext.define('TE.util.DynamicFields', {
 // ----------------------------------------------------------------------------
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_dynamicfields',
-    id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
+    models: {},
     items: [{
         xtype: 'hiddenfield',
         name:'dynamicfields',
@@ -31,12 +31,12 @@ Ext.define('TE.util.DynamicFields', {
     extraSaveData: {},
 
 
-    addField: function(type, label, value, collapse)
+    addField: function(type, label, value, collapse, model)
     // ------------------------------------------------------------------------
     //   Add new field to this container
     // ------------------------------------------------------------------------
     {
-        var field = this.createField(type, label);
+        var field = this.createField(type, label, model);
         if (type.indexOf('_menu') >= 0)
         {
             if (!field)
@@ -69,7 +69,7 @@ Ext.define('TE.util.DynamicFields', {
     },
 
 
-    createField: function(name, label)
+    createField: function(name, label, model)
     // ------------------------------------------------------------------------
     //   Create a field from given type
     // ------------------------------------------------------------------------
@@ -111,6 +111,10 @@ Ext.define('TE.util.DynamicFields', {
                 }
             }
         });
+
+        // If this was created from an item, record it
+        if (model)
+            this.models[name] = model;
 
         return field;
     },
@@ -202,10 +206,7 @@ Ext.define('TE.util.DynamicFields', {
     //   Return the default label for the given type id
     // ------------------------------------------------------------------------
     {
-        var name = this.fieldDefaultLabels[id];
-        if (!name)
-            name = 'Unknown field type ' + id;
-        return name;
+        return this.fieldDefaultLabels[id] || id;
     },
 
 
@@ -214,15 +215,7 @@ Ext.define('TE.util.DynamicFields', {
     //   Override toJSON method to save the fields
     // ------------------------------------------------------------------------
     {
-        var json = "{";
-        function add(txt)
-        {
-            // Add comma if not first itme
-            if (json != "{")
-                json += ',';
-            json += txt;
-        }
-
+        var json = {};
         var items = this.items.items;
 
         // Compute the "collapsed" and "labels" states
@@ -236,15 +229,24 @@ Ext.define('TE.util.DynamicFields', {
                 labels[item.name] = item.title;
         });
         if (collapsed !== [])
-            add('"_collapsed_":' + JSON.stringify(collapsed));
+            json._collapsed_ = collapsed;
         if (labels !== {})
-            add('"_labels_":' + JSON.stringify(labels));
+            json._labels_ = labels;
+        if (this.models != {})
+            json._models_ = this.models;
         for (item in this.extraSaveData)
-            add('"' + item + '":' + JSON.stringify(this.extraSaveData[item]));
+            json[item] = this.extraSaveData[item];
 
+        // Item name for each model
+        var itemNames = {};
+        var me = this;
+        var models = this.models;
+        var itemIndex = 1;
+ 
         // Re-encode the dyanmic fields including _collapsed_ and _labels_
         Ext.each(items, function(item, index) {
-            if(item.name != 'dynamicfields')
+            var name = item.name;
+            if(name != 'dynamicfields')
             {
                 // To encode complex objects, use toJSON method if defined,
                 // otherwise encode value directly (e.g. for textfields)
@@ -254,16 +256,31 @@ Ext.define('TE.util.DynamicFields', {
                     value = Ext.encode(item.getValue());
                 
                 // Add item to the JSON output
-                add('"' + item.name + '":' + value);
+                if (models.hasOwnProperty(name)) {
+                    var model = models[name];
+                    var itemName = 'item_' + itemIndex;
+                    if (itemNames.hasOwnProperty(model)) {
+                        itemName = itemNames[model];
+                    } else {
+                        itemNames[model] = itemName;
+                        itemIndex++;
+                    }
+                    if (!json.hasOwnProperty(itemName))
+                        json[itemName] = { model: model };
+                    json[itemName][name] = JSON.parse(value);
+                } else {
+                    json[name] = JSON.parse(value);
+                }
             }
         });
-        json += "}";
 
-        return json;
+        console.log("DynamicFields::toJSON=", json);
+
+        return JSON.stringify(json);
     },
 
 
-    setValue: function(json)
+    setValue: function(json, model)
     // ------------------------------------------------------------------------
     //   Set the value of the field
     // ------------------------------------------------------------------------
@@ -280,22 +297,41 @@ Ext.define('TE.util.DynamicFields', {
         var collapsed = items._collapsed_;
         var labels = items._labels_ || { };
         if (items._labels_)
-            this._labels_ = items._labels_;
+            this._labels_ = mergeObjects(this._labels, items._labels_);
+        var me = this;
         for(var name in items)
         {
-            if (name != '_collapsed_' && name != '_labels_')
+            if (!name.match(/_.*_/))
             {
                 var value = items[name];
 
-                // Check if we have a label in the input value,
-                // otherwise get it from the label of the 'Add...' menu
-                var label = labels[name] || this.defaultLabel(name);
+                function add(name, value)
+                {
+                    // Check if we have a label in the input value,
+                    // otherwise get it from the label of the 'Add...' menu
+                    var label = labels[name] || me.defaultLabel(name);
 
-                // Check if collapsed
-                var collapse = collapsed && collapsed.indexOf(name) >= 0;
+                    // Check if collapsed
+                    var collapse = collapsed && collapsed.indexOf(name) >= 0;
 
-                // Add field
-                this.addField(name, label, value, collapse);
+                    // Add field
+                    me.addField(name, label, value, collapse, model);
+                }
+
+
+                // Check if we have an item with a data model
+                if (name.match(/item_[0-9]+/))
+                {
+                    model = value.model;
+                    delete value.model;
+                    for (var it in value)
+                        add(it, value[it]);
+                }
+                else
+                {
+                    add(name, value);
+                }
+                
             }
         }
         this.disableSave = saveDisabled;

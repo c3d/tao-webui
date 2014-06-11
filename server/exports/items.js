@@ -42,8 +42,6 @@ function emitItems(page, id, parms)
                 ddd += require('./' + kind) (page, item, { pageId: item });
         }
     }
-    if (ddd == '')
-        ddd = 'nil';
     return ddd;
 }
 

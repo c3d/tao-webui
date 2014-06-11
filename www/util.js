@@ -35,3 +35,16 @@ function httpGet(theUrl)
         return xmlHttp.responseText;
     return '';
 }
+
+
+function mergeObjects(obj1, obj2)
+// ----------------------------------------------------------------------------
+//   Merge the two objects, override with the right one
+// ----------------------------------------------------------------------------
+{
+    if (!obj1)
+        return obj2;
+    for (var item in obj2)
+        obj1[item] = mergeObjects(obj1[item], obj2[item]);
+    return obj1;
+}

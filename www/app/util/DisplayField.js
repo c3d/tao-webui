@@ -1,3 +1,25 @@
+// ****************************************************************************
+//  DisplayField.js                                                Tao project
+// ****************************************************************************
+//
+//   File Description:
+//
+//    A simple display field
+//
+//
+//
+//
+//
+//
+//
+//
+// ****************************************************************************
+//  (C) 2014 Christophe de Dinechin <christophe@taodyne.com>
+//  (C) 2014 Jérôme Forissier <jerome@taodyne.com>
+//  (C) 2014 Catherine Burvelle <cathy@taodyne.com>
+//  (C) 2014 Taodyne SAS
+// ****************************************************************************
+
 Ext.define('TE.util.DisplayField', {
     extend: 'Ext.form.FieldSet',
     requires:['Ext.form.field.Display'],

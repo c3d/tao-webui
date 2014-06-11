@@ -4,12 +4,12 @@
 // 
 //   File Description:
 // 
-//     Additional entries for the optional elements in a template
-//     (elements marked with '[[body "toto"]]' in the .DDT file
-// 
-// 
-// 
-// 
+//     Additional entries for the optional recursive elements in a template
+//     (elements marked with '[[items "toto"]]' in the .DDT file
+//
+//     This converts a recursive data model (i.e. the JSON files) into 
+//     a non-recursive one (the components) as implemented by the
+//     DynamicFields.js class
 // 
 // 
 // 
@@ -70,10 +70,8 @@ Ext.define('TE.util.Items', {
                 var model = rec.raw.model;
                 var init = httpGet('/init/' + model);
                 if (init) {
-                    var initObj = JSON.parse(init);
                     var dynamic = Ext.getCmp('dynamic');
-                    console.log("Init", model, "=", initObj,
-                                'dynamic=', dynamic);
+                    var field = dynamic.setValue(init, model);
                 }
             }
         },
@@ -147,7 +145,7 @@ Ext.define('TE.util.Items', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        return this.item_kinds;
+        return '"' + this.item_kinds + '"';
     },
 
 
@@ -175,6 +173,6 @@ Ext.define('TE.util.Items', {
     //   Set the value of the field
     // ------------------------------------------------------------------------
     {
-        return this.toJSON();
+        return this.item_kinds;
     }
 });
