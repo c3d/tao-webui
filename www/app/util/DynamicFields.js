@@ -4,6 +4,7 @@ Ext.define('TE.util.DynamicFields', {
 // ----------------------------------------------------------------------------
     extend:'Ext.form.FieldContainer',
     alias: 'widget.te_dynamicfields',
+    id:"dynamic",
     name:"dynamic",
     layout: 'vbox',
     items: [{
