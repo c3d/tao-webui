@@ -5,13 +5,17 @@ Ext.define('TE.util.SliderField', {
     collapsible: true,
     collapsed:false,
     layout: 'hbox',
+
+    // Default settings
+    min:0, max: 100, step: 0.01,
+
     items: [
         {
             xtype:'slider',
             width: '75%',
             value: 0,
             minValue: 0,
-            maxValue: 100,
+            maxValue: 10000,
             padding: '5 0 0 0',
             listeners: {
                 change: function(f)
