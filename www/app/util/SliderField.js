@@ -16,6 +16,7 @@ Ext.define('TE.util.SliderField', {
             value: 0,
             minValue: 0,
             maxValue: 10000,
+            step: 0.01,
             padding: '5 0 0 0',
             listeners: {
                 change: function(f)
