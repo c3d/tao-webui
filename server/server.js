@@ -1254,6 +1254,7 @@ function writeTaoDocument(pages, lang, callback, overwrite)
             header: '',
             docPath: docPath(),
             themeAsset: themeAsset,
+            ddtFilePath: ddtFilePath,
             verbose: verbose
         };
     var body = '';

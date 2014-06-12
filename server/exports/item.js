@@ -29,16 +29,23 @@ function emitItem(page, id, value)
 //   Emit the name of the page
 // ----------------------------------------------------------------------------
 {
-    var item = util.property(page, id, value);
+    var item = util.page_property(page, id, value);
     if (item === null)
         return '';
-    var model = item.model;
-    var ddt = model + '.ddt';
-    var path = __dirname + '/../fields';
-    console.log("Processing model ", model);
 
-    var processor = templates.processTemplateFile(ddt, item.data, path);
-    processor(item.data);    
+    var model = item.model;
+    var path = __dirname;
+    var ctx = page.ctx;
+    var ddtFilePath = ctx.ddtFilePath;
+    var ddt = ddtFilePath(model);
+    var processor = templates.processTemplatePath(ddt, model, path);
+
+    var dataItem = { model: model, properties: item, ctx: ctx };
+    if (page.properties.hasOwnProperty('_labels_'))
+        dataItem.properties._labels_ = page.properties._labels_;
+    var result = processor(dataItem);
+    delete dataItem.properties._labels_;
+    return result;
 }
 
 module.exports = emitItem;
