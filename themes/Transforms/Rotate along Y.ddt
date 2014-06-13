@@ -1,0 +1,1 @@
+rotate_y [[real {label: "Rotate along Y", value: 0, min:-360, max:360, step:0.1 }]]
