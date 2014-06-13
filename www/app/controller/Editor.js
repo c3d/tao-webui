@@ -82,8 +82,8 @@ Ext.define('TE.controller.Editor', {
             'pagelist button[action=pageDelete]': {
                 click: this.deletePage
             },
-            'te_editor [action=addField]': {
-                 click: this.addField
+            'te_editor [action=addFromMenu]': {
+                 click: this.addFromMenu
              },
             'button[action=showImageLibrary]': {
                 click: this.showImageLibrary
@@ -484,10 +484,10 @@ Ext.define('TE.controller.Editor', {
         this.movePage(delta);
     },
 
-    addField: function(e) {
+    addFromMenu: function(e) {
         var dynamic = Ext.getCmp('dynamic');
         if (dynamic)
-            dynamic.addField(e.itemId, e.text);
+            dynamic.addFieldFromMenu(e.itemId, e.text);
     },
 
 

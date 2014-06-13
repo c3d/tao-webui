@@ -31,46 +31,99 @@ Ext.define('TE.util.DynamicFields', {
     extraSaveData: {},
 
 
-    addField: function(type, label, value, collapse, model)
+    addItem: function(json, parent)
+    // ------------------------------------------------------------------------
+    //    Add an item, possibly within an 'Items' component
+    // ------------------------------------------------------------------------
+    {
+        // Disable saves to hidden field while we are reading it
+        var saveDisabled = this.disableSave;
+        this.disableSave = true;
+
+        // Decode JSON string
+        var items = (typeof json == 'string' ? Ext.decode(json) : json);
+        var collapsed = items._collapsed_;
+        var labels = items._labels_ || { };
+        var me = this;
+        for(var name in items)
+        {
+            var value = items[name];
+            if (name.match(/_.*_/))
+            {
+                // Record special elements like _label_ or _collapsed_
+                // in the 'extraSaveData' field so that we can save it later
+                var parentCt = parent || this;
+                parentCt.extraSaveData[name] = value;
+            }
+            else
+            {
+                // Regular values will cause the creation of a component
+                // Check if we have a label in the input value,
+                // otherwise get it from the label of the 'Add...' menu
+                var label = labels[name] || me.defaultLabel(name);
+
+                // Check if collapsed
+                var collapse = collapsed && collapsed.indexOf(name) >= 0;
+                
+                // Add field
+                me.addField(name, label, value, collapse, parent);
+            }
+        }
+        this.disableSave = saveDisabled;
+
+        return items;
+    },
+
+
+    addFromMenu: function(type, label)
+    // ------------------------------------------------------------------------
+    //   Add element directly from menu
+    // ------------------------------------------------------------------------
+    {
+        this.addField(type, label);
+        this.saveDynamicFields();
+    },
+
+
+    addField: function(type, label, value, collapse, parent)
     // ------------------------------------------------------------------------
     //   Add new field to this container
     // ------------------------------------------------------------------------
     {
-        var field = this.createField(type, label, model);
+        var field = this.createField(type, label);
+        var parentCt = parent || this;
         if (type.indexOf('_menu') >= 0)
         {
             if (!field)
                 field = this.componentExists(type);
             var menu = Ext.getCmp(type);
             menu.add(field.menuItems);
-            this.extraSaveData[type] = value;
+            parentCt.extraSaveData[type] = value;
         }
-        else if(field)
+        else if (field)
         {
-            this.add(field);
+            parentCt.add(field);
 
             // Use setValue method to update all fields
             if (value)
                 field.setValue(value);
 
             // Add remove button and up/down buttons
-            if (field.multipleAllowed)
-                this.addRemoveButton(field);
-            this.addUpDownButtons(field);
+            if (field.legend)
+            {
+                this.addButtons(field);
 
-            // Expand fieldset if needed (first add)
-            if(collapse)
-                field.collapse();
-            else
-                field.expand();
-
-            // Once we are done, save
-            this.saveDynamicFields();
+                // Expand fieldset if needed (first add)
+                if(collapse)
+                    field.collapse();
+                else
+                    field.expand();
+            }
         }
     },
 
 
-    createField: function(name, label, model)
+    createField: function(name, label)
     // ------------------------------------------------------------------------
     //   Create a field from given type
     // ------------------------------------------------------------------------
@@ -93,6 +146,7 @@ Ext.define('TE.util.DynamicFields', {
         }
 
         // Create new field with the given type and label
+        var me = this;
         var field = Ext.create('TE.fields.' + type, {
             title: label,
             name: name,
@@ -102,7 +156,7 @@ Ext.define('TE.util.DynamicFields', {
                 change: function() {
                     // Save when all fields change
                     // (except legend and datasets fields)
-                    Ext.getCmp("dynamic").saveDynamicFields();
+                    me.saveDynamicFields();
                 },
                 render: function(f) {
                     // Fire click to display field in the center pane
@@ -112,10 +166,6 @@ Ext.define('TE.util.DynamicFields', {
                 }
             }
         });
-
-        // If this was created from an item, record it
-        if (model)
-            this.models[name] = model;
 
         return field;
     },
@@ -139,58 +189,59 @@ Ext.define('TE.util.DynamicFields', {
     },
 
 
-    addRemoveButton: function(field)
+    addButtons: function(field)
     // ------------------------------------------------------------------------
     //   Add remove button to field legend
     // ------------------------------------------------------------------------
     {
-        if (!field.legend.closable)
+        var dynamic = this;
+
+        if (field.multipleAllowed)
         {
-            field.legend.insert(0, Ext.widget('tool', {
-                type: 'close',
-                handler: function() {
-                    if (this.ownerCt) {
-                        this.ownerCt.remove(this, true);
-                        this.ownerCt.saveDynamicFields();
-                    }
-                },
-                scope: field
-            }));
-            field.legend.closable = true;
+            if (!field.legend.closable)
+            {
+                field.legend.insert(0, Ext.widget('tool', {
+                    type: 'close',
+                    handler: function() {
+                        if (this.ownerCt) {
+                            this.ownerCt.remove(this, true);
+                            dynamic.saveDynamicFields();
+                        }
+                    },
+                    scope: field
+                }));
+                field.legend.closable = true;
+            }
         }
-    },
 
-
-    addUpDownButtons: function(field)
-    // ------------------------------------------------------------------------
-    //   Add up-down buttons to field legend
-    // ------------------------------------------------------------------------
-    {
-        if (!field.legend.moveable)
+        if (!field.orderMustBePreserved)
         {
-            field.legend.insert(0, Ext.widget('tool', {
-                type: 'moveDown',
-                handler: function() {
-                    if (this.ownerCt) {
-                        var itemIndex = this.ownerCt.items.indexOf(this);
-                        this.ownerCt.move(itemIndex, itemIndex+1);
-                        this.ownerCt.saveDynamicFields();
-                    }
-                },
-                scope: field
-            }));
-            field.legend.insert(0, Ext.widget('tool', {
-                type: 'moveUp',
-                handler: function() {
-                    if (this.ownerCt) {
-                        var itemIndex = this.ownerCt.items.indexOf(this);
-                        this.ownerCt.move(itemIndex, itemIndex-1);
-                        this.ownerCt.saveDynamicFields();
-                    }
-                },
-                scope: field
-            }));
-            field.legend.moveable = true;
+            if (!field.legend.moveable)
+            {
+                field.legend.insert(0, Ext.widget('tool', {
+                    type: 'moveDown',
+                    handler: function() {
+                        if (this.ownerCt) {
+                            var itemIndex = this.ownerCt.items.indexOf(this);
+                            this.ownerCt.move(itemIndex, itemIndex+1);
+                            dynamic.saveDynamicFields();
+                        }
+                    },
+                    scope: field
+                }));
+                field.legend.insert(0, Ext.widget('tool', {
+                    type: 'moveUp',
+                    handler: function() {
+                        if (this.ownerCt) {
+                            var itemIndex = this.ownerCt.items.indexOf(this);
+                            this.ownerCt.move(itemIndex, itemIndex-1);
+                            dynamic.saveDynamicFields();
+                        }
+                    },
+                    scope: field
+                }));
+                field.legend.moveable = true;
+            }
         }
     },
 
@@ -232,6 +283,7 @@ Ext.define('TE.util.DynamicFields', {
     //   Return the default label for the given type id
     // ------------------------------------------------------------------------
     {
+        id = id.replace(/_[0-9]+$/, '');
         return this.fieldDefaultLabels[id] || id;
     },
 
@@ -241,38 +293,50 @@ Ext.define('TE.util.DynamicFields', {
     //   Override toJSON method to save the fields
     // ------------------------------------------------------------------------
     {
+        return this.toJSONItems(this);
+    },
+
+
+    toJSONItems: function(me)
+    // ------------------------------------------------------------------------
+    //   Save to JSON, including for children items (see Items.js)
+    // ------------------------------------------------------------------------
+    {
         var json = {};
-        var items = this.items.items;
+        var items = me.items.items;
 
         // Compute the "collapsed" and "labels" states
         var collapsed = [];
         var labels = { };
-        var me = this;
+        var dynamic = this;
         Ext.each(items, function(item, index) {
-            if (item.collapsed)
-                collapsed.push(item.name);
-            if (item.title != me.defaultLabel(item.type))
-                labels[item.name] = item.title;
+            if (item.type)
+            {
+                if (item.collapsed)
+                    collapsed.push(item.name);
+                if (item.title != dynamic.defaultLabel(item.type))
+                    labels[item.name] = item.title;
+            }
         });
-        if (collapsed !== [])
-            json._collapsed_ = collapsed;
-        if (labels !== {})
-            json._labels_ = labels;
-        if (this.models != {})
-            json._models_ = this.models;
-        for (item in this.extraSaveData)
-            json[item] = this.extraSaveData[item];
 
-        // Item name for each model
-        var itemNames = {};
-        var me = this;
-        var models = this.models;
-        var itemIndex = 1;
- 
+        // Save elements that are really not fields
+        for (item in me.extraSaveData)
+            json[item] = me.extraSaveData[item];
+
+        // Possibly overwrite with computed collapsed and labels states
+        if (collapsed != [])
+            json._collapsed_ = collapsed;
+        else
+            delete json._collapsed_;
+        if (labels != {})
+            json._labels_ = labels;
+        else
+            delete json._labels_;
+
         // Re-encode the dyanmic fields including _collapsed_ and _labels_
         Ext.each(items, function(item, index) {
             var name = item.name;
-            if(name != 'dynamicfields')
+            if(item.type)
             {
                 // To encode complex objects, use toJSON method if defined,
                 // otherwise encode value directly (e.g. for textfields)
@@ -282,21 +346,7 @@ Ext.define('TE.util.DynamicFields', {
                     value = Ext.encode(item.getValue());
                 
                 // Add item to the JSON output
-                if (models.hasOwnProperty(name)) {
-                    var model = models[name];
-                    var itemName = 'item_' + itemIndex;
-                    if (itemNames.hasOwnProperty(model)) {
-                        itemName = itemNames[model];
-                    } else {
-                        itemNames[model] = itemName;
-                        itemIndex++;
-                    }
-                    if (!json.hasOwnProperty(itemName))
-                        json[itemName] = { model: model };
-                    json[itemName][name] = JSON.parse(value);
-                } else {
-                    json[name] = JSON.parse(value);
-                }
+                json[name] = JSON.parse(value);
             }
         });
 
@@ -304,61 +354,14 @@ Ext.define('TE.util.DynamicFields', {
     },
 
 
-    setValue: function(json, model)
+    setValue: function(json)
     // ------------------------------------------------------------------------
     //   Set the value of the field
     // ------------------------------------------------------------------------
     {
         if(!json || json == '')
             return;
-
-        // Disable saves to hidden field while we are reading it
-        var saveDisabled = this.disableSave;
-        this.disableSave = true;
-
-        // Decode JSON string
-        var items = Ext.decode(json);
-        var collapsed = items._collapsed_;
-        var labels = items._labels_ || { };
-        if (items._labels_)
-            this._labels_ = mergeObjects(this._labels, items._labels_);
-        var me = this;
-        for(var name in items)
-        {
-            if (!name.match(/_.*_/))
-            {
-                var value = items[name];
-
-                function add(name, value)
-                {
-                    // Check if we have a label in the input value,
-                    // otherwise get it from the label of the 'Add...' menu
-                    var label = labels[name] || me.defaultLabel(name);
-
-                    // Check if collapsed
-                    var collapse = collapsed && collapsed.indexOf(name) >= 0;
-
-                    // Add field
-                    me.addField(name, label, value, collapse, model);
-                }
-
-
-                // Check if we have an item with a data model
-                if (name.match(/item_[0-9]+/))
-                {
-                    model = value.model;
-                    delete value.model;
-                    for (var it in value)
-                        add(it, value[it]);
-                }
-                else
-                {
-                    add(name, value);
-                }
-                
-            }
-        }
-        this.disableSave = saveDisabled;
+        this.addItem(json);
     },
 
 

@@ -26,24 +26,10 @@ Ext.define('TE.util.Items', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.te_items',
     layout: 'vbox',
-    item_kinds: '',
+    collapsible: true,
+    extraSaveData: {},
 
     items: [{
-        xtype: 'hiddenfield',
-        name:'items',
-        flex: 1,
-        listeners: {
-            change: function()
-            {
-                // Parse JSON only when container is loaded
-                // (i.e no other fields)
-                if(this.ownerCt.items.length == 1)
-                {
-                    this.ownerCt.parseJSON(this.getValue());
-                }
-            }
-        }
-    }, {
         xtype: 'treepanel',
         rootVisible: false,
         singleExpand: true,
@@ -71,7 +57,12 @@ Ext.define('TE.util.Items', {
                 var init = httpGet('/init/' + model);
                 if (init) {
                     var dynamic = Ext.getCmp('dynamic');
-                    var field = dynamic.setValue(init, model);
+                    var items = view.up('te_items');
+                    var name = rec.raw.text;
+                    init = JSON.parse(init);
+                    init._model_ = model;
+                    var fieldValue = { _labels_: { item: name }, item : init };
+                    var field = dynamic.addItem(fieldValue, items);
                 }
             },
             itemclick : function(view,rec,item,indexa,eventObj,eventOpts) {
@@ -92,7 +83,7 @@ Ext.define('TE.util.Items', {
     }],
 
 
-    loadItems: function(f)
+    loadTreePanel: function(kinds)
     // ------------------------------------------------------------------------
     //   When rendering, load the possible choices from the server
     // ------------------------------------------------------------------------
@@ -138,7 +129,7 @@ Ext.define('TE.util.Items', {
             add(dataRoot, theme.theme, '', theme.templates);
         }
 
-        var kindsArray = this.getValue().split(' ');
+        var kindsArray = kinds.split(' ');
         var me = this;
         kindsArray.forEach(function(itemKind) {
             var itemsArray = JSON.parse(httpGet("/list/" + itemKind));
@@ -156,7 +147,8 @@ Ext.define('TE.util.Items', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        return '"' + this.item_kinds + '"';
+        var dynamic = Ext.getCmp('dynamic');
+        return dynamic.toJSONItems(this);
     },
 
 
@@ -165,8 +157,14 @@ Ext.define('TE.util.Items', {
     //   Render item as JSON to save on the server side
     // ------------------------------------------------------------------------
     {
-        this.item_kinds = json;
-        this.loadItems();
+        var obj = json;
+        if (typeof obj == 'string')
+            obj = JSON.parse(obj);
+        this.loadTreePanel(obj._kinds_);
+
+        var dynamic = Ext.getCmp('dynamic');
+        this.extraSaveData = {};
+        dynamic.addItem(obj, this);
     },
 
 
@@ -184,6 +182,6 @@ Ext.define('TE.util.Items', {
     //   Set the value of the field
     // ------------------------------------------------------------------------
     {
-        return this.item_kinds;
+        return this.toJSON();
     }
 });

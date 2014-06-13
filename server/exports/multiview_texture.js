@@ -25,17 +25,6 @@ function emitMultiviewTexture(page, id, value)
 //   Emit the name of the multiview texture
 // ----------------------------------------------------------------------------
 {
-    var parms = value;
-    if (parms && parms.label)
-    {
-        // Try to find it by label if the label is set
-        var label = parms.label;
-        var labels = page.properties._labels_;
-        for (lbl in labels)
-            if (labels[lbl] == label)
-                console.log("Property will be ", page.properties[lbl], " for ", label, " as ", lbl);
-    }
-
     var text = util.property(page, id, value);
     if (text === null)
         return '';

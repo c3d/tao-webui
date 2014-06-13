@@ -67,11 +67,8 @@ Ext.define('TE.util.FileUpload', {
  
                     // Currently, I have a separate library that holds
                     // reusable functions to access our public API
-                    console.log("Upload 1", files);
                     var win = Ext.getCmp('file_upload_container');
-                    console.log("Win: ", win);
                     var editor = win.editor;
-                    console.log("Editor: ", editor);
                     editor.uploadFiles(datasetName, files, win);
  
                 }, false);

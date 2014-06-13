@@ -24,18 +24,18 @@ var util = require('../util');
 var templates = require('../templates');
 
 
-function emitItem(page, id, value)
+function emitItem(items, id, parms)
 // ----------------------------------------------------------------------------
-//   Emit the name of the page
+//   Emit the contents of the page
 // ----------------------------------------------------------------------------
 {
-    var item = util.page_property(page, id, value);
+    var item = items.properties[id];
     if (item === null)
         return '';
 
-    var model = item.model;
+    var model = item._model_;
     var path = __dirname;
-    var ctx = page.ctx;
+    var ctx = items.ctx;
     var ddtFilePath = ctx.ddtFilePath;
     var ddt = ddtFilePath(model);
     if (ddt)
@@ -43,14 +43,10 @@ function emitItem(page, id, value)
         var processor = templates.processTemplatePath(ddt, model, path);
         
         var dataItem = { model: model, properties: item, ctx: ctx };
-        if (page.properties.hasOwnProperty('_labels_'))
-            dataItem.properties._labels_ = page.properties._labels_;
         var result = processor(dataItem);
-        delete dataItem.properties._labels_;
         return result;
     }
 
-    console.log("No DDT file for ", model);
     return '';
 }
 

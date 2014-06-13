@@ -123,11 +123,8 @@ function items(object)
 {
     return function (page, id, value)
     {
-        var name = value.label;
-        if (!result.items)
-            result.items = name;
-        else
-            result.items += ' ' + name;
+        var kinds = value.label;
+        result.items = { _kinds_: kinds, items: {} };
         return '';
     }
 }
