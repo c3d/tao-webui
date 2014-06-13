@@ -25,7 +25,7 @@ Ext.define('TE.util.DynamicFields', {
     }],
     listeners:
     {
-        remove: function(me, field) { this.removeField(field); }
+        remove: function(me, field) { this.saveDynamicFields(); }
     },
     disableSave: false,
     extraSaveData: {},
@@ -53,9 +53,10 @@ Ext.define('TE.util.DynamicFields', {
             if (value)
                 field.setValue(value);
 
-            // Add remove button
+            // Add remove button and up/down buttons
             if (field.multipleAllowed)
                 this.addRemoveButton(field);
+            this.addUpDownButtons(field);
 
             // Expand fieldset if needed (first add)
             if(collapse)
@@ -120,16 +121,6 @@ Ext.define('TE.util.DynamicFields', {
     },
 
 
-    removeField: function(field)
-    // ------------------------------------------------------------------------
-    //   Remove field from container - Save new state to dynamic fields
-    // ------------------------------------------------------------------------
-    {
-        // Resave fields
-        this.saveDynamicFields();
-    },
-
-
     componentExists: function(name)
     // ------------------------------------------------------------------------
     //    Check if a component with same name exists
@@ -160,11 +151,46 @@ Ext.define('TE.util.DynamicFields', {
                 handler: function() {
                     if (this.ownerCt) {
                         this.ownerCt.remove(this, true);
+                        this.ownerCt.saveDynamicFields();
                     }
                 },
                 scope: field
             }));
             field.legend.closable = true;
+        }
+    },
+
+
+    addUpDownButtons: function(field)
+    // ------------------------------------------------------------------------
+    //   Add up-down buttons to field legend
+    // ------------------------------------------------------------------------
+    {
+        if (!field.legend.moveable)
+        {
+            field.legend.insert(0, Ext.widget('tool', {
+                type: 'moveDown',
+                handler: function() {
+                    if (this.ownerCt) {
+                        var itemIndex = this.ownerCt.items.indexOf(this);
+                        this.ownerCt.move(itemIndex, itemIndex+1);
+                        this.ownerCt.saveDynamicFields();
+                    }
+                },
+                scope: field
+            }));
+            field.legend.insert(0, Ext.widget('tool', {
+                type: 'moveUp',
+                handler: function() {
+                    if (this.ownerCt) {
+                        var itemIndex = this.ownerCt.items.indexOf(this);
+                        this.ownerCt.move(itemIndex, itemIndex-1);
+                        this.ownerCt.saveDynamicFields();
+                    }
+                },
+                scope: field
+            }));
+            field.legend.moveable = true;
         }
     },
 

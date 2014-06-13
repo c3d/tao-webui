@@ -68,6 +68,22 @@ Chrome/Safari (it gives a empty zone below the page) */
     background-repeat: no-repeat;
 }
 
+/* DynamicFields moveUp and moveDown icons */
+.x-tool-moveUp
+{
+    background-image: url('app/resources/images/moveUp.png') !important;
+    background-position: 0 2px !important;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+.x-tool-moveDown
+{
+    background-image: url('app/resources/images/moveDown.png') !important;
+    background-position: 0 2px !important;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
 /* Remove icon in tree view */
 .no-icon
 {

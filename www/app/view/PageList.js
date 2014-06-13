@@ -84,13 +84,13 @@ Ext.define('TE.tree.PageList', {
                 ' ',
                 {
                     xtype: 'button',
-                    icon: 'app/resources/images/page-up.gif',
+                    icon: 'app/resources/images/pageUp.png',
                     action: 'pageBefore',
                     tooltip: tr('Move selected page before previous page'),
                     disabled: true
                 },{
                     xtype: 'button',
-                    icon: 'app/resources/images/page-down.gif',
+                    icon: 'app/resources/images/pageDown.png',
                     action: 'pageAfter',
                     tooltip: tr('Move selected page after next page'),
                     disabled: true

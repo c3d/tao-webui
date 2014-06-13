@@ -81,7 +81,6 @@ Ext.define('TE.util.Items', {
                     var name = rec.raw.text;
                     var url = 'themes/' + rec.raw.fullName + '.html';
                     var ed = TE.app.getController('TE.controller.Editor');
-                    console.log("URL=", url);
                     ed.setCenterPaneURL(model, name, url, null);
                 }
             }
