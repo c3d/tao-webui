@@ -274,8 +274,6 @@ Ext.define('TE.util.DynamicFields', {
             }
         });
 
-        console.log("DynamicFields::toJSON=", json);
-
         return JSON.stringify(json);
     },
 
