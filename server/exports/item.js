@@ -38,14 +38,20 @@ function emitItem(page, id, value)
     var ctx = page.ctx;
     var ddtFilePath = ctx.ddtFilePath;
     var ddt = ddtFilePath(model);
-    var processor = templates.processTemplatePath(ddt, model, path);
+    if (ddt)
+    {
+        var processor = templates.processTemplatePath(ddt, model, path);
+        
+        var dataItem = { model: model, properties: item, ctx: ctx };
+        if (page.properties.hasOwnProperty('_labels_'))
+            dataItem.properties._labels_ = page.properties._labels_;
+        var result = processor(dataItem);
+        delete dataItem.properties._labels_;
+        return result;
+    }
 
-    var dataItem = { model: model, properties: item, ctx: ctx };
-    if (page.properties.hasOwnProperty('_labels_'))
-        dataItem.properties._labels_ = page.properties._labels_;
-    var result = processor(dataItem);
-    delete dataItem.properties._labels_;
-    return result;
+    console.log("No DDT file for ", model);
+    return '';
 }
 
 module.exports = emitItem;

@@ -228,10 +228,6 @@ Ext.define('TE.controller.Editor', {
 
     setCenterPaneURL: function(path, text, url, defaultInfo, previewImage) {
         var themeInfo = httpGet(url);
-        var cp = this.getCenterpane();
-        cp.removeAll();
-        var display = Ext.create('Ext.form.field.Display');
-        cp.add(display);
         var theme = '/themes/' + path + '/';
         var defaultImage = '/themes/' + path + '.page.png';
         var image = previewImage || defaultImage;
@@ -251,12 +247,20 @@ Ext.define('TE.controller.Editor', {
                 });
             }
         }
-        themeInfo = themeInfo
-            .replace(/\[\[theme\]\]/g, theme)
-            .replace(/\[\[image\]\]/g, image)
-            .replace(/\[\[caption\]\]/g, text);
-        
-        display.update(themeInfo);
+
+        if (themeInfo)
+        {
+            var cp = this.getCenterpane();
+            cp.removeAll();
+            var display = Ext.create('Ext.form.field.Display');
+            cp.add(display);
+
+            themeInfo = themeInfo
+                .replace(/\[\[theme\]\]/g, theme)
+                .replace(/\[\[image\]\]/g, image)
+                .replace(/\[\[caption\]\]/g, text);
+            display.update(themeInfo);
+        }
     },
 
     pageTemplateClicked: function(list, item) {
@@ -629,8 +633,6 @@ Ext.define('TE.controller.Editor', {
                     win.close();
                     record.set(values);
                     record.set('file', action.result.file);
-                    console.log("Record=", record);
-                    console.log("Action=", action);
                     if (record.get('id') === undefined)
                         store.add(record);
                     store.sync();

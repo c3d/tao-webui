@@ -73,6 +73,17 @@ Ext.define('TE.util.Items', {
                     var dynamic = Ext.getCmp('dynamic');
                     var field = dynamic.setValue(init, model);
                 }
+            },
+            itemclick : function(view,rec,item,indexa,eventObj,eventOpts) {
+                var model = rec.raw.model;
+                if (model)
+                {
+                    var name = rec.raw.text;
+                    var url = 'themes/' + rec.raw.fullName + '.html';
+                    var ed = TE.app.getController('TE.controller.Editor');
+                    console.log("URL=", url);
+                    ed.setCenterPaneURL(model, name, url, null);
+                }
             }
         },
         
@@ -104,7 +115,8 @@ Ext.define('TE.util.Items', {
                 if (len == 0 || kids[len-1].text != dir)
                 {
                     kids.push({ text: dir, expanded: false,
-                                path: subdir, children: [] });
+                                model: subdir, fullName : subdir + '/' + dir,
+                                children: [] });
                     len = kids.length;
                 }
                 return add(kids[len-1], rest, subdir, templates);
