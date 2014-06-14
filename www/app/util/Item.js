@@ -46,7 +46,6 @@ Ext.define('TE.util.Item', {
     //   Override parseJSON method
     // ------------------------------------------------------------------------
     {
-        console.log('Item::fromJSON ', json);
         var obj = json;
         if (typeof obj == 'string')
             obj = JSON.parse(obj);
