@@ -1327,7 +1327,6 @@ app.get(/^\/init\/(.*)$/, function(req, res)
 {
     var path = __dirname + '/fields';
     var template = req.params[0];
-    console.log('init:', template);
     var templateFile = ddtFilePath(template);
     var result = '';
     var page = {};
