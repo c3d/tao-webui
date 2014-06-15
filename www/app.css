@@ -84,6 +84,20 @@ Chrome/Safari (it gives a empty zone below the page) */
     background-repeat: no-repeat;
 }
 
+/* Color picker customization */
+.x-color-picker-item {
+    width: 16px;
+    height: 16px;
+    padding: 0px;
+    border-width: 1px;
+    border-style: solid;
+}
+.x-color-picker-item-inner {
+    line-height: 16px;
+    border-width: 1px;
+    border-style: none;
+}
+
 /* Remove icon in tree view */
 .no-icon
 {
