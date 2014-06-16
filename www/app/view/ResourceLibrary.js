@@ -16,7 +16,7 @@ Ext.define('TE.view.ResourceLibrary', {
 
         this.items = [{
             xtype: 'gridpanel',
-            width: 600,
+            width: 700,
             height: 600,
             store: this.store,
 
