@@ -649,12 +649,16 @@ Ext.define('TE.controller.Editor', {
     },
 
     chooseResource: function(button) {
-        var win = button.findParentByType('teresourcelibrary'),
-            field = win.targetField,
-            image = this.selectedResource();
-        field.setValue(image.get('file'));
-        win.close();
-        this.application.getController('PageControllerBase').updatePage();
+        var win = this.getResourceLibrary();
+        // We sometimes get duplicate action events, second one has no window
+        if (win)
+        {
+            var field = win.targetField;
+            var image = this.selectedResource();
+            field.setValue(image.get('file'));
+            win.close();
+            this.application.getController('PageControllerBase').updatePage();
+        }
     },
 
     setStatus: function(msg) {
