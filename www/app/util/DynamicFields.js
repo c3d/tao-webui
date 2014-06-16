@@ -70,6 +70,7 @@ Ext.define('TE.util.DynamicFields', {
             }
         }
         this.disableSave = saveDisabled;
+        this.saveDynamicFields();
 
         return items;
     },
