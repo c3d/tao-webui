@@ -1,1 +1,1 @@
-color [[color "Color"]]
+color [[color "Color"]], [[percent {label: "Opacity", value: 100, min:0, max:100}]]%
