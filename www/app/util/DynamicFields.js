@@ -112,7 +112,7 @@ Ext.define('TE.util.DynamicFields', {
             // Add remove button and up/down buttons
             if (field.legend)
             {
-                this.addButtons(field);
+                this.addButtons(field, parent);
 
                 // Expand fieldset if needed (first add)
                 if(collapse)
@@ -190,7 +190,7 @@ Ext.define('TE.util.DynamicFields', {
     },
 
 
-    addButtons: function(field)
+    addButtons: function(field, parent)
     // ------------------------------------------------------------------------
     //   Add remove button to field legend
     // ------------------------------------------------------------------------
@@ -201,16 +201,18 @@ Ext.define('TE.util.DynamicFields', {
         {
             if (!field.legend.closable)
             {
-                field.legend.insert(0, Ext.widget('tool', {
-                    type: 'close',
-                    handler: function() {
-                        if (this.ownerCt) {
-                            this.ownerCt.remove(this, true);
-                            dynamic.saveDynamicFields();
-                        }
-                    },
-                    scope: field
-                }));
+                var canClose = !parent || parent.type != 'item';
+                if (canClose)
+                    field.legend.insert(0, Ext.widget('tool', {
+                        type: 'close',
+                        handler: function() {
+                            if (this.ownerCt) {
+                                this.ownerCt.remove(this, true);
+                                dynamic.saveDynamicFields();
+                            }
+                        },
+                        scope: field
+                    }));
                 field.legend.closable = true;
             }
         }
