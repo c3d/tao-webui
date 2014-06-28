@@ -13,8 +13,9 @@
 # License version 3.0 requirements will be met:
 # http://www.gnu.org/copyleft/gpl.html.
 #
+# (C) 2014 Christophe de Dinechin <christophe@taodyne.com>
 # (C) 2013 Jerome Forissier <jerome@taodyne.com>
-# (C) 2013 Taodyne SAS
+# (C) 2013-2014 Taodyne SAS
 # ******************************************************************************
 
 .PHONY: install
@@ -33,7 +34,7 @@ install: deps
 	mkdir -p "$(DEST)"
 	cp LICENSE "$(DEST)"
 	mkdir -p "$(DEST)"/www
-	cp www/index_nodebug.html "$(DEST)"/www/index.html
+	cp www/index.html "$(DEST)"/www/index.html
 	cp www/app.js www/app.css www/tinymce_content.css "$(DEST)"/www
 	cp -R www/app "$(DEST)"/www
 	cp -R www/ext-tinymce "$(DEST)"/www
