@@ -34,16 +34,18 @@ install: deps
 	mkdir -p "$(DEST)"
 	cp LICENSE "$(DEST)"
 	mkdir -p "$(DEST)"/www
-	cp www/index.html "$(DEST)"/www/index.html
-	cp www/app.js www/app.css www/tinymce_content.css "$(DEST)"/www
+	sed -e 's/ext-dev.js/ext-all.js/g' < www/index.html > "$(DEST)"/www/index.html
+	cp www/app.js www/util.js www/app.css www/xcode.css www/highlight.js www/tinymce_content.css "$(DEST)"/www
 	cp -R www/app "$(DEST)"/www
 	cp -R www/ext-tinymce "$(DEST)"/www
 	mkdir -p "$(DEST)"/www/ext-4
 	cp www/ext-4/ext-all.js "$(DEST)"/www/ext-4
-	cp www/ext-4/ext-dev.js "$(DEST)"/www/ext-4
 	mkdir -p "$(DEST)"/www/ext-4/resources/ext-theme-neptune
+	mkdir -p "$(DEST)"/www/ext-4/resources/css
+	cp www/ext-4/resources/css/ext-all-neptune.css "$(DEST)"/www/ext-4/resources/css/
 	cp www/ext-4/resources/ext-theme-neptune/ext-theme-neptune-all.css "$(DEST)"/www/ext-4/resources/ext-theme-neptune
 	cp -R www/ext-4/resources/ext-theme-neptune/images "$(DEST)"/www/ext-4/resources/ext-theme-neptune
+	cp -R www/ext-4/locale "$(DEST)"/www/ext-4/
 	mkdir -p "$(DEST)"/server
 	cp -R server "$(DEST)"
 	mkdir -p "$(DEST)"/themes
@@ -54,7 +56,7 @@ install: deps
 	echo "$(DEST)" | sed 's/.*\(.\)$$/\1/' | grep -v -q /
 	# Find all OUR .js files, copy them to install but prepend our copyright header
 	find "$(DEST)" -name '*.js' -not -path '$(DEST)/node_modules/*' -and -not -path '$(DEST)/www/ext-4/*' \
-                -exec bash -c "cat js_header.txt \"{}\" >> \"{}_\" && mv \"{}_\" \"{}\"" \;
+		-exec bash -c "cat js_header.txt \"{}\" >> \"{}_\" && mv \"{}_\" \"{}\"" \;
 	cp server.sh "$(DEST)"
 
 clean:
