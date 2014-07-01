@@ -40,6 +40,7 @@ install: deps
 	cp -R www/ext-tinymce "$(DEST)"/www
 	mkdir -p "$(DEST)"/www/ext-4
 	cp www/ext-4/ext-all.js "$(DEST)"/www/ext-4
+	cp www/ext-4/ext-dev.js "$(DEST)"/www/ext-4
 	mkdir -p "$(DEST)"/www/ext-4/resources/ext-theme-neptune
 	cp www/ext-4/resources/ext-theme-neptune/ext-theme-neptune-all.css "$(DEST)"/www/ext-4/resources/ext-theme-neptune
 	cp -R www/ext-4/resources/ext-theme-neptune/images "$(DEST)"/www/ext-4/resources/ext-theme-neptune
