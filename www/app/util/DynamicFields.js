@@ -48,7 +48,7 @@ Ext.define('TE.util.DynamicFields', {
         for(var name in items)
         {
             var value = items[name];
-            if (name.match(/_.*_/))
+            if (name.match(/^_.*_$/))
             {
                 // Record special elements like _label_ or _collapsed_
                 // in the 'extraSaveData' field so that we can save it later
@@ -64,6 +64,7 @@ Ext.define('TE.util.DynamicFields', {
 
                 // Check if collapsed
                 var collapse = collapsed && collapsed.indexOf(name) >= 0;
+
                 
                 // Add field
                 me.addField(name, label, value, collapse, parent);
@@ -336,7 +337,7 @@ Ext.define('TE.util.DynamicFields', {
         else
             delete json._labels_;
 
-        // Re-encode the dyanmic fields including _collapsed_ and _labels_
+        // Re-encode the dynamic fields including _collapsed_ and _labels_
         Ext.each(items, function(item, index) {
             var name = item.name;
             if(item.type)
