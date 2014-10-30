@@ -886,13 +886,13 @@ app.get(/^\/+(index.*\.html|)$/, function(req, res)
             function titleString() {
                 switch (lang) {
                 case 'fr':
-                    return 'Éditeur Tao Presentations';
+                    return 'Éditeur Tao3D';
                 default:
                     console.log("titleString() Unsupported language '"
                                 + lang + "', using 'en'");
                     // Fallthrough
                 case 'en':
-                    return 'Tao Presentations Editor';
+                    return 'Tao3D Editor';
                 }
             }
             var options = {
