@@ -176,7 +176,7 @@ function previewPath(pageId)
 //   Return the path for the preview file
 // ----------------------------------------------------------------------------
 {
-    return docPath()+"-preview-"+pageId+".png";
+    return DOC_DIR+"/.thumbnails/"+DOC_FILENAME+"-"+pageId+".png";
 }
 
 
