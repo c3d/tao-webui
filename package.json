@@ -10,8 +10,8 @@
     "express": "~3.3.5",
     "htmlparser": "~1.7.6",
     "http-proxy": "~0.10.3",
-    "async":"~0.2.9",
-    "adm-zip":"~0.4.4"
+    "async": "~0.2.9",
+    "adm-zip": "~0.4.4"
   },
   "devDependencies": {},
   "scripts": {
@@ -21,4 +21,3 @@
   "author": "Taodyne SAS",
   "license": "Taodyne Confidential (for now)"
 }
-
